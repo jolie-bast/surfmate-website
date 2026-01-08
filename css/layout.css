@@ -1,0 +1,218 @@
+/* Hero Section mit Wellenanimation */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hero Background Image */
+.hero-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.hero-bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* Fallback wenn Bild nicht lädt */
+.hero-fallback {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    var(--surfmate-blue) 0%,
+    var(--surfmate-light-blue) 100%
+  );
+  z-index: 0;
+}
+
+.hero-content {
+  text-align: center;
+  z-index: 3;
+  position: relative;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+
+.hero-title {
+  color: var(--surfmate-white);
+  font-size: clamp(2rem, 4vw, 5rem);
+  margin-bottom: var(--spacing-lg);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Verhindere Umbruch nur bei größeren Bildschirmen */
+@media (min-width: 1024px) {
+  .hero-title {
+    white-space: nowrap;
+  }
+}
+
+/* Erlaube Umbruch bei kleineren Bildschirmen */
+@media (max-width: 1023px) {
+  .hero-title {
+    white-space: normal;
+    line-height: 1.1;
+  }
+}
+
+.hero-subtitle {
+  color: var(--surfmate-white);
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  margin-bottom: var(--spacing-2xl);
+  opacity: 0.9;
+}
+
+/* Surfmate Logo */
+.surfmate-logo {
+  margin-bottom: var(--spacing-2xl);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Responsive Logo Image */
+.surfmate-logo-img {
+  width: 80%;
+  height: auto;
+  max-width: 1300px;
+  display: block;
+  margin: 0 auto;
+  filter: brightness(0) invert(1); /* Macht das SVG weiß */
+}
+
+@media (max-width: 1400px) {
+  .surfmate-logo-img {
+    width: 85%;
+    max-width: 1100px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .surfmate-logo-img {
+    width: 90%;
+    max-width: 900px;
+  }
+}
+
+@media (max-width: 768px) {
+  .surfmate-logo-img {
+    width: 95%;
+    max-width: 700px;
+  }
+}
+
+@media (max-width: 480px) {
+  .surfmate-logo-img {
+    width: 98%;
+    max-width: 400px;
+  }
+}
+
+/* Main Content Sections */
+.main-content {
+  padding-top: 0;
+}
+
+.section {
+  padding: var(--spacing-3xl) 0;
+}
+
+/* Dark Section Styling with Surf Background */
+.section-dark {
+  background-image: var(--dark-bg-image, url("../assets/surf-background.jpg"));
+  background-size: cover;
+  background-position: center bottom;
+  background-attachment: scroll;
+  position: relative;
+  color: #ffffff;
+}
+
+.section-dark::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1;
+}
+
+.section-dark .container {
+  position: relative;
+  z-index: 2;
+}
+
+.section-dark .section-content {
+  color: #ffffff;
+}
+
+.section-dark .section-content p,
+.section-dark .section-content h3 {
+  color: #ffffff;
+  margin-bottom: var(--spacing-lg);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: var(--spacing-2xl);
+}
+
+.section-content {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Content Sections für Impressum/Datenschutz */
+.content-section {
+  padding: var(--spacing-2xl) 0;
+  min-height: calc(100vh - var(--header-height) - var(--footer-height));
+}
+
+.content-header {
+  text-align: center;
+  margin-bottom: var(--spacing-2xl);
+  padding-top: var(--spacing-xl);
+}
+
+.content-body {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.content-body h2 {
+  color: var(--surfmate-blue);
+  margin-top: var(--spacing-2xl);
+  margin-bottom: var(--spacing-md);
+}
+
+.content-body ul,
+.content-body ol {
+  margin-bottom: var(--spacing-md);
+  padding-left: var(--spacing-xl);
+}
+
+.content-body li {
+  margin-bottom: var(--spacing-sm);
+}

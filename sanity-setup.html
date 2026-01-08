@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sanity CMS Setup Anleitung</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .code {
+        background: #f4f4f4;
+        padding: 15px;
+        border-radius: 5px;
+        font-family: monospace;
+      }
+      .step {
+        margin-bottom: 30px;
+        padding: 20px;
+        border-left: 4px solid #007acc;
+        background: #f9f9f9;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🏄‍♂️ Sanity CMS Integration Setup</h1>
+
+    <div class="step">
+      <h2>1. Projekt-ID finden</h2>
+      <p>Führe in dem sanity-cms Ordner aus:</p>
+      <div class="code">cd sanity-cms && npx sanity manage</div>
+      <p>Kopiere die Projekt-ID aus der URL oder dem Dashboard</p>
+    </div>
+
+    <div class="step">
+      <h2>2. Projekt-ID einsetzen</h2>
+      <p>Bearbeite <code>js/sanity-client.js</code> und ersetze:</p>
+      <div class="code">projectId: 'your-project-id'</div>
+      <p>mit deiner echten Projekt-ID</p>
+    </div>
+
+    <div class="step">
+      <h2>3. CORS konfigurieren</h2>
+      <p>Füge in Sanity die Domain hinzu:</p>
+      <div class="code">http://localhost:8000</div>
+    </div>
+
+    <div class="step">
+      <h2>4. Content erstellen</h2>
+      <p>Starte das Sanity Studio:</p>
+      <div class="code">cd sanity-cms && npm run dev</div>
+      <p>Erstelle Hero und About Inhalte im Studio</p>
+    </div>
+
+    <div class="step">
+      <h2>5. Website testen</h2>
+      <p>Starte den HTTP Server und teste:</p>
+      <div class="code">python3 -m http.server 8000</div>
+      <p>Die Website lädt jetzt automatisch Content aus Sanity!</p>
+    </div>
+  </body>
+</html>

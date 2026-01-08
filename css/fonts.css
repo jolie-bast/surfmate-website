@@ -1,0 +1,13 @@
+/* Inter Font from Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+/* Eight Extra Condensed Font - Heavy Weight */
+@font-face {
+  font-family: "eight-extra-condensed";
+  src: url("../assets/fonts/8/WOFF/8-Heavy.woff2") format("woff2"),
+    url("../assets/fonts/8/WOFF/8-Heavy.woff") format("woff"),
+    url("../assets/fonts/8/OTF/8-Heavy.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
