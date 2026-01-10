@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Datenschutzerklärung - Surfmate" />
-    <title>Datenschutzerklärung - Surfmate</title>
+    <meta name="description" content="Data Privacy - Surfmate" />
+    <title>Data Privacy - Surfmate</title>
 
     <!-- CSS -->
     <link rel="stylesheet" href="./css/main.css" />
@@ -13,41 +13,46 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
   <body>
-    <!-- Header mit Navigation -->
-    <header class="header">
-      <div class="header-container">
-        <a href="./index.html" class="logo">
-          <img
-            src="./assets/logo-surfmate-schriftzug.svg"
-            alt="Surfmate Logo"
-            class="logo-svg"
-          />
-        </a>
+    <!-- Header -->
+    <div data-include="header.html"></div>
 
-        <nav class="nav">
-          <button class="nav-toggle" aria-label="Navigation ein-/ausblenden">
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
+    <script>
+      // Nav Bar soll auf Datenschutz-Seite immer schwarz sein
+      document.addEventListener("DOMContentLoaded", () => {
+        // Robuste Header-Suche mit mehreren Versuchen
+        let attempts = 0;
+        const maxAttempts = 10;
 
-          <ul class="nav-menu">
-            <li><a href="./index.html" class="nav-link">Home</a></li>
-            <li><a href="./impressum.html" class="nav-link">Impressum</a></li>
-            <li>
-              <a href="./datenschutz.html" class="nav-link">Datenschutz</a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-    </header>
+        const makeHeaderBlack = () => {
+          attempts++;
+          const header = document.querySelector(".header");
+
+          if (header) {
+            console.log("✅ Header gefunden - wird schwarz gemacht");
+            header.classList.add("scrolled");
+            // Zusätzlich direkte CSS-Styles für maximale Sicherheit
+            header.style.background = "rgba(0, 0, 0, 0.95)";
+            header.style.backdropFilter = "blur(10px)";
+          } else if (attempts < maxAttempts) {
+            console.log(
+              `⏳ Header noch nicht gefunden... Versuch ${attempts}/${maxAttempts}`
+            );
+            setTimeout(makeHeaderBlack, 300);
+          } else {
+            console.log("❌ Header nach 10 Versuchen nicht gefunden");
+          }
+        };
+
+        makeHeaderBlack();
+      });
+    </script>
 
     <!-- Main Content -->
-    <main class="main-content">
+    <main class="main-content" style="padding-top: var(--header-height)">
       <section class="content-section">
         <div class="container">
           <header class="content-header">
-            <h1>Datenschutzerklärung</h1>
+            <h1>Data Privacy</h1>
           </header>
 
           <div class="content-body">
@@ -118,34 +123,96 @@
               sich jederzeit an uns wenden.
             </p>
 
-            <h2>2. Hosting</h2>
+            <h2>2. Waitlist und Newsletter (MailerLite)</h2>
+
+            <h3>Registrierung für die Waitlist</h3>
+            <p>
+              Auf dieser Website können Sie sich für unsere Waitlist
+              registrieren, um über die Veröffentlichung unserer App informiert
+              zu werden. Hierfür ist die Angabe Ihrer E-Mail-Adresse
+              erforderlich.
+            </p>
+
+            <h3>MailerLite</h3>
+            <p>
+              Für den Versand unserer Waitlist-Benachrichtigungen nutzen wir den
+              Dienst MailerLite (UAB MailerLite, J. Basanavičiaus str. 15,
+              LT-03108 Vilnius, Litauen).
+            </p>
+            <p>
+              <strong>Zweck der Verarbeitung:</strong> Benachrichtigung über die
+              Verfügbarkeit unserer App
+            </p>
+            <p>
+              <strong>Rechtsgrundlage:</strong> Ihre Einwilligung (Art. 6 Abs. 1
+              lit. a DSGVO)
+            </p>
+            <p>
+              <strong>Gespeicherte Daten:</strong> E-Mail-Adresse, Zeitpunkt der
+              Anmeldung
+            </p>
+            <p>
+              <strong>Widerruf:</strong> Sie können Ihre Einwilligung jederzeit
+              widerrufen, indem Sie sich über den in jeder E-Mail enthaltenen
+              Abmelde-Link austragen oder uns eine E-Mail senden.
+            </p>
+            <p>
+              Weitere Informationen zum Datenschutz bei MailerLite finden Sie
+              unter:
+              <a
+                href="https://www.mailerlite.com/privacy-policy"
+                target="_blank"
+                rel="noopener"
+                >https://www.mailerlite.com/privacy-policy</a
+              >
+            </p>
+
+            <h2>3. Hosting</h2>
             <p>
               Wir hosten die Inhalte unserer Website bei folgendem Anbieter:
             </p>
 
-            <h3>Externes Hosting</h3>
+            <h3>IONOS</h3>
             <p>
-              Diese Website wird extern gehostet. Die personenbezogenen Daten,
-              die auf dieser Website erfasst werden, werden auf den Servern des
-              Hosters / der Hoster gespeichert. Hierbei kann es sich v. a. um
-              IP-Adressen, Kontaktanfragen, Meta- und Kommunikationsdaten,
-              Vertragsdaten, Kontaktdaten, Namen, Websitezugriffe und sonstige
-              Daten, die über eine Website generiert werden, handeln.
+              Diese Website wird bei IONOS gehostet. Anbieter ist die IONOS SE,
+              Elgendorfer Str. 57, 56410 Montabaur, Deutschland.
             </p>
             <p>
-              Das externe Hosting erfolgt zum Zwecke der Vertragserfüllung
+              Die personenbezogenen Daten, die auf dieser Website erfasst
+              werden, werden auf den Servern von IONOS gespeichert. Hierbei kann
+              es sich v. a. um IP-Adressen, Kontaktanfragen, Meta- und
+              Kommunikationsdaten, Vertragsdaten, Kontaktdaten, Namen,
+              Websitezugriffe und sonstige Daten, die über eine Website
+              generiert werden, handeln.
+            </p>
+            <p>
+              Das Hosting bei IONOS erfolgt zum Zwecke der Vertragserfüllung
               gegenüber unseren potenziellen und bestehenden Kunden (Art. 6 Abs.
               1 lit. b DSGVO) und im Interesse einer sicheren, schnellen und
               effizienten Bereitstellung unseres Online-Angebots durch einen
               professionellen Anbieter (Art. 6 Abs. 1 lit. f DSGVO).
             </p>
             <p>
-              Unser Hoster wird Ihre Daten nur insoweit verarbeiten, wie dies
-              zur Erfüllung seiner Leistungspflichten erforderlich ist und
-              unsere Weisungen in Bezug auf diese Daten befolgen.
+              IONOS wird Ihre Daten nur insoweit verarbeiten, wie dies zur
+              Erfüllung der Leistungspflichten erforderlich ist und unsere
+              Weisungen in Bezug auf diese Daten befolgen.
+            </p>
+            <p>
+              Die Datenverarbeitung erfolgt auf Grundlage eines
+              Auftragsverarbeitungsvertrags, den wir mit IONOS geschlossen
+              haben.
+            </p>
+            <p>
+              Weitere Informationen zum Datenschutz bei IONOS finden Sie unter:
+              <a
+                href="https://www.ionos.de/terms-gtc/terms-privacy"
+                target="_blank"
+                rel="noopener"
+                >https://www.ionos.de/terms-gtc/terms-privacy</a
+              >
             </p>
 
-            <h2>3. Allgemeine Hinweise und Pflichtinformationen</h2>
+            <h2>4. Allgemeine Hinweise und Pflichtinformationen</h2>
 
             <h3>Datenschutz</h3>
             <p>
@@ -170,11 +237,11 @@
             </p>
             <p>
               <strong>Surfmate</strong><br />
-              [Vollständiger Name des Inhabers]<br />
-              [Straße und Hausnummer]<br />
-              [Postleitzahl und Ort]<br /><br />
-              <strong>Telefon:</strong> [Telefonnummer]<br />
-              <strong>E-Mail:</strong> [E-Mail-Adresse]
+              Jolie Bast<br />
+              Deelwisch 43<br />
+              22529 Hamburg<br /><br />
+              <strong>Telefon:</strong> +4916091814756<br />
+              <strong>E-Mail:</strong> info@surf-mate.de
             </p>
             <p>
               Verantwortliche Stelle ist die natürliche oder juristische Person,
@@ -215,7 +282,7 @@
               gerichtlicher Rechtsbehelfe.
             </p>
 
-            <h2>4. Datenerfassung auf dieser Website</h2>
+            <h2>5. Datenerfassung auf dieser Website</h2>
 
             <h3>Server-Log-Dateien</h3>
             <p>
@@ -282,28 +349,10 @@
     </main>
 
     <!-- Footer -->
-    <footer class="footer">
-      <div class="footer-container">
-        <div class="footer-content">
-          <div class="footer-copyright">
-            <p>&copy; 2026 Surfmate. Alle Rechte vorbehalten.</p>
-          </div>
-
-          <nav class="footer-nav">
-            <ul class="footer-links">
-              <li>
-                <a href="./impressum.html" class="footer-link">Impressum</a>
-              </li>
-              <li>
-                <a href="./datenschutz.html" class="footer-link">Datenschutz</a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </div>
-    </footer>
+    <div data-include="footer.html"></div>
 
     <!-- JavaScript -->
+    <script src="./js/includes.js"></script>
     <script src="./js/navigation.js"></script>
   </body>
 </html>

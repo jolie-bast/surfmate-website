@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Impressum - Surfmate" />
-    <title>Impressum - Surfmate</title>
+    <meta name="description" content="Imprint - Surfmate" />
+    <title>Imprint - Surfmate</title>
 
     <!-- CSS -->
     <link rel="stylesheet" href="./css/main.css" />
@@ -13,58 +13,63 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
   <body>
-    <!-- Header mit Navigation -->
-    <header class="header">
-      <div class="header-container">
-        <a href="./index.html" class="logo">
-          <img
-            src="./assets/logo-surfmate-schriftzug.svg"
-            alt="Surfmate Logo"
-            class="logo-svg"
-          />
-        </a>
+    <!-- Header -->
+    <div data-include="header.html"></div>
 
-        <nav class="nav">
-          <button class="nav-toggle" aria-label="Navigation ein-/ausblenden">
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
+    <script>
+      // Nav Bar soll auf Impressum-Seite immer schwarz sein
+      document.addEventListener("DOMContentLoaded", () => {
+        // Robuste Header-Suche mit mehreren Versuchen
+        let attempts = 0;
+        const maxAttempts = 10;
 
-          <ul class="nav-menu">
-            <li><a href="./index.html" class="nav-link">Home</a></li>
-            <li><a href="./impressum.html" class="nav-link">Impressum</a></li>
-            <li>
-              <a href="./datenschutz.html" class="nav-link">Datenschutz</a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-    </header>
+        const makeHeaderBlack = () => {
+          attempts++;
+          const header = document.querySelector(".header");
+
+          if (header) {
+            console.log("✅ Header gefunden - wird schwarz gemacht");
+            header.classList.add("scrolled");
+            // Zusätzlich direkte CSS-Styles für maximale Sicherheit
+            header.style.background = "rgba(0, 0, 0, 0.95)";
+            header.style.backdropFilter = "blur(10px)";
+          } else if (attempts < maxAttempts) {
+            console.log(
+              `⏳ Header noch nicht gefunden... Versuch ${attempts}/${maxAttempts}`
+            );
+            setTimeout(makeHeaderBlack, 300);
+          } else {
+            console.log("❌ Header nach 10 Versuchen nicht gefunden");
+          }
+        };
+
+        makeHeaderBlack();
+      });
+    </script>
 
     <!-- Main Content -->
-    <main class="main-content">
+    <main class="main-content" style="padding-top: var(--header-height)">
       <section class="content-section">
         <div class="container">
           <header class="content-header">
-            <h1>Impressum</h1>
+            <h1>Imprint</h1>
           </header>
 
           <div class="content-body">
             <h2>Angaben gemäß § 5 TMG</h2>
             <p>
               <strong>Surfmate</strong><br />
-              [Vollständiger Name des Inhabers]<br />
-              [Straße und Hausnummer]<br />
-              [Postleitzahl und Ort]
+              Jolie Bast<br />
+              Deelwisch 43<br />
+              22529 Hamburg
             </p>
 
             <h2>Kontakt</h2>
             <p>
-              <strong>Telefon:</strong> [Telefonnummer]<br />
-              <strong>E-Mail:</strong> [E-Mail-Adresse]<br />
+              <strong>Telefon:</strong> +4916091814756<br />
+              <strong>E-Mail:</strong> info@surf-mate.de<br />
               <strong>Website:</strong>
-              <a href="https://surfmate.de">https://surfmate.de</a>
+              <a href="https://surf-mate.de">https://surf-mate.de</a>
             </p>
 
             <h2>Umsatzsteuer-ID</h2>
@@ -163,28 +168,10 @@
     </main>
 
     <!-- Footer -->
-    <footer class="footer">
-      <div class="footer-container">
-        <div class="footer-content">
-          <div class="footer-copyright">
-            <p>&copy; 2026 Surfmate. Alle Rechte vorbehalten.</p>
-          </div>
-
-          <nav class="footer-nav">
-            <ul class="footer-links">
-              <li>
-                <a href="./impressum.html" class="footer-link">Impressum</a>
-              </li>
-              <li>
-                <a href="./datenschutz.html" class="footer-link">Datenschutz</a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </div>
-    </footer>
+    <div data-include="footer.html"></div>
 
     <!-- JavaScript -->
+    <script src="./js/includes.js"></script>
     <script src="./js/navigation.js"></script>
   </body>
 </html>
