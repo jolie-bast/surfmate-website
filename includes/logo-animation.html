@@ -1,131 +1,76 @@
 <!-- Logo Animation Section -->
 <section
   class="logo-animation"
-  style="background: #1a1a1a; padding: 80px 0; text-align: center"
+  style="
+    position: relative;
+    padding: 80px 0;
+    text-align: center;
+    overflow: hidden;
+  "
 >
-  <div class="container">
+  <!-- Video Background -->
+  <video
+    autoplay
+    loop
+    muted
+    playsinline
+    style="
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+    "
+  >
+    <source src="assets/water.mp4" type="video/mp4" />
+  </video>
+
+  <div class="container" style="position: relative; z-index: 1">
     <div class="logo-animation-content">
       <div
         class="logo-animation-wrapper"
         style="display: flex; justify-content: center; align-items: center"
       >
-        <!-- Surfmate Logo SVG Component -->
-        <svg
-          width="1000"
-          height="300"
-          viewBox="0 0 1000 300"
-          xmlns="http://www.w3.org/2000/svg"
+        <!-- Funktionierende Wellenanimation als iframe -->
+        <iframe
+          src="animation-bewegende-welle.html"
+          title="Surfmate Wellenanimation"
           style="
-            --schriftzug-color: #fff;
-            max-width: 100%;
-            height: auto;
+            width: 100%;
             max-width: 800px;
+            height: 300px;
+            border: none;
+            background: transparent;
           "
-          class="surfmate-logo-svg"
-        >
-          <defs>
-            <mask id="wave-mask-animation">
-              <!-- Alles unsichtbar machen -->
-              <rect x="0" y="0" width="1000" height="300" fill="#000" />
-              <!-- Nur unterhalb der Welle sichtbar machen -->
-              <path
-                id="wave-path-animation"
-                fill="#fff"
-                d="M0,300 L0,100 L1000,100 L1000,300 Z"
-              />
-            </mask>
-          </defs>
-          <g mask="url(#wave-mask-animation)">
-            <g id="schriftzug-komplett-animation">
-              <g>
-                <!-- S -->
-                <path
-                  class="cls-1"
-                  fill="var(--schriftzug-color)"
-                  d="M48.226,125.273c0-15.68,13.02-22.68,31.78-22.68,21.979,0,49.419,1.68,61.739,0l-.84,36.54c-12.04-7.979-26.04-11.34-33.46-11.34-6.72,0-10.22.84-10.22,3.64,0,9.66,46.199-1.399,46.199,30.66,0,17.08-10.64,30.1-34.859,30.1-19.74,0-42.42-2.24-61.6-.56l.84-46.06c11.06,6.439,26.04,10.22,34.439,10.22,7.28,0,11.48-1.26,11.48-4.62,0-9.38-45.5,2.8-45.5-25.9Z"
-                />
-                <!-- U -->
-                <path
-                  class="cls-1"
-                  fill="var(--schriftzug-color)"
-                  d="M150.005,105.394h54.88c-1.96,12.04-2.94,23.38-2.94,28.42,0,8.261,2.66,12.601,6.721,12.601,4.199,0,6.859-4.34,6.859-12.601,0-5.04-.979-16.38-2.939-28.42h46.76c-4.2,19.601-2.38,38.641-2.38,49.84,0,25.48-19.88,36.96-53.48,36.96-35.279,0-51.1-9.52-51.1-35,0-11.199,1.82-32.199-2.38-51.8Z"
-                />
-                <!-- R -->
-                <path
-                  class="cls-1"
-                  fill="var(--schriftzug-color)"
-                  d="M268.304,144.174c0-14-1.12-26.88-3.22-38.78h66.359c23.1,0,38.08,9.38,38.08,25.48,0,13.72-11.62,22.399-28.141,22.399-2.38,0-4.619-.279-6.72-.279-1.399,0-2.24.84-2.24,1.96,0,4.34,6.44,5.88,11.48,5.88,9.939,0,20.02-4.34,25.34-8.82h.56c1.681,4.34,2.521,9.38,2.521,14.14,0,14.561-11.2,26.04-26.88,26.04-14.7,0-23.1-5.6-26.6-24.64-.7-3.64-2.101-5.32-4.061-5.32-1.68,0-2.66,1.4-2.66,3.5,0,5.04.98,13.86,2.66,23.66h-49.699c2.1-16.1,3.22-31.22,3.22-45.22ZM318.144,147.954c4.34,0,7-4.061,7-9.38,0-6.44-2.38-11.9-6.72-11.9-4.48,0-6.86,5.46-6.86,11.9,0,5.319,2.1,9.38,6.58,9.38Z"
-                />
-                <!-- F -->
-                <path
-                  class="cls-1"
-                  fill="var(--schriftzug-color)"
-                  d="M377.642,105.394h99.959l-3.08,30.94c-14-3.5-30.239-6.44-41.439-6.44-6.16,0-8.82,1.96-8.82,5.74,0,3.64,2.24,5.46,6.021,5.46h33.739v22.26c-13.439,0-29.119-3.08-35.14-3.08-2.939,0-4.62,1.4-4.62,4.2,0,8.96,7.98,13.58,7.98,24.92h-54.6c4.199-32.2,4.199-60.2,0-84Z"
-                />
-                <!-- M -->
-                <path
-                  class="cls-1"
-                  fill="var(--schriftzug-color)"
-                  d="M488.94,105.394h36.12c20.58,0,24.359,13.58,25.62,31.5.279,4.62.979,9.521,4.34,9.521,3.64,0,4.62-4.9,5.18-9.521,2.521-17.92,6.44-31.5,27.021-31.5h34.72c-3.78,23.521-2.801,60.2,3.359,84h-51.1c3.92-19.04,8.26-49-.56-49-7.561,0-6.021,29.26-7.141,49h-31.92c-1.119-19.74.42-49-7.14-49-8.82,0-4.479,29.96-.56,49h-41.3c6.159-23.8,7.14-60.479,3.359-84Z"
-                />
-                <!-- A -->
-                <path
-                  class="cls-1"
-                  fill="var(--schriftzug-color)"
-                  d="M653.02,105.394h72.1c2.8,23.8,21,51.8,25.199,84h-60.479c1.4-13.3,1.82-21,1.82-26.74,0-5.18-2.24-8.54-6.16-8.54s-6.16,3.36-6.16,8.54c0,5.74.561,13.44,1.82,26.74h-49.14c4.199-32.479,25.199-60.34,21-84ZM685.499,140.954c4.34,0,6.16-4.061,6.16-9.38,0-6.44-1.54-11.9-5.88-11.9-4.48,0-6.16,5.46-6.16,11.9,0,5.319,1.399,9.38,5.88,9.38Z"
-                />
-                <!-- T -->
-                <path
-                  class="cls-1"
-                  fill="var(--schriftzug-color)"
-                  d="M825.219,131.714c-5.319,0-8.399,2.38-8.399,7.84,0,11.62,6.3,27.86,8.12,49.84h-58.1c1.819-23.1,8.119-37.8,8.119-49.84,0-5.46-2.659-7.84-8.119-7.84-5.601,0-13.301,1.82-19.601,4.2l-1.399-30.521h100.1l-1.4,30.521c-5.6-2.38-13.58-4.2-19.32-4.2Z"
-                />
-                <!-- E -->
-                <path
-                  class="cls-1"
-                  fill="var(--schriftzug-color)"
-                  d="M852.658,105.394h96.879l-1.96,25.061c-9.8-3.221-25.479-4.9-36.68-4.9-8.82,0-11.62,1.82-11.62,5.46,0,2.8,2.24,4.34,5.74,4.34,5.6,0,23.52-2.52,35.42-2.52v19.46c-13.44,0-30.38-1.96-36.26-1.96-2.94,0-4.76,1.68-4.76,4.34,0,3.5,2.52,5.18,12.88,5.18,9.8,0,26.04-1.68,37.239-4.479l3.08,34.02h-99.959c4.199-32.2,4.199-60.2,0-84Z"
-                />
-              </g>
-            </g>
-          </g>
-        </svg>
-
-        <script>
-          // Einfache Wellenanimation
-          const wave = document.getElementById("wave-path-animation");
-
-          if (wave) {
-            const svgWidth = 1000;
-            const svgHeight = 300;
-            const baseY = 140;
-            const amplitude = 10;
-            const frequency = 2;
-            const waveLength = 350;
-            let t = 0;
-
-            function animateWave() {
-              t += 0.05;
-              // Start unten links
-              let d = `M0,${svgHeight}`;
-              // Wellenlinie
-              for (let x = 0; x <= svgWidth; x += 5) {
-                let y =
-                  baseY +
-                  amplitude * Math.sin((x / waveLength) * 2 * Math.PI - t) +
-                  40 * Math.sin(-t + x / 200);
-                d += ` L${x},${y}`;
-              }
-              // Rechts unten zurück
-              d += ` L${svgWidth},${svgHeight} Z`;
-              wave.setAttribute("d", d);
-              requestAnimationFrame(animateWave);
-            }
-
-            animateWave();
-          }
-        </script>
+        ></iframe>
       </div>
     </div>
   </div>
 </section>
+
+<style>
+  /* Mobile Responsive für Logo Animation */
+  @media (max-width: 768px) {
+    .logo-animation {
+      padding: 60px 0 !important;
+    }
+
+    .logo-animation iframe {
+      height: 200px !important;
+      max-width: 90% !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .logo-animation {
+      padding: 40px 0 !important;
+    }
+
+    .logo-animation iframe {
+      height: 160px !important;
+      max-width: 95% !important;
+    }
+  }
+</style>

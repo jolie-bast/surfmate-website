@@ -1,0 +1,49 @@
+/* Animation CSS für Surfmate Logo mit Wellenmasken-Animation */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  body {
+    min-height: 200px;
+  }
+
+  svg {
+    width: 90%;
+    height: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    min-height: 160px;
+  }
+
+  svg {
+    width: 95%;
+    height: 160px;
+  }
+}
+
+/* Logo-Pfade für bessere Performance */
+.cls-1 {
+  fill: var(--schriftzug-color, #fff);
+}
