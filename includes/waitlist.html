@@ -1,0 +1,38 @@
+<!-- Waitlist Section -->
+<section class="waitlist">
+  <div class="container">
+    <div class="waitlist-content">
+      <h2 class="waitlist-title">Get Early Access</h2>
+      <p class="waitlist-description">
+        Get into the waitlist to get early access and be among the first to know
+        when Surfmate drops.
+      </p>
+
+      <!-- Custom Waitlist Form -->
+      <div class="waitlist-form" style="position: relative;">
+        <form id="waitlist-form" class="custom-waitlist-form" method="post" action="javascript:void(0)" style="transition: opacity 0.3s ease;">
+          <div class="form-row">
+            <input
+              type="email"
+              id="waitlist-email"
+              name="email"
+              placeholder="Your Email Address"
+              autocomplete="email"
+              required
+            />
+            <button type="submit" id="waitlist-submit">Join Waitlist</button>
+          </div>
+          <div id="error-message" class="error-message" style="display: none;"></div>
+        </form>
+
+        <!-- Success Message -->
+        <div id="success-message" class="success-message" style="display: none; position: absolute; top: -50px; left: 0; width: 100%; opacity: 0; transition: opacity 0.5s ease;">
+          <p><strong>You’re on the Surfmate waitlist!</strong></p>
+          <p>You’re officially part of the journey. We’ll let you know as soon as Surfmate drops.</p>
+        </div>
+      </div>
+
+      </div>
+    </div>
+  </div>
+</section>

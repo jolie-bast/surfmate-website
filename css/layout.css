@@ -26,21 +26,6 @@
   display: block;
 }
 
-/* Fallback wenn Bild nicht lädt */
-.hero-fallback {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    135deg,
-    var(--surfmate-blue) 0%,
-    var(--surfmate-light-blue) 100%
-  );
-  z-index: 0;
-}
-
 .hero-content {
   text-align: center;
   z-index: 3;

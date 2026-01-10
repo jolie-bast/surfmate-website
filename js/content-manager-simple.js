@@ -2,7 +2,12 @@
 class ContentManager {
   constructor() {
     console.log("🚀 Content Manager wird initialisiert...");
-    this.init();
+    this.init().catch((error) => {
+      console.error(
+        "❌ Fehler beim Initialisieren des Content Managers:",
+        error
+      );
+    });
   }
 
   async init() {

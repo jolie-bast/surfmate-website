@@ -43,15 +43,35 @@
 
       <!-- About Section -->
       <div data-include="about.html"></div>
+
+      <!-- Waitlist Section -->
+      <div data-include="waitlist.html"></div>
+
+      <!-- Logo Animation Section -->
+      <div data-include="logo-animation.html"></div>
     </main>
 
     <!-- Footer -->
     <div data-include="footer.html"></div>
 
     <!-- JavaScript -->
+    <script>
+      // Globaler Error Handler für besseres Debugging
+      window.addEventListener("error", (e) => {
+        console.log("🔴 JavaScript Error:", e.error);
+      });
+
+      window.addEventListener("unhandledrejection", (e) => {
+        console.log("🔴 Unhandled Promise Rejection:", e.reason);
+        // Verhindere dass der Fehler in der Console erscheint
+        e.preventDefault();
+      });
+    </script>
     <script src="./js/sanity-client-simple.js"></script>
     <script src="./js/content-manager-simple.js"></script>
     <script src="./js/includes.js"></script>
+    <script src="./js/waitlist.js"></script>
+    <script src="./js/wave-animation.js"></script>
     <script src="./js/navigation.js"></script>
   </body>
 </html>

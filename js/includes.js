@@ -24,5 +24,7 @@ class IncludeManager {
 
 // Lade Includes wenn DOM geladen ist
 document.addEventListener("DOMContentLoaded", () => {
-  IncludeManager.loadIncludes();
+  IncludeManager.loadIncludes().catch((error) => {
+    console.error("Fehler beim Laden der Includes:", error);
+  });
 });

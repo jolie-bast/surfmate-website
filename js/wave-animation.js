@@ -73,10 +73,15 @@ class WaveAnimation {
 
 // Initialize wave animation when DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
+  // Original wave animation (if it exists)
   const waveAnimation = new WaveAnimation();
+
+  // Logo animation section wave animation
+  const logoWaveAnimation = new WaveAnimation("wave-path-animation");
 
   // Optimize performance by pausing animation when tab is not visible
   document.addEventListener("visibilitychange", () => {
     waveAnimation.handleVisibilityChange();
+    logoWaveAnimation.handleVisibilityChange();
   });
 });
