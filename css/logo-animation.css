@@ -1,0 +1,70 @@
+/* Logo Animation Styles */
+
+/* Logo Animation Section */
+.logo-animation {
+  position: relative;
+  padding: 80px 0;
+  text-align: center;
+  overflow: hidden;
+  background-image: url("../assets/steine_edited.jpg");
+  background-size: cover;
+  background-position: center center;
+  background-attachment: scroll;
+}
+
+/* Background Overlay */
+.logo-animation::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+/* Container */
+.logo-animation .container {
+  position: relative;
+  z-index: 2;
+}
+
+/* Animation Wrapper */
+.logo-animation-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Animation iframe */
+.logo-animation iframe {
+  width: 100%;
+  max-width: 800px;
+  height: 300px;
+  border: none;
+  background: transparent;
+}
+
+/* Mobile Responsive für Logo Animation */
+@media (max-width: 768px) {
+  .logo-animation {
+    padding: 60px 0;
+  }
+
+  .logo-animation iframe {
+    height: 200px;
+    max-width: 90%;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-animation {
+    padding: 40px 0;
+  }
+
+  .logo-animation iframe {
+    height: 160px;
+    max-width: 95%;
+  }
+}

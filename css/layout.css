@@ -40,7 +40,7 @@
   color: var(--surfmate-white);
   font-size: clamp(2rem, 4vw, 5rem);
   margin-bottom: var(--spacing-lg);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
 }
 
 /* Verhindere Umbruch nur bei größeren Bildschirmen */
@@ -119,43 +119,6 @@
 
 .section {
   padding: var(--spacing-3xl) 0;
-}
-
-/* Dark Section Styling with Surf Background */
-.section-dark {
-  background-image: var(--dark-bg-image, url("../assets/surf-background.jpg"));
-  background-size: cover;
-  background-position: center bottom;
-  background-attachment: scroll;
-  position: relative;
-  color: #ffffff;
-}
-
-.section-dark::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.3);
-  z-index: 1;
-}
-
-.section-dark .container {
-  position: relative;
-  z-index: 2;
-}
-
-.section-dark .section-content {
-  color: #ffffff;
-}
-
-.section-dark .section-content p,
-.section-dark .section-content h3 {
-  color: #ffffff;
-  margin-bottom: var(--spacing-lg);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
 }
 
 .section-title {

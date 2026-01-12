@@ -1,76 +1,14 @@
 <!-- Logo Animation Section -->
-<section
-  class="logo-animation"
-  style="
-    position: relative;
-    padding: 80px 0;
-    text-align: center;
-    overflow: hidden;
-  "
->
-  <!-- Video Background -->
-  <video
-    autoplay
-    loop
-    muted
-    playsinline
-    style="
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: -1;
-    "
-  >
-    <source src="assets/water.mp4" type="video/mp4" />
-  </video>
-
-  <div class="container" style="position: relative; z-index: 1">
+<section class="logo-animation">
+  <div class="container">
     <div class="logo-animation-content">
-      <div
-        class="logo-animation-wrapper"
-        style="display: flex; justify-content: center; align-items: center"
-      >
+      <div class="logo-animation-wrapper">
         <!-- Funktionierende Wellenanimation als iframe -->
         <iframe
           src="animation-bewegende-welle.html"
           title="Surfmate Wellenanimation"
-          style="
-            width: 100%;
-            max-width: 800px;
-            height: 300px;
-            border: none;
-            background: transparent;
-          "
         ></iframe>
       </div>
     </div>
   </div>
 </section>
-
-<style>
-  /* Mobile Responsive für Logo Animation */
-  @media (max-width: 768px) {
-    .logo-animation {
-      padding: 60px 0 !important;
-    }
-
-    .logo-animation iframe {
-      height: 200px !important;
-      max-width: 90% !important;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .logo-animation {
-      padding: 40px 0 !important;
-    }
-
-    .logo-animation iframe {
-      height: 160px !important;
-      max-width: 95% !important;
-    }
-  }
-</style>

@@ -1,0 +1,138 @@
+/* Datenschutz Specific Styles */
+
+/* Enhanced list styling for privacy policy */
+.content-body ul {
+  background: var(--background-white);
+  padding: 1.5rem 2rem;
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-color);
+  margin: 1.5rem 0;
+}
+
+.content-body ul li {
+  margin-bottom: 0.8rem;
+  padding-left: 0.5rem;
+}
+
+.content-body ul li:before {
+  content: "•";
+  color: var(--primary-color);
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+/* Special styling for legal sections */
+.content-body h2:first-of-type {
+  color: var(--primary-color);
+  font-size: 1.6rem;
+  margin-top: 1rem;
+}
+
+/* Contact data boxes - specific styling */
+.content-body p:has(strong:contains("Surfmate")),
+.content-body p:has(strong:contains("Telefon")),
+.content-body p:has(strong:contains("E-Mail")) {
+  background: linear-gradient(
+    135deg,
+    var(--background-white) 0%,
+    rgba(var(--primary-color-rgb), 0.05) 100%
+  );
+  border-left-color: var(--primary-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Mailerlite and IONOS section highlighting */
+.content-body h3:contains("MailerLite"),
+.content-body h3:contains("IONOS") {
+  background: rgba(var(--accent-color-rgb), 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border-left: 4px solid var(--accent-color);
+  margin-left: -1rem;
+  margin-right: -1rem;
+}
+
+/* Data processing highlights */
+.content-body p:has(strong:contains("Zweck")),
+.content-body p:has(strong:contains("Rechtsgrundlage")),
+.content-body p:has(strong:contains("Gespeicherte Daten")) {
+  background: rgba(var(--secondary-color-rgb), 0.05);
+  padding: 1rem;
+  border-left: 3px solid var(--secondary-color);
+  border-radius: 0 8px 8px 0;
+  margin: 1rem 0;
+  font-size: 0.95rem;
+}
+
+/* External links specific styling */
+.content-body a[href*="mailerlite.com"],
+.content-body a[href*="ionos.de"],
+.content-body a[href*="e-recht24.de"] {
+  background: rgba(var(--accent-color-rgb), 0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* Section numbering enhancement */
+.content-body h2:before {
+  content: counter(section-counter) ". ";
+  counter-increment: section-counter;
+  color: var(--accent-color);
+  font-weight: 700;
+}
+
+.content-body {
+  counter-reset: section-counter;
+}
+
+/* Rights section special styling */
+.content-body h2:contains("Welche Rechte") + p,
+.content-body p:contains("Beschwerderecht") {
+  background: rgba(var(--success-color-rgb, 46, 160, 67), 0.1);
+  border-left: 4px solid var(--success-color, #2ea043);
+  padding: 1rem;
+  border-radius: 0 8px 8px 0;
+  font-weight: 500;
+}
+
+/* Mobile optimizations for datenschutz */
+@media (max-width: 768px) {
+  .content-body ul {
+    padding: 1rem 1.5rem;
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+  }
+
+  .content-body h3:contains("MailerLite"),
+  .content-body h3:contains("IONOS") {
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+    padding: 0.5rem 0.8rem;
+  }
+
+  .content-body p:has(strong:contains("Zweck")),
+  .content-body p:has(strong:contains("Rechtsgrundlage")),
+  .content-body p:has(strong:contains("Gespeicherte Daten")) {
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+    padding: 0.8rem;
+  }
+}
+
+/* Print styles for datenschutz */
+@media print {
+  .content-body a:after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+
+  .content-body h2 {
+    page-break-after: avoid;
+  }
+
+  .content-body p:has(strong:contains("Surfmate")) {
+    page-break-inside: avoid;
+  }
+}
