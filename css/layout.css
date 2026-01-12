@@ -26,6 +26,13 @@
   display: block;
 }
 
+/* Mobile: Bild mehr rechts positionieren */
+@media (max-width: 768px) {
+  .hero-bg-img {
+    object-position: 70% center;
+  }
+}
+
 .hero-content {
   text-align: center;
   z-index: 3;

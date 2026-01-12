@@ -46,6 +46,7 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   white-space: nowrap;
+  width: 100%;
 }
 
 .custom-waitlist-form button:hover,
