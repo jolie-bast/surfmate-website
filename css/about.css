@@ -99,7 +99,7 @@
 .section-dark .section-content p,
 .section-dark .section-content h3 {
   color: #ffffff;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 /* Responsive Design */
