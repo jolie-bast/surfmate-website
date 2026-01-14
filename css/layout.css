@@ -68,9 +68,34 @@
 .hero-subtitle {
   color: var(--surfmate-white);
   font-size: clamp(1rem, 2.5vw, 1.5rem);
-  margin-bottom: var(--spacing-2xl);
   opacity: 0.9;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Hero CTA Button */
+.hero-cta-button {
+  display: inline-block;
+  background-color: var(--surfmate-dark);
+  color: var(--surfmate-white);
+  text-decoration: none;
+  border-radius: 15px;
+  font-family: "Inter", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  padding: 15px 35px;
+  cursor: pointer;
+  white-space: nowrap;
+  margin-top: var(--spacing-sm);
+  text-shadow: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+  .hero-cta-button {
+    font-size: 14px;
+    padding: 12px 20px;
+    margin-top: var(--spacing-sm);
+  }
 }
 
 /* Surfmate Logo */

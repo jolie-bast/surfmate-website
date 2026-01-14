@@ -235,7 +235,7 @@ class Navigation {
             });
           },
           {
-            rootMargin: "-10% 0px -10% 0px", // Triggert wenn 10% der Section sichtbar ist
+            rootMargin: "100px 0px -10% 0px", // Triggert 100px bevor die Section sichtbar wird
             threshold: 0.1,
           }
         );
