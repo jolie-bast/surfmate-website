@@ -85,9 +85,18 @@
   padding: 15px 35px;
   cursor: pointer;
   white-space: nowrap;
-  margin-top: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
   text-shadow: none;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  outline: none;
+}
+
+.hero-cta-button:active,
+.hero-cta-button:focus {
+  background-color: var(--surfmate-blue);
+  color: var(--primary-black);
+  text-decoration: none;
+  outline: none;
 }
 
 @media (max-width: 768px) {
