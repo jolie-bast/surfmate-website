@@ -121,6 +121,8 @@
     transform: translateY(0);
     opacity: 1;
     visibility: visible;
+    background: var(--surfmate-dark);
+    backdrop-filter: blur(10px);
   }
 
   .nav-link {
@@ -128,6 +130,9 @@
     text-align: center;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     color: var(--surfmate-white);
+    display: block;
+    width: 100%;
+    cursor: pointer;
   }
 
   .nav-link:last-child {

@@ -8,7 +8,6 @@ class Navigation {
     this.navMenu = null;
     this.navLinks = null;
     this.header = null;
-    this.waitlistSection = null;
     this.observer = null;
 
     this.init();
@@ -86,11 +85,31 @@ class Navigation {
   toggleMobileMenu() {
     this.navMenu.classList.toggle("active");
     this.navToggle.classList.toggle("active");
+    // Wenn Menü geöffnet, Navbar immer dunkel
+    if (this.navMenu.classList.contains("active")) {
+      if (this.header) {
+        this.header.classList.add("scrolled");
+        this.header.style.background = "var(--surfmate-dark)";
+      }
+    } else {
+      // Wenn Menü geschlossen, Observer übernimmt wieder
+      if (this.header) {
+        this.header.classList.remove("scrolled");
+        this.header.style.background = "";
+        this.header.style.backdropFilter = "";
+      }
+    }
   }
 
   closeMobileMenu() {
     this.navMenu.classList.remove("active");
     this.navToggle.classList.remove("active");
+    // Beim Schließen Menü: Observer übernimmt wieder
+    if (this.header) {
+      this.header.classList.remove("scrolled");
+      this.header.style.background = "";
+      this.header.style.backdropFilter = "";
+    }
   }
 
   handleAnchorClick(e, link) {
@@ -175,76 +194,50 @@ class Navigation {
   setupWaitlistObserver() {
     // Warte auf das Laden aller Includes bevor Observer eingerichtet wird
     setTimeout(() => {
+      // Beobachte sowohl Carousel als auch Waiting Section
+      this.carouselSection = document.querySelector(
+        ".features-carousel-section"
+      );
       this.waitlistSection = document.querySelector("#waitlist");
 
-      if (this.waitlistSection) {
-        console.log("#waitlist Section gefunden, Observer wird eingerichtet");
+      const observedSections = [
+        this.carouselSection,
+        this.waitlistSection,
+      ].filter(Boolean);
+
+      if (observedSections.length > 0) {
+        console.log(
+          "Features-Carousel und/oder Waiting-Section gefunden, Observer wird eingerichtet"
+        );
 
         this.observer = new IntersectionObserver(
           (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                console.log(
-                  "#waitlist Section ist sichtbar - Header wird schwarz"
-                );
-
-                if (this.header) {
-                  this.header.classList.add("scrolled");
-                  // Debug: Prüfe ob Klasse wirklich hinzugefügt wurde
-                  console.log("Header Klassen:", this.header.className);
-                  console.log(
-                    "Hat 'scrolled' Klasse:",
-                    this.header.classList.contains("scrolled")
-                  );
-
-                  // Force update für CSS
-                  this.header.style.background = "rgba(0, 0, 0, 0.95)";
-                  this.header.style.backdropFilter = "blur(10px)";
-                } else {
-                  console.log(
-                    "⚠️ Header noch nicht gefunden - versuche erneut zu finden..."
-                  );
-                  this.header = document.querySelector(".header");
-                  if (this.header) {
-                    console.log("✅ Header nachträglich gefunden!");
-                    this.header.classList.add("scrolled");
-                    this.header.style.background = "rgba(0, 0, 0, 0.95)";
-                    this.header.style.backdropFilter = "blur(10px)";
-                  }
-                }
-              } else {
-                console.log(
-                  "#waitlist Section nicht sichtbar - Header wird transparent"
-                );
-
-                if (this.header) {
-                  this.header.classList.remove("scrolled");
-                  // Debug: Prüfe ob Klasse entfernt wurde
-                  console.log("Header Klassen:", this.header.className);
-
-                  // CSS zurücksetzen
-                  this.header.style.background = "";
-                  this.header.style.backdropFilter = "";
-                } else {
-                  console.log(
-                    "⚠️ Header noch nicht gefunden für transparent machen..."
-                  );
-                  this.header = document.querySelector(".header");
-                }
+            // Header bleibt dunkel, solange eine der Sections sichtbar ist
+            const anyVisible = entries.some((entry) => entry.isIntersecting);
+            if (anyVisible) {
+              if (this.header) {
+                this.header.classList.add("scrolled");
+                this.header.style.background = "var(--surfmate-dark)";
               }
-            });
+            } else {
+              if (this.header) {
+                this.header.classList.remove("scrolled");
+                this.header.style.background = "";
+                this.header.style.backdropFilter = "";
+              }
+            }
           },
           {
-            rootMargin: "100px 0px -10% 0px", // Triggert 100px bevor die Section sichtbar wird
+            rootMargin: "100px 0px -10% 0px",
             threshold: 0.1,
           }
         );
 
-        this.observer.observe(this.waitlistSection);
+        observedSections.forEach((section) => this.observer.observe(section));
       } else {
-        console.log("#waitlist Section nicht gefunden - prüfe HTML");
+        console.log("Keine relevante Section gefunden - prüfe HTML");
       }
-    }, 1000); // 1 Sekunde warten für Includes
+    }, 1000);
   }
 
   // Fallback: Alte handleScroll Methode entfernt da wir Observer verwenden
