@@ -23,8 +23,19 @@ class IncludeManager {
 }
 
 // Lade Includes wenn DOM geladen ist
+
 document.addEventListener("DOMContentLoaded", () => {
-  IncludeManager.loadIncludes().catch((error) => {
-    console.error("Fehler beim Laden der Includes:", error);
-  });
+  IncludeManager.loadIncludes()
+    .then(() => {
+      // Initialisiere Custom Scrollbars und Navigation nach dem Laden der Includes
+      if (typeof window.initCustomScrollbars === "function") {
+        window.initCustomScrollbars();
+      }
+      if (typeof window.initNavigation === "function") {
+        window.initNavigation();
+      }
+    })
+    .catch((error) => {
+      console.error("Fehler beim Laden der Includes:", error);
+    });
 });

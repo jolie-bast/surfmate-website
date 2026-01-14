@@ -1,3 +1,13 @@
+/* Scrollbar Styles für das Carousel */
+.features-carousel::-webkit-scrollbar {
+  height: 6px;
+  width: 300px;
+}
+
+.features-carousel::-webkit-scrollbar-thumb {
+  background: var(--surfmate-dark);
+  border-radius: 2px;
+}
 /* About Section Styles */
 
 /* About Section */
@@ -6,25 +16,10 @@
   background: var(--background-light);
 }
 
-#about .section-title {
-  font-size: 2.5rem;
-  font-weight: 600;
-  text-align: center;
-  margin-bottom: 2rem;
-  color: var(--primary-color);
-}
-
 #about .section-content {
   max-width: 800px;
   margin: 0 auto;
   text-align: center;
-}
-
-#about .section-content p {
-  font-size: 1.2rem;
-  line-height: 1.8;
-  color: var(--text-color);
-  margin-bottom: 1.5rem;
 }
 
 #about .section-content strong {
@@ -36,15 +31,8 @@
 .section-dark {
   background: var(--secondary-color);
   color: var(--text-light);
-}
-
-.section-dark h3 {
-  font-size: 2rem;
-  font-weight: 500;
-  text-align: center;
-  margin-bottom: 2rem;
-  color: var(--text-light);
-  line-height: 1.4;
+  padding-top: 80px;
+  padding-bottom: 80px;
 }
 
 .section-dark .section-content {
@@ -54,8 +42,6 @@
 }
 
 .section-dark p {
-  font-size: 1.1rem;
-  line-height: 1.7;
   color: var(--text-light);
   margin-bottom: 1.5rem;
 }
@@ -78,34 +64,12 @@
 .section-dark::before {
   content: "";
   position: absolute;
+  content: "";
+  position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.3);
   z-index: 1;
-}
-
-.section-dark .container {
-  position: relative;
-  z-index: 2;
-}
-
-.section-dark .section-content {
-  color: #ffffff;
-}
-
-.section-dark .section-content p,
-.section-dark .section-content h3 {
-  color: #ffffff;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  #about {
-    padding: 40px 0;
-  }
 
   #about .section-title {
     font-size: 2rem;
@@ -152,7 +116,6 @@
 
 /* Features Carousel */
 .features-carousel-section {
-  padding: 80px 0;
   background: var(--primary-black);
 }
 
@@ -172,12 +135,49 @@
 
 .features-carousel {
   position: relative;
-  max-width: 1200px;
   margin: 0 auto;
-  overflow-x: auto;
+  overflow-x: scroll !important;
   overflow-y: hidden;
+  min-height: 18px;
   scrollbar-width: thin;
-  scrollbar-color: var(--surfmate-blue) transparent;
+  scrollbar-color: var(--surfmate-dark);
+  /* Native Scrollbar ausblenden (nur für Custom Scrollbar) */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.features-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+/* Custom Scrollbar unterhalb des Carousels */
+.custom-scrollbar {
+  width: 100%;
+  max-width: 800px;
+  height: 6px;
+  margin: 8px auto 0 auto;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+}
+
+.custom-scrollbar-thumb {
+  /* die Bar an sich */
+  height: 100%;
+  background: var(--surfmate-dark);
+  border-radius: 4px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+.custom-scrollbar-thumb:hover,
+.scrollbar-dragging .custom-scrollbar-thumb {
+  background: var(--surfmate-blue);
 }
 
 .features-carousel::-webkit-scrollbar {
@@ -189,12 +189,12 @@
 }
 
 .features-carousel::-webkit-scrollbar-thumb {
-  background: var(--surfmate-blue);
+  background: var(--surfmate-dark);
   border-radius: 4px;
 }
 
 .features-carousel::-webkit-scrollbar-thumb:hover {
-  background: var(--surfmate-dark);
+  background: var(--surfmate-blue);
 }
 
 .carousel-track {
@@ -208,7 +208,7 @@
   flex: 0 0 280px;
   background: var(--surfmate-white);
   border-radius: 20px;
-  padding: 32px 24px;
+  padding: 15px 15px;
   text-align: center;
 }
 
@@ -218,8 +218,8 @@
 }
 
 .feature-card h4 {
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-family: "Inter", sans-serif;
+  font-size: 1.1 rem;
   color: var(--primary-color);
   margin-bottom: 12px;
 }
@@ -234,17 +234,19 @@
   display: none;
 }
 
-.carousel-btn {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 2px solid var(--surfmate-blue);
-  background: var(--surfmate-white);
-  color: var(--surfmate-blue);
-  font-size: 18px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
+.features-carousel::-webkit-scrollbar {
+  height: 10px;
+}
+.features-carousel::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+}
+.features-carousel::-webkit-scrollbar-thumb {
+  background: var(--surfmate-blue);
+  border-radius: 999px;
+}
+.features-carousel::-webkit-scrollbar-thumb:hover {
+  background: var(--surfmate-dark);
 }
 
 .carousel-btn:hover {
@@ -269,7 +271,7 @@
 
   .feature-card {
     flex: 0 0 250px;
-    padding: 24px 20px;
+    padding: 15px 15px;
   }
 
   .feature-icon {

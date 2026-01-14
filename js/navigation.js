@@ -250,7 +250,6 @@ class Navigation {
   // Fallback: Alte handleScroll Methode entfernt da wir Observer verwenden
 }
 
-// Initialize navigation when DOM is loaded
-document.addEventListener("DOMContentLoaded", () => {
+window.initNavigation = function initNavigation() {
   new Navigation();
-});
+};

@@ -91,6 +91,10 @@
   outline: none;
 }
 
+.hero-cta-button:hover {
+  text-decoration: none;
+}
+
 .hero-cta-button:active,
 .hero-cta-button:focus {
   background-color: var(--surfmate-blue);

@@ -36,9 +36,11 @@ h2 {
 
 h3 {
   font-size: 1.5rem;
+  margin-bottom: var(--spacing-md);
 }
 
 p {
+  font-size: 1.1rem;
   margin-bottom: var(--spacing-md);
   line-height: 1.6;
 }
@@ -51,7 +53,7 @@ a {
 
 a:hover {
   color: var(--surfmate-light-blue);
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 /* Layout */

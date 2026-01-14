@@ -67,10 +67,6 @@
 
 /* Mobile Responsive für Logo Animation */
 @media (max-width: 768px) {
-  .logo-animation {
-    padding: 60px 0;
-  }
-
   .logo-animation iframe {
     height: 200px;
     max-width: 90%;

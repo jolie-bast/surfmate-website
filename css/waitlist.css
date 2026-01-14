@@ -67,13 +67,6 @@
   padding: 40px 20px;
 }
 
-.success-message h4 {
-  color: var(--surfmate-blue);
-  font-size: 28px;
-  margin-bottom: 15px;
-  font-family: var(--font-family-heading);
-}
-
 .success-message p {
   color: var(--text-light-gray);
   font-size: 18px;
@@ -110,16 +103,10 @@
 }
 
 .waitlist-title {
-  font-size: 2.5rem;
-  font-weight: var(--font-weight-bold);
-  margin-bottom: 20px;
   color: var(--text-white);
 }
 
 .waitlist-description {
-  font-size: 1.2rem;
-  line-height: 1.6;
-  margin-bottom: 40px;
   color: var(--text-light-gray);
 }
 
