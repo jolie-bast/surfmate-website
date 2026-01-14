@@ -36,7 +36,6 @@
 .section-dark {
   background: var(--secondary-color);
   color: var(--text-light);
-  padding: 80px 0;
 }
 
 .section-dark h3 {
@@ -148,5 +147,140 @@
 
   .section-dark p {
     font-size: 0.95rem;
+  }
+}
+
+/* Features Carousel */
+.features-carousel-section {
+  padding: 80px 0;
+  background: var(--primary-black);
+}
+
+.carousel-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.carousel-header h3 {
+  color: var(--surfmate-dark);
+  margin-bottom: 16px;
+}
+
+.carousel-header p {
+  color: var(--surfmate-dark);
+}
+
+.features-carousel {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--surfmate-blue) transparent;
+}
+
+.features-carousel::-webkit-scrollbar {
+  height: 8px;
+}
+.features-carousel::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.features-carousel::-webkit-scrollbar-thumb {
+  background: var(--surfmate-blue);
+  border-radius: 4px;
+}
+
+.features-carousel::-webkit-scrollbar-thumb:hover {
+  background: var(--surfmate-dark);
+}
+
+.carousel-track {
+  display: flex;
+  gap: 24px;
+  padding: 0;
+  min-width: min-content;
+}
+
+.feature-card {
+  flex: 0 0 280px;
+  background: var(--surfmate-white);
+  border-radius: 20px;
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.feature-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+
+.feature-card h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 12px;
+}
+
+.feature-card p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.carousel-controls {
+  display: none;
+}
+
+.carousel-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--surfmate-blue);
+  background: var(--surfmate-white);
+  color: var(--surfmate-blue);
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.carousel-btn:hover {
+  background: var(--surfmate-blue);
+  color: var(--surfmate-white);
+}
+
+.carousel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .features-carousel-section {
+    padding: 60px 0;
+  }
+
+  .carousel-track {
+    gap: 16px;
+    padding: 0 16px;
+  }
+
+  .feature-card {
+    flex: 0 0 250px;
+    padding: 24px 20px;
+  }
+
+  .feature-icon {
+    font-size: 2.5rem;
+  }
+
+  .feature-card h4 {
+    font-size: 1.1rem;
+  }
+
+  .feature-card p {
+    font-size: 0.9rem;
   }
 }
