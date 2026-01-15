@@ -85,31 +85,23 @@ class Navigation {
   toggleMobileMenu() {
     this.navMenu.classList.toggle("active");
     this.navToggle.classList.toggle("active");
-    // Wenn Menü geöffnet, Navbar immer dunkel
     if (this.navMenu.classList.contains("active")) {
-      if (this.header) {
+      // Nur wenn Navbar aktuell transparent ist, auf dunkel setzen
+      if (this.header && !this.header.classList.contains("scrolled")) {
         this.header.classList.add("scrolled");
         this.header.style.background = "var(--surfmate-dark)";
+        this.header.style.backdropFilter = "blur(10px)";
       }
     } else {
       // Wenn Menü geschlossen, Observer übernimmt wieder
-      if (this.header) {
-        this.header.classList.remove("scrolled");
-        this.header.style.background = "";
-        this.header.style.backdropFilter = "";
-      }
+      // Observer setzt Zustand korrekt, daher hier nichts tun
     }
   }
 
   closeMobileMenu() {
     this.navMenu.classList.remove("active");
     this.navToggle.classList.remove("active");
-    // Beim Schließen Menü: Observer übernimmt wieder
-    if (this.header) {
-      this.header.classList.remove("scrolled");
-      this.header.style.background = "";
-      this.header.style.backdropFilter = "";
-    }
+    // Observer übernimmt wieder, daher hier nichts tun
   }
 
   handleAnchorClick(e, link) {
@@ -192,48 +184,37 @@ class Navigation {
   }
 
   setupWaitlistObserver() {
-    // Warte auf das Laden aller Includes bevor Observer eingerichtet wird
+    // Warte auf das Laden aller Includes bevor Scroll-Logik eingerichtet wird
     setTimeout(() => {
-      // Beobachte sowohl Carousel als auch Waiting Section
-      this.carouselSection = document.querySelector(
-        ".features-carousel-section"
-      );
-      this.waitlistSection = document.querySelector("#waitlist");
-
-      const observedSections = [
-        this.carouselSection,
-        this.waitlistSection,
-      ].filter(Boolean);
-
-      if (observedSections.length > 0) {
+      this.aboutSection = document.querySelector("#about.section");
+      const section = this.aboutSection;
+      if (section) {
         console.log(
-          "Features-Carousel und/oder Waiting-Section gefunden, Observer wird eingerichtet"
+          "Features-Carousel gefunden, Scroll-Listener wird eingerichtet"
         );
-
-        this.observer = new IntersectionObserver(
-          (entries) => {
-            // Header bleibt dunkel, solange eine der Sections sichtbar ist
-            const anyVisible = entries.some((entry) => entry.isIntersecting);
-            if (anyVisible) {
-              if (this.header) {
-                this.header.classList.add("scrolled");
-                this.header.style.background = "var(--surfmate-dark)";
-              }
-            } else {
-              if (this.header) {
-                this.header.classList.remove("scrolled");
-                this.header.style.background = "";
-                this.header.style.backdropFilter = "";
-              }
+        const handleScroll = () => {
+          const sectionTop = section.offsetTop;
+          const sectionHeight = section.offsetHeight;
+          const scrollY = window.scrollY;
+          const offset = 200; // 200px früher dunkel
+          // Header dunkel, wenn man ca. 200px vor der Section ist
+          if (scrollY + 1 >= sectionTop - offset) {
+            if (this.header) {
+              this.header.classList.add("scrolled");
+              this.header.style.background = "var(--surfmate-dark)";
+              this.header.style.backdropFilter = "blur(10px)";
             }
-          },
-          {
-            rootMargin: "100px 0px -10% 0px",
-            threshold: 0.1,
+          } else {
+            if (this.header) {
+              this.header.classList.remove("scrolled");
+              this.header.style.background = "";
+              this.header.style.backdropFilter = "";
+            }
           }
-        );
-
-        observedSections.forEach((section) => this.observer.observe(section));
+        };
+        window.addEventListener("scroll", handleScroll);
+        // Initial prüfen
+        handleScroll();
       } else {
         console.log("Keine relevante Section gefunden - prüfe HTML");
       }

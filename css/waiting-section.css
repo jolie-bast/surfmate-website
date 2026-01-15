@@ -45,7 +45,7 @@
     padding: 0 0.5rem;
   }
   .waiting-image {
-    min-height: 120px;
-    max-height: 200px;
+    min-height: 260px;
+    max-height: 340px;
   }
 }
