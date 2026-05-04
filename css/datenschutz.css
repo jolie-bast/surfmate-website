@@ -11,14 +11,7 @@
 
 .content-body ul li {
   margin-bottom: 0.8rem;
-  padding-left: 0.5rem;
-}
-
-.content-body ul li:before {
-  content: "•";
-  color: var(--primary-color);
-  font-weight: bold;
-  margin-right: 0.5rem;
+  padding-left: 0.25rem;
 }
 
 /* Special styling for legal sections */
@@ -72,18 +65,6 @@
   padding: 0.2rem 0.5rem;
   border-radius: 4px;
   font-weight: 500;
-}
-
-/* Section numbering enhancement */
-.content-body h2:before {
-  content: counter(section-counter) ". ";
-  counter-increment: section-counter;
-  color: var(--accent-color);
-  font-weight: 700;
-}
-
-.content-body {
-  counter-reset: section-counter;
 }
 
 /* Rights section special styling */
