@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script
+      id="Cookiebot"
+      src="https://consent.cookiebot.com/uc.js"
+      data-cbid="68373b03-6bb0-4e24-a9cd-ceaf6c3b6732"
+      type="text/javascript"
+      async
+    ></script>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-DKK7DGE8ED"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-DKK7DGE8ED");
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Legal information for Surfmate – privacy, terms, community guidelines, imprint."
+    />
+    <title>Legal information – Surfmate</title>
+
+    <link rel="stylesheet" href="./css/main.css" />
+    <link rel="stylesheet" href="./css/legal.css" />
+    <link rel="stylesheet" href="./css/datenschutz.css" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <div data-include="header.html"></div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        let attempts = 0;
+        const maxAttempts = 10;
+
+        const makeHeaderBlack = () => {
+          attempts++;
+          const header = document.querySelector(".header");
+
+          if (header) {
+            header.classList.add("scrolled");
+            header.style.background = "rgba(0, 0, 0, 0.95)";
+            header.style.backdropFilter = "blur(10px)";
+          } else if (attempts < maxAttempts) {
+            setTimeout(makeHeaderBlack, 300);
+          }
+        };
+
+        makeHeaderBlack();
+      });
+    </script>
+
+    <main class="main-content" style="padding-top: var(--header-height)">
+      <section class="content-section">
+        <div class="container">
+          <header class="content-header">
+            <h1>Legal information</h1>
+          </header>
+
+          <div class="content-body">
+            <p>
+              Central overview of legal documents and policies for Surfmate (the
+              mobile app and this website). Choose the document you need below.
+            </p>
+
+            <h2>Company</h2>
+            <ul>
+              <li>
+                <a href="./impressum.html">Imprint</a> — provider identification
+                and contact (Impressum)
+              </li>
+            </ul>
+
+            <h2>Privacy</h2>
+            <ul>
+              <li>
+                <a href="./datenschutz.html">Privacy policy (website)</a> —
+                data processing when you use this website (waitlist, cookies,
+                analytics, hosting, etc.)
+              </li>
+              <li>
+                <a href="./datenschutz-app.html">Privacy policy (app)</a> —
+                data processing in the Surfmate mobile application
+              </li>
+              <li>
+                <a href="./data-deletion.html">Data deletion request</a> — how
+                to ask for deletion of app-related personal data
+              </li>
+            </ul>
+
+            <h2>Terms &amp; community</h2>
+            <ul>
+              <li>
+                <a href="./terms.html">Terms of Service</a> — rules for using
+                Surfmate (app and related services)
+              </li>
+              <li>
+                <a href="./community-guidelines.html">Community Guidelines</a>
+                — behaviour and content standards in the community
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div data-include="footer.html"></div>
+
+    <script src="./js/includes.js"></script>
+    <script src="./js/navigation.js"></script>
+  </body>
+</html>

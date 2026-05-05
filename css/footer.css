@@ -22,10 +22,12 @@
 
 .footer-links {
   display: flex;
+  flex-wrap: wrap;
   list-style: none;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-md) var(--spacing-lg);
   margin: 0;
   padding: 0;
+  justify-content: center;
 }
 
 .footer-link {
@@ -45,6 +47,12 @@
   color: var(--surfmate-gray);
 }
 
+@media (min-width: 769px) {
+  .footer-links {
+    justify-content: flex-end;
+  }
+}
+
 @media (max-width: 768px) {
   .footer-content {
     flex-direction: column;
@@ -53,5 +61,6 @@
 
   .footer-links {
     order: -1;
+    justify-content: center;
   }
 }

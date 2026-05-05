@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script
+      id="Cookiebot"
+      src="https://consent.cookiebot.com/uc.js"
+      data-cbid="68373b03-6bb0-4e24-a9cd-ceaf6c3b6732"
+      type="text/javascript"
+      async
+    ></script>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-DKK7DGE8ED"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-DKK7DGE8ED");
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Community Guidelines for Surfmate – respectful behaviour and content standards."
+    />
+    <title>Community Guidelines – Surfmate</title>
+
+    <link rel="stylesheet" href="./css/main.css" />
+    <link rel="stylesheet" href="./css/legal.css" />
+    <link rel="stylesheet" href="./css/datenschutz.css" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <div data-include="header.html"></div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        let attempts = 0;
+        const maxAttempts = 10;
+
+        const makeHeaderBlack = () => {
+          attempts++;
+          const header = document.querySelector(".header");
+
+          if (header) {
+            header.classList.add("scrolled");
+            header.style.background = "rgba(0, 0, 0, 0.95)";
+            header.style.backdropFilter = "blur(10px)";
+          } else if (attempts < maxAttempts) {
+            setTimeout(makeHeaderBlack, 300);
+          }
+        };
+
+        makeHeaderBlack();
+      });
+    </script>
+
+    <main class="main-content" style="padding-top: var(--header-height)">
+      <section class="content-section">
+        <div class="container">
+          <header class="content-header">
+            <h1>Community Guidelines</h1>
+          </header>
+
+          <div class="content-body">
+            <p><strong>Last updated:</strong> 4 May 2026</p>
+
+            <p>
+              Surfmate is built for people who love surfing. These Community
+              Guidelines explain how we expect everyone to behave, what content
+              is not allowed in the Service, and what we may do if rules are
+              broken. They form part of our
+              <a href="./terms.html">Terms of Service</a>. Capitalised terms
+              used here align with those Terms where applicable.
+            </p>
+
+            <h2>1. Be respectful</h2>
+            <p>
+              Treat other users with respect. Do not harass, bully, threaten,
+              or stalk anyone. Do not share private information about others
+              (doxing) or encourage pile-ons. Hateful conduct targeting
+              individuals or groups based on attributes such as race, ethnicity,
+              religion, gender, sexual orientation, or disability is not
+              allowed.
+            </p>
+
+            <h2>2. No sexual or gratuitous nudity in shared content</h2>
+            <p>
+              Surfmate is not a platform for sharing nude or sexually explicit
+              content with others. Do not post or share photos, videos, or other
+              media that show <strong>nudity intended to be sexual or
+              pornographic</strong>, or that sexualise minors. Non-sexual,
+              incidental background in beach or surf settings does not give
+              permission to post explicit content. When in doubt, keep it
+              appropriate for a general surf community.
+            </p>
+
+            <h2>3. Illegal and harmful content</h2>
+            <p>
+              Do not post content that is illegal, promotes illegal activity, or
+              poses a serious risk of harm (including self-harm or dangerous
+              stunts encouraging others to get hurt). Do not share instructions
+              for wrongdoing or content that exploits or endangers minors.
+            </p>
+
+            <h2>4. Authenticity and spam</h2>
+            <p>
+              Do not impersonate Surfmate, another user, or a public figure. Do
+              not use the Service primarily to send spam, misleading links, or
+              deceptive commercial promotions. Respect intellectual property:
+              only share content you have the right to use.
+            </p>
+
+            <h2>5. Spots, safety, and environment</h2>
+            <p>
+              Information about surf spots can affect safety and local
+              communities. Do not encourage trespassing, unsafe access, or
+              disrespect for residents and the environment. Follow local rules
+              and common sense in the water.
+            </p>
+
+            <h2>6. Reporting and enforcement</h2>
+            <p>
+              If you see content or behaviour that violates these Guidelines or
+              our <a href="./terms.html">Terms</a>, please report it to us at
+              <a href="mailto:info@surf-mate.de">info@surf-mate.de</a> with a
+              short description and, if possible, screenshots or links. We may
+              remove content, hide it from others, warn accounts, or suspend or
+              terminate accounts, depending on severity and repeat behaviour. We
+              may also involve authorities where required by law.
+            </p>
+
+            <h2>7. Changes</h2>
+            <p>
+              We may update these Guidelines from time to time. The “Last
+              updated” date at the top will change when we do. Continued use of
+              the Service after updates can mean you accept the new Guidelines,
+              as described in our Terms.
+            </p>
+
+            <p>
+              <strong>Note:</strong> These Guidelines support a safe community
+              but are not legal advice. Align them with your final moderation
+              process and legal review.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div data-include="footer.html"></div>
+
+    <script src="./js/includes.js"></script>
+    <script src="./js/navigation.js"></script>
+  </body>
+</html>
