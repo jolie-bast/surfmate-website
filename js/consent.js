@@ -43,6 +43,20 @@
       };
   }
 
+  function isDebugEnabled() {
+    try {
+      const url = new URL(window.location.href);
+      if (url.searchParams.get("ga_debug") === "1") return true;
+    } catch {
+      // ignore
+    }
+    try {
+      return localStorage.getItem("surfmate_ga_debug") === "1";
+    } catch {
+      return false;
+    }
+  }
+
   function loadGA4Once() {
     if (gaLoaded) return;
     gaLoaded = true;
@@ -60,7 +74,9 @@
     }
 
     window.gtag("js", new Date());
-    window.gtag("config", GA_MEASUREMENT_ID);
+    window.gtag("config", GA_MEASUREMENT_ID, {
+      debug_mode: isDebugEnabled(),
+    });
     // Ensure we emit a first hit even if config timing is odd.
     window.gtag("event", "page_view");
   }
