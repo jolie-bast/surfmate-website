@@ -61,6 +61,8 @@
 
     window.gtag("js", new Date());
     window.gtag("config", GA_MEASUREMENT_ID);
+    // Ensure we emit a first hit even if config timing is odd.
+    window.gtag("event", "page_view");
   }
 
   function removeBanner() {
@@ -79,15 +81,15 @@
     wrapper.innerHTML = `
       <div class="consent-banner__grid">
         <div>
-          <p class="consent-banner__title">Cookies & Analytics</p>
+          <p class="consent-banner__title">Cookies</p>
           <p class="consent-banner__text">
-            We use necessary cookies to run this site. With your permission, we also use analytics (GA4) to understand usage and improve SurfMate.
+            We use essential cookies to make this site work. If you’d like, you can also allow analytics (GA4) so we can understand what’s helpful and improve Surfmate.
             <a href="./datenschutz.html">Learn more</a>.
           </p>
         </div>
         <div class="consent-banner__actions">
-          <button type="button" class="consent-btn" data-action="reject">Reject</button>
-          <button type="button" class="consent-btn consent-btn--primary" data-action="accept">Accept analytics</button>
+          <button type="button" class="consent-btn" data-action="reject">Not now</button>
+          <button type="button" class="consent-btn consent-btn--primary" data-action="accept">Allow analytics</button>
         </div>
       </div>
     `;
