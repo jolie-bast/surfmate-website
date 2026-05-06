@@ -1,11 +1,9 @@
 (() => {
   const STORAGE_KEY = "surfmate_consent_v1";
-  const GA_MEASUREMENT_ID = "G-DKK7DGE8ED";
 
   /** @type {{statistics: boolean}|null} */
   let consent = null;
   let bannerEl = null;
-  let gaLoaded = false;
 
   function readStoredConsent() {
     try {
@@ -34,51 +32,14 @@
     }
   }
 
-  function ensureGtagStub() {
-    window.dataLayer = window.dataLayer || [];
-    window.gtag =
-      window.gtag ||
-      function gtag() {
-        window.dataLayer.push(arguments);
-      };
-  }
-
-  function isDebugEnabled() {
-    try {
-      const url = new URL(window.location.href);
-      if (url.searchParams.get("ga_debug") === "1") return true;
-    } catch {
-      // ignore
-    }
-    try {
-      return localStorage.getItem("surfmate_ga_debug") === "1";
-    } catch {
-      return false;
-    }
-  }
-
-  function loadGA4Once() {
-    if (gaLoaded) return;
-    gaLoaded = true;
-
-    ensureGtagStub();
-
-    const existing = document.querySelector(
-      `script[src="https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}"]`,
-    );
-    if (!existing) {
-      const s = document.createElement("script");
-      s.async = true;
-      s.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
-      document.head.appendChild(s);
-    }
-
-    window.gtag("js", new Date());
-    window.gtag("config", GA_MEASUREMENT_ID, {
-      debug_mode: isDebugEnabled(),
+  function applyAnalyticsConsent(statistics) {
+    if (typeof window.gtag !== "function") return;
+    window.gtag("consent", "update", {
+      analytics_storage: statistics ? "granted" : "denied",
     });
-    // Ensure we emit a first hit even if config timing is odd.
-    window.gtag("event", "page_view");
+    if (statistics) {
+      window.gtag("event", "page_view");
+    }
   }
 
   function removeBanner() {
@@ -99,7 +60,7 @@
         <div>
           <p class="consent-banner__title">Cookies</p>
           <p class="consent-banner__text">
-            We use essential cookies to make this site work. If you’d like, you can also allow analytics (GA4) so we can understand what’s helpful and improve Surfmate.
+            We use essential cookies to make this site work. If you’d like, you can also allow analytics (GA4) so we can understand what’s helpful and improve SurfMate.
             <a href="./datenschutz.html">Learn more</a>.
           </p>
         </div>
@@ -117,12 +78,13 @@
 
       if (action === "accept") {
         writeStoredConsent({ statistics: true });
-        loadGA4Once();
+        applyAnalyticsConsent(true);
         removeBanner();
       }
 
       if (action === "reject") {
         writeStoredConsent({ statistics: false });
+        applyAnalyticsConsent(false);
         removeBanner();
       }
     });
@@ -139,11 +101,12 @@
     consent = readStoredConsent();
 
     if (consent?.statistics === true) {
-      loadGA4Once();
+      applyAnalyticsConsent(true);
       return;
     }
 
     if (consent?.statistics === false) {
+      applyAnalyticsConsent(false);
       return;
     }
 
