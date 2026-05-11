@@ -6,7 +6,7 @@ class IncludeManager {
     for (const include of includes) {
       try {
         const file = include.getAttribute("data-include");
-        const response = await fetch(`./includes/${file}`);
+        const response = await fetch(`/includes/${file}`);
 
         if (response.ok) {
           const content = await response.text();

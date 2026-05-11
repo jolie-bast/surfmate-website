@@ -1,0 +1,17 @@
+.support-content p {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.support-form-wrap {
+  background: var(--background-white);
+  border: 1px solid var(--border-color-light);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.support-form-wrap iframe {
+  display: block;
+  width: 100%;
+}
