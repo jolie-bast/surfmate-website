@@ -1,5 +1,26 @@
-/* Inter Font from Google Fonts */
-@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+/* Seattle Font - Regular */
+@font-face {
+  font-family: "seattle-regular";
+  src: url("../assets/fonts/Seattle/WOFF/SeattleRegular.woff?v=20260515")
+      format("woff"),
+    url("../assets/fonts/Seattle/OTF/SeattleRegular.otf?v=20260515")
+      format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Seattle Font - Bold */
+@font-face {
+  font-family: "seattle-bold";
+  src: url("../assets/fonts/Seattle/WOFF/SeattleBold.woff?v=20260515")
+      format("woff"),
+    url("../assets/fonts/Seattle/OTF/SeattleBold.otf?v=20260515")
+      format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 /* Eight Extra Condensed Font - Heavy Weight */
 @font-face {

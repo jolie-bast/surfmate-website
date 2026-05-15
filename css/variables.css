@@ -10,8 +10,12 @@
   --schriftzug-color: #fff;
 
   /* Typography */
-  --font-family-primary: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, sans-serif;
+  --font-family-primary: "seattle-regular", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
+  --font-family-primary-bold: "seattle-bold", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
+  --seattle-top-padding: 0.1em;
+  --seattle-button-balance: 0.08em;
   --font-family-heading: "eight-extra-condensed", sans-serif;
 
   /* Spacing */

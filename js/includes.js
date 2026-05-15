@@ -97,6 +97,48 @@ function initNoConnectionBannerAdjustment() {
   });
 }
 
+function getHashTargetElement(hash) {
+  if (!hash || hash === "#") return null;
+
+  const decodedHash = decodeURIComponent(hash);
+
+  try {
+    return document.querySelector(decodedHash);
+  } catch {
+    const id = decodedHash.replace(/^#/, "");
+    return document.getElementById(id);
+  }
+}
+
+function scrollToCurrentHash({ behavior = "auto", attempts = 0 } = {}) {
+  const hash = window.location.hash;
+  if (!hash || hash === "#") return;
+
+  const targetElement = getHashTargetElement(hash);
+
+  if (targetElement) {
+    const header = document.querySelector(".header");
+    const headerHeight = header
+      ? Math.max(header.getBoundingClientRect().height, 80)
+      : 80;
+    const targetTop =
+      targetElement.getBoundingClientRect().top + window.scrollY - headerHeight;
+
+    window.scrollTo({
+      top: Math.max(0, targetTop),
+      behavior,
+    });
+
+    return;
+  }
+
+  if (attempts < 12) {
+    setTimeout(() => {
+      scrollToCurrentHash({ behavior, attempts: attempts + 1 });
+    }, 150);
+  }
+}
+
 // Lade Includes wenn DOM geladen ist
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -111,8 +153,16 @@ document.addEventListener("DOMContentLoaded", () => {
       if (typeof window.initNavigation === "function") {
         window.initNavigation();
       }
+
+      // Important for links like /index.html#waitlist:
+      // the target may only exist after includes are rendered.
+      scrollToCurrentHash({ behavior: "auto" });
     })
     .catch((error) => {
       console.error("Fehler beim Laden der Includes:", error);
     });
+});
+
+window.addEventListener("hashchange", () => {
+  scrollToCurrentHash({ behavior: "smooth" });
 });

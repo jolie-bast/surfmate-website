@@ -9,13 +9,9 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Typography */
+/* Display headings */
 h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h2 {
   font-family: var(--font-family-heading);
   font-style: normal;
   font-weight: 900;
@@ -34,6 +30,18 @@ h2 {
   color: var(--surfmate-dark);
 }
 
+/* Small headings */
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-family-primary-bold);
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: var(--spacing-md);
+}
+
 h3 {
   font-size: 1.5rem;
   margin-bottom: var(--spacing-md);
@@ -43,6 +51,39 @@ p {
   font-size: 1.1rem;
   margin-bottom: var(--spacing-md);
   line-height: 1.6;
+}
+
+/* Seattle sits optically high, add a global top offset everywhere Seattle is used. */
+h3,
+h4,
+h5,
+h6,
+p,
+li,
+a,
+span,
+strong,
+em,
+b,
+i,
+small,
+input,
+textarea,
+label,
+select,
+option,
+blockquote,
+cite,
+figcaption,
+caption,
+td,
+th,
+dt,
+dd,
+legend,
+summary,
+time {
+  padding-top: var(--seattle-top-padding);
 }
 
 a {

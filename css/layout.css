@@ -79,10 +79,12 @@
   color: var(--surfmate-white);
   text-decoration: none;
   border-radius: 15px;
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-family-primary-bold);
   font-size: 18px;
   font-weight: 600;
-  padding: 15px 35px;
+  line-height: 1;
+  padding: calc(15px + var(--seattle-button-balance)) 35px
+    calc(15px - var(--seattle-button-balance));
   cursor: pointer;
   white-space: nowrap;
   margin-top: var(--spacing-lg);
@@ -106,7 +108,8 @@
 @media (max-width: 768px) {
   .hero-cta-button {
     font-size: 14px;
-    padding: 12px 20px;
+    padding: calc(12px + var(--seattle-button-balance)) 20px
+      calc(12px - var(--seattle-button-balance));
     margin-top: var(--spacing-sm);
   }
 }

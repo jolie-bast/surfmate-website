@@ -18,7 +18,7 @@
   color: var(--surfmate-white);
   border: 2px solid var(--surfmate-dark);
   border-radius: 15px;
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-family-primary);
   font-size: 16px;
   padding: 15px 20px;
   box-sizing: border-box;
@@ -39,10 +39,12 @@
   color: var(--primary-black);
   border: none;
   border-radius: 15px;
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-family-primary-bold);
   font-size: 16px;
   font-weight: 600;
-  padding: 15px 25px;
+  line-height: 1;
+  padding: calc(15px + var(--seattle-button-balance)) 25px
+    calc(15px - var(--seattle-button-balance));
   cursor: pointer;
   transition: all var(--transition-fast);
   white-space: nowrap;
@@ -255,9 +257,9 @@
   .ml-form-successContent
   h4 {
   color: #000000;
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-family-primary-bold);
   font-size: 30px;
-  font-weight: 400;
+  font-weight: 700;
   margin: 0 0 10px 0;
   text-align: left;
   word-break: break-word;
@@ -273,7 +275,7 @@
   .ml-form-successContent
   p {
   color: #000000;
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-family-primary);
   font-size: 14px;
   font-weight: 400;
   line-height: 20px;
@@ -301,7 +303,7 @@
   .ml-form-successContent
   ol {
   color: #000000;
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-family-primary);
   font-size: 14px;
 }
 #mlb2-35553339.ml-form-embedContainer
@@ -365,7 +367,7 @@
   margin-bottom: 5px;
   color: #333333;
   font-size: 14px;
-  font-family: "Open Sans", Arial, Helvetica, sans-serif;
+  font-family: var(--font-family-primary-bold);
   font-weight: bold;
   font-style: normal;
   text-decoration: none;
@@ -448,7 +450,7 @@
   border-radius: 15px !important;
   border-style: solid !important;
   border-width: 2px !important;
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-family-primary);
   font-size: 16px !important;
   height: auto;
   line-height: 21px !important;
@@ -476,7 +478,7 @@
   color: #ff6b6b;
   font-size: 14px;
   margin-top: 8px;
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-family-primary);
   text-align: left;
 }
 
@@ -555,12 +557,13 @@
   box-shadow: none !important;
   color: #ffffff !important;
   cursor: pointer;
-  font-family: "Inter", sans-serif !important;
+  font-family: var(--font-family-primary-bold) !important;
   font-size: 16px !important;
   font-weight: 600 !important;
-  line-height: 21px !important;
+  line-height: 1 !important;
   height: auto;
-  padding: 15px 30px !important;
+  padding: calc(15px + var(--seattle-button-balance)) 30px
+    calc(15px - var(--seattle-button-balance)) !important;
   width: 100% !important;
   box-sizing: border-box !important;
   transition: all 0.3s ease !important;
