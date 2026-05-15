@@ -38,7 +38,7 @@
   background-color: var(--surfmate-blue);
   color: var(--primary-black);
   border: none;
-  border-radius: 15px;
+  border-radius: var(--border-radius-pill);
   font-family: var(--font-family-primary-bold);
   font-size: 16px;
   font-weight: 600;
@@ -553,7 +553,7 @@
   button {
   background-color: var(--surfmate-blue) !important;
   border: none !important;
-  border-radius: 15px !important;
+  border-radius: var(--border-radius-pill) !important;
   box-shadow: none !important;
   color: #ffffff !important;
   cursor: pointer;
