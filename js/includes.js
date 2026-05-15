@@ -25,13 +25,11 @@ class IncludeManager {
 function isAppleDevice() {
   const ua = navigator.userAgent || "";
   const platform = navigator.platform || "";
-  const maxTouchPoints = navigator.maxTouchPoints || 0;
 
-  // iPadOS can report itself as "MacIntel", so touch capability is required.
-  return (
-    /iPhone|iPad|iPod/i.test(ua) ||
-    (/Mac/i.test(platform) && maxTouchPoints > 1)
-  );
+  const isIOS = /iPhone|iPad|iPod/i.test(ua);
+  const isMacOS = /Macintosh|Mac OS X/i.test(ua) || /Mac/i.test(platform);
+
+  return isIOS || isMacOS;
 }
 
 function isAndroidDevice() {

@@ -74,7 +74,6 @@
   color: var(--surfmate-white);
   font-size: clamp(1rem, 2.5vw, 1.5rem);
   opacity: 0.9;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
