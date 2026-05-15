@@ -78,7 +78,7 @@
   background-color: var(--surfmate-dark);
   color: var(--surfmate-white);
   text-decoration: none;
-  border-radius: 15px;
+  border-radius: var(--border-radius-pill);
   font-family: var(--font-family-primary-bold);
   font-size: 18px;
   font-weight: 600;

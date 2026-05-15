@@ -53,7 +53,7 @@
 
 /* Dark Section Styling with Surf Background */
 .section-dark {
-  background-image: var(--dark-bg-image, url("../assets/surfmate-community.jpg"));
+  background-image: var(--dark-bg-image, url("../assets/surfmate-community.avif"));
   background-size: cover;
   background-position: center center;
   background-attachment: scroll;
