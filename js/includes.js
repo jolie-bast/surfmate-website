@@ -34,6 +34,34 @@ function isAppleDevice() {
   );
 }
 
+function isAndroidDevice() {
+  const ua = navigator.userAgent || "";
+  return /Android/i.test(ua);
+}
+
+function configureHeroCtaByPlatform() {
+  const heroCta = document.querySelector(".hero-cta-button");
+  if (!heroCta) return;
+
+  const appStoreUrl =
+    "https://apps.apple.com/de/app/surfmate-surf-log-connect/id6760191082";
+
+  if (isAppleDevice()) {
+    heroCta.href = appStoreUrl;
+    heroCta.textContent = "Pre-order now";
+    heroCta.target = "_blank";
+    heroCta.rel = "noopener noreferrer";
+    return;
+  }
+
+  if (isAndroidDevice()) {
+    heroCta.href = "#waitlist";
+    heroCta.textContent = "Join the Waitlist";
+    heroCta.removeAttribute("target");
+    heroCta.removeAttribute("rel");
+  }
+}
+
 function getSafeAreaTopInset() {
   return "env(safe-area-inset-top, 0px)";
 }
@@ -146,6 +174,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   IncludeManager.loadIncludes()
     .then(() => {
+      configureHeroCtaByPlatform();
+
       // Initialisiere Custom Scrollbars und Navigation nach dem Laden der Includes
       if (typeof window.initCustomScrollbars === "function") {
         window.initCustomScrollbars();
