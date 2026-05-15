@@ -65,11 +65,46 @@
   }
 }
 
+@media (max-width: 768px) {
+  .hero-title {
+    white-space: pre-line;
+  }
+}
+
 .hero-subtitle {
   color: var(--surfmate-white);
   font-size: clamp(1rem, 2.5vw, 1.5rem);
   opacity: 0.9;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.hero-title,
+.hero-subtitle {
+  position: relative;
+}
+
+.hero-title.is-typing::after,
+.hero-subtitle.is-typing::after {
+  content: "";
+  display: inline-block;
+  width: 2px;
+  height: 0.95em;
+  margin-left: 0.08em;
+  vertical-align: -0.1em;
+  background: currentColor;
+  animation: hero-typewriter-caret 0.8s step-end infinite;
+}
+
+@keyframes hero-typewriter-caret {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
 }
 
 /* Hero CTA Button */
@@ -91,6 +126,29 @@
   text-shadow: none;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   outline: none;
+  transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.2s ease;
+}
+
+.hero-cta-button.hero-cta-hidden {
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+}
+
+.hero-cta-button.hero-cta-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.hero-subtitle.hero-subtitle-hidden {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.hero-subtitle.hero-subtitle-visible {
+  opacity: 0.9;
+  transform: translateY(0);
 }
 
 .hero-cta-button:hover {
@@ -111,6 +169,21 @@
     padding: calc(12px + var(--seattle-button-balance)) 20px
       calc(12px - var(--seattle-button-balance));
     margin-top: var(--spacing-sm);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-title.is-typing::after,
+  .hero-subtitle.is-typing::after {
+    animation: none;
+  }
+
+  .hero-cta-button {
+    transition: none;
+  }
+
+  .hero-subtitle {
+    transition: none;
   }
 }
 

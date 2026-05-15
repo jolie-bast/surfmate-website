@@ -2,6 +2,10 @@
 // Erstellt: 2026-01-14
 
 window.initCustomScrollbars = function initCustomScrollbars() {
+  const prefersReducedMotion =
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
   // Für alle Carousels mit Custom-Scrollbar
   document.querySelectorAll(".features-carousel").forEach(function (carousel) {
     // Die zugehörige Custom-Scrollbar ist das nächste Element nach dem Carousel
@@ -41,9 +45,15 @@ window.initCustomScrollbars = function initCustomScrollbars() {
     let isDragging = false;
     let dragStartX = 0;
     let startScrollLeft = 0;
+    let userInteracted = false;
+    let hintHasRun = false;
+    let hintRafId = null;
+    let isProgrammaticHinting = false;
 
     // Dragging Thumb oder Click auf die Scrollbar
     function onPointerDown(e) {
+      userInteracted = true;
+
       // Thumb Drag
       if (e.target === customThumb) {
         isDragging = true;
@@ -90,6 +100,100 @@ window.initCustomScrollbars = function initCustomScrollbars() {
       isDragging = false;
       document.body.classList.remove("scrollbar-dragging");
     });
+
+    function markInteracted() {
+      userInteracted = true;
+      customScrollbar.classList.remove("is-hinting");
+      if (hintRafId) {
+        cancelAnimationFrame(hintRafId);
+        hintRafId = null;
+      }
+      isProgrammaticHinting = false;
+    }
+
+    carousel.addEventListener("wheel", markInteracted, { passive: true });
+    carousel.addEventListener("touchmove", markInteracted, { passive: true });
+    carousel.addEventListener(
+      "scroll",
+      () => {
+        if (!isProgrammaticHinting) {
+          markInteracted();
+        }
+      },
+      { passive: true }
+    );
+
+    function animateScrollTo(targetLeft, durationMs) {
+      return new Promise((resolve) => {
+        const from = carousel.scrollLeft;
+        const distance = targetLeft - from;
+        const start = performance.now();
+
+        const step = (now) => {
+          if (userInteracted) {
+            isProgrammaticHinting = false;
+            resolve(false);
+            return;
+          }
+
+          const t = Math.min(1, (now - start) / durationMs);
+          // Smooth ease-in-out
+          const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+          isProgrammaticHinting = true;
+          carousel.scrollLeft = from + distance * eased;
+
+          if (t < 1) {
+            hintRafId = requestAnimationFrame(step);
+          } else {
+            hintRafId = null;
+            isProgrammaticHinting = false;
+            resolve(true);
+          }
+        };
+
+        hintRafId = requestAnimationFrame(step);
+      });
+    }
+
+    async function runScrollHintOnce() {
+      if (hintHasRun || prefersReducedMotion) return;
+      hintHasRun = true;
+
+      const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+      if (maxScroll <= 0) return;
+      if (userInteracted) return;
+
+      const hintDistance = Math.min(
+        maxScroll,
+        Math.max(90, Math.round(carousel.clientWidth * 0.2))
+      );
+      if (hintDistance <= 0) return;
+
+      customScrollbar.classList.add("is-hinting");
+      const movedForward = await animateScrollTo(hintDistance, 1800);
+      if (movedForward && !userInteracted) {
+        await animateScrollTo(0, 1800);
+      }
+      customScrollbar.classList.remove("is-hinting");
+    }
+
+    if (!prefersReducedMotion && "IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
+          if (!entry?.isIntersecting) return;
+          observer.disconnect();
+          setTimeout(runScrollHintOnce, 300);
+        },
+        {
+          root: null,
+          threshold: 0.2,
+          rootMargin: "0px 0px -10% 0px",
+        }
+      );
+
+      observer.observe(carousel);
+    }
   });
 };
 
