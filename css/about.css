@@ -12,7 +12,7 @@
 
 /* About Section */
 #about {
-  padding: 60px 0;
+  padding: 60px 0 24px;
   background: var(--background-light);
 }
 
@@ -158,6 +158,7 @@
 /* Features Carousel */
 .features-carousel-section {
   background: var(--primary-black);
+  padding-top: 24px;
 }
 
 .carousel-header {
@@ -330,7 +331,7 @@
 
 @media (max-width: 768px) {
   .features-carousel-section {
-    padding: 60px 0;
+    padding: 20px 0 48px;
   }
 
   .carousel-track {
@@ -359,7 +360,7 @@
 @media (min-width: 1024px) {
   #about.section {
     padding-top: 120px;
-    padding-bottom: 120px;
+    padding-bottom: 40px;
   }
 
   .section.section-dark {
