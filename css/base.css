@@ -49,8 +49,8 @@ h3 {
 
 p {
   font-size: 1.1rem;
-  margin-bottom: var(--spacing-md);
-  line-height: 1.6;
+  margin-bottom: var(--spacing-lg);
+  line-height: 1.7;
 }
 
 /* Seattle sits optically high, add a global top offset everywhere Seattle is used. */

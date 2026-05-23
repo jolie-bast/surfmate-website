@@ -237,6 +237,52 @@ function initCommunityTypewriterOnView() {
   observer.observe(communityHeading);
 }
 
+function initUseCasesOnView() {
+  const useCasesSection = document.querySelector(".use-cases-section");
+  const cards = Array.from(document.querySelectorAll(".use-case-card"));
+  if (!cards.length) return;
+
+  const revealCards = () => {
+    cards.forEach((card, index) => {
+      setTimeout(() => {
+        card.classList.add("is-visible");
+      }, index * 130);
+    });
+  };
+
+  if (prefersReducedMotion()) {
+    cards.forEach((card) => {
+      card.classList.add("is-visible");
+    });
+    return;
+  }
+
+  cards.forEach((card) => {
+    card.classList.add("reveal-init");
+  });
+
+  if (!("IntersectionObserver" in window)) {
+    revealCards();
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const entry = entries[0];
+      if (!entry?.isIntersecting) return;
+      observer.disconnect();
+      revealCards();
+    },
+    {
+      root: null,
+      threshold: 0.25,
+      rootMargin: "0px 0px -10% 0px",
+    }
+  );
+
+  observer.observe(useCasesSection || cards[0]);
+}
+
 async function typeInputPlaceholder(inputElement, text, speedMs = 40) {
   if (!inputElement) return;
 
@@ -466,6 +512,7 @@ document.addEventListener("DOMContentLoaded", () => {
       configureHeroCtaByPlatform();
       await runHeroTypewriterSequence();
       initAboutIntroOnView();
+      initUseCasesOnView();
       initCommunityTypewriterOnView();
       initWaitlistPlaceholderTypewriterOnView();
 
