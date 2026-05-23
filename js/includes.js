@@ -476,6 +476,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (typeof window.initNavigation === "function") {
         window.initNavigation();
       }
+      if (typeof window.initFaq === "function") {
+        window.initFaq();
+      }
 
       // Important for links like /index.html#waitlist:
       // the target may only exist after includes are rendered.
