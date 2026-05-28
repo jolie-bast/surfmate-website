@@ -378,23 +378,17 @@ function configureHeroCtaByPlatform() {
 
   const appStoreUrl =
     "https://apps.apple.com/de/app/surfmate-surf-log-connect/id6760191082";
+  const playStoreUrl =
+    "https://play.google.com/store/apps/details?id=com.joliebast.surfmateapp&pcampaignid=web_share";
+  const ctaLabel = "Download Now";
 
-  if (isAppleDevice()) {
-    heroCta.href = appStoreUrl;
-    heroCta.textContent = "Pre-order now";
-    heroCta.setAttribute("data-text", "Pre-order now");
-    heroCta.target = "_blank";
-    heroCta.rel = "noopener noreferrer";
-    return;
-  }
+  const storeUrl = isAndroidDevice() ? playStoreUrl : appStoreUrl;
 
-  if (isAndroidDevice()) {
-    heroCta.href = "#waitlist";
-    heroCta.textContent = "Join the Waitlist";
-    heroCta.setAttribute("data-text", "Join the Waitlist");
-    heroCta.removeAttribute("target");
-    heroCta.removeAttribute("rel");
-  }
+  heroCta.href = storeUrl;
+  heroCta.textContent = ctaLabel;
+  heroCta.setAttribute("data-text", ctaLabel);
+  heroCta.target = "_blank";
+  heroCta.rel = "noopener noreferrer";
 }
 
 function getSafeAreaTopInset() {
