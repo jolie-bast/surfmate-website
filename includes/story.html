@@ -1,47 +1,195 @@
-<!-- Story Section -->
-<section id="story" class="section story-section" aria-labelledby="story-title">
-  <div class="container">
-    <div class="story-content">
-      <h2 id="story-title" class="story-title">The Story</h2>
+<!-- Interactive Story Journey -->
+<section
+  class="story-journey"
+  id="story-text"
+  aria-label="The Story"
+  data-story-journey
+>
+  <div class="story-progress" aria-hidden="true">
+    <span class="story-progress-year">2019</span>
+    <div class="story-progress-track">
+      <div class="story-progress-fill"></div>
+      <ol class="story-progress-dots">
+        <li data-chapter-dot="0"></li>
+        <li data-chapter-dot="1"></li>
+        <li data-chapter-dot="2"></li>
+        <li data-chapter-dot="3"></li>
+        <li data-chapter-dot="4"></li>
+      </ol>
+    </div>
+    <span class="story-progress-year">now</span>
+  </div>
 
-      <p>
-        There was a girl with a dream. A dream of <span class="story-highlight">becoming a surfer</span>.
-      </p>
+  <div class="story-scroll-track">
+    <div class="story-stage">
+      <!-- Scene 1: The Dream -->
+      <div class="story-scene story-scene--dream" data-story-scene="dream">
+        <div class="story-scene-bg story-scene-bg--void"></div>
+        <div class="story-scene-bg story-scene-bg--ocean"></div>
+        <svg
+          class="story-wave-svg"
+          viewBox="0 0 1000 300"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path class="story-wave-path" d="M0,300 L1000,300 L1000,300 Z"></path>
+        </svg>
+        <div class="story-scene-content story-scene-content--center">
+          <p class="story-line" data-story-line="dream-1">
+            There was a girl with a dream:
+          </p>
+          <p class="story-line" data-story-line="dream-2">
+            <span class="story-highlight">becoming a surfer</span>.
+          </p>
+        </div>
+      </div>
 
-      <p>
-        After her first surf session, she tattooed a wave on her back - a
-        promise to herself that this would become her life.
-      </p>
+      <!-- Scene 2: First Surf -->
+      <div class="story-scene story-scene--first-surf" data-story-scene="first-surf">
+        <div class="story-scene-bg story-scene-bg--dawn"></div>
+        <div class="story-scene-content story-scene-content--split">
+          <div class="story-polaroid">
+            <img
+              src="assets/surfmate-beginning.avif"
+              alt=""
+              class="story-polaroid-img"
+            />
+              <span class="story-polaroid-caption">First session</span>
+            </div>
+          <div class="story-first-surf-text">
+            <p class="story-line story-line--small" data-story-line="first-1">
+              After her first surf session, she tattooed a wave on her back —
+              a promise to herself.
+            </p>
+            <svg class="story-tattoo" viewBox="0 0 200 64" aria-hidden="true">
+              <path
+                class="story-tattoo-path"
+                pathLength="1"
+                d="M 6,46 L 48,46 Q 92,46 100,18 Q 108,46 152,46 L 194,46"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
 
-      <p>
-        But becoming a surfer was <span class="story-highlight">not easy</span>.
-      </p>
+      <!-- Scene 3: Lost -->
+      <div class="story-scene story-scene--lost" data-story-scene="lost">
+        <div class="story-scene-bg story-scene-bg--chaos"></div>
+        <div class="story-chaos-layer" aria-hidden="true">
+          <div class="story-scatter story-scatter--photo-1">
+            <img src="assets/surfmate-community.avif" alt="" />
+          </div>
+          <div class="story-scatter story-scatter--photo-2">
+            <img src="assets/surfmate-rocks.avif" alt="" />
+          </div>
+          <div class="story-scatter story-scatter--photo-3">
+            <img src="assets/surfmate-waiting.avif" alt="" />
+          </div>
+          <div class="story-scatter story-scatter--story-ring">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="story-scatter story-scatter--weather">
+            <i class="bi bi-cloud-sun"></i>
+            <span>Flat · 12kt</span>
+          </div>
+          <div class="story-scatter story-scatter--map">
+            <i class="bi bi-geo-alt"></i>
+            <span>Wrong spot</span>
+          </div>
+        </div>
+        <div class="story-scene-content story-scene-content--center">
+          <p class="story-line" data-story-line="lost-1">
+            But becoming a surfer was
+            <span class="story-highlight">not easy</span>.
+          </p>
+          <p class="story-chaos-line" data-story-line="lost-chaos-1">
+            No surf friends.
+          </p>
+          <p class="story-chaos-line" data-story-line="lost-chaos-2">
+            Wrong spot.
+          </p>
+          <p class="story-chaos-line" data-story-line="lost-chaos-3">
+            10,000 photos.
+          </p>
+          <p class="story-line story-line--small" data-story-line="lost-2">
+            Over time, the journey got
+            <span class="story-highlight">lost</span> — in camera rolls,
+            disappearing stories, and fading memories.
+          </p>
+        </div>
+      </div>
 
-      <p>
-        No surf friends. No surf community. No
-        idea where to start.
-      </p>
+      <!-- Scene 4: Turning Point -->
+      <div class="story-scene story-scene--turning" data-story-scene="turning">
+        <div class="story-scene-bg story-scene-bg--calm"></div>
+        <div class="story-memory-cards" aria-hidden="true">
+          <div class="story-memory-card story-memory-card--session">
+            <i class="bi bi-journal-text"></i>
+            <span>Logged session · 6 waves</span>
+          </div>
+          <div class="story-memory-card story-memory-card--spot">
+            <i class="bi bi-pin-map"></i>
+            <span>Secret reef</span>
+          </div>
+          <div class="story-memory-card story-memory-card--photo">
+            <i class="bi bi-camera"></i>
+            <span>Line-up shot</span>
+          </div>
+          <div class="story-memory-card story-memory-card--note">
+            <i class="bi bi-pencil"></i>
+            <span>Offshore · glassy</span>
+          </div>
+        </div>
+        <div class="story-scene-content story-scene-content--center">
+          <p class="story-line" data-story-line="turning-1">
+            That is why
+            <span class="story-highlight">Surfmate exists</span>.
+          </p>
+          <p class="story-line story-line--small" data-story-line="turning-2">
+            To log every session. To stay connected. To build your own surf
+            story.
+          </p>
+        </div>
+      </div>
 
-      <p>
-        So she figured it out herself: solo surf trips, wrong spots, missed
-        conditions, chasing waves everywhere.
-      </p>
-
-      <p>Over time, surfing became part of her identity.</p>
-
-      <p>
-        But over time, <span class="story-highlight">the journey got lost</span> - disappeared in camera rolls, disappearing stories, and fading memories.
-      </p>
-
-      <p>
-        That is why <span class="story-highlight">Surfmate exists</span>.
-      </p>
-
-      <p>To remember every surf.</p>
-      <p>To stay connected.</p>
-      <p>To build your own surf story.</p>
-
-      <p class="story-signature"><strong>Your surf. Your story.</strong></p>
+      <!-- Scene 5: Your Story -->
+      <div class="story-scene story-scene--yours" data-story-scene="yours">
+        <div class="story-scene-bg story-scene-bg--yours"></div>
+        <div class="story-scene-content story-scene-content--center">
+          <p class="story-line" data-story-line="yours-1">
+            This started as one surfer's story.
+          </p>
+          <p class="story-line" data-story-line="yours-2">
+            Now it's <span class="story-highlight">yours</span>.
+          </p>
+          <p class="story-signature">
+            <strong>Your surf. Your story.</strong>
+          </p>
+          <div class="story-cta-group">
+            <a
+              href="https://apps.apple.com/de/app/surfmate-surf-log-connect/id6760191082"
+              class="story-cta-button story-cta-primary"
+              data-story-cta
+              target="_blank"
+              rel="noopener noreferrer"
+              >Log your first session</a
+            >
+            <a
+              href="https://apps.apple.com/de/app/surfmate-surf-log-connect/id6760191082"
+              class="story-cta-button story-cta-secondary"
+              data-story-cta
+              target="_blank"
+              rel="noopener noreferrer"
+              >Log your next session</a
+            >
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>

@@ -520,6 +520,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (typeof window.initFaq === "function") {
         window.initFaq();
       }
+      if (typeof window.initStoryJourney === "function") {
+        window.initStoryJourney();
+      }
 
       // Important for links like /index.html#waitlist:
       // the target may only exist after includes are rendered.

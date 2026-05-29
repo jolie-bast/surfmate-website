@@ -1,29 +1,12 @@
-.story-section {
-  background: var(--surfmate-dark);
-  padding: var(--spacing-3xl) 0;
-}
-
-.story-content {
-  max-width: 760px;
-  margin: 0 auto;
+/* ===== STORY JOURNEY ===== */
+.story-journey {
+  position: relative;
+  background: #000;
   color: var(--surfmate-white);
 }
 
-.story-title {
-  color: var(--surfmate-white);
-  margin-bottom: var(--spacing-xl);
-}
-
-.story-section .story-title,
-.story-section .story-content p,
-.story-section .story-signature,
-.story-section .story-signature strong {
-  color: var(--surfmate-white) !important;
-}
-
-.story-content p {
-  color: var(--surfmate-white);
-  margin-bottom: var(--spacing-lg);
+.story-journey p {
+  margin-bottom: 0;
 }
 
 .story-highlight {
@@ -31,36 +14,668 @@
   font-family: var(--font-family-primary-bold);
 }
 
-.story-signature {
-  margin-top: var(--spacing-xl);
-  margin-bottom: 0;
-  font-family: var(--font-family-heading);
-  font-size: 1.7rem;
-  letter-spacing: 0.02em;
-  line-height: 1.1;
+/* Progress indicator */
+.story-progress {
+  position: fixed;
+  left: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
 
+.story-journey.is-active .story-progress {
+  opacity: 1;
+}
+
+.story-progress-year {
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  font-family: var(--font-family-primary-bold);
+}
+
+.story-progress-track {
+  position: relative;
+  width: 2px;
+  height: 140px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+}
+
+.story-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  background: var(--surfmate-blue);
+  border-radius: 2px;
+}
+
+.story-progress-dots {
+  position: absolute;
+  inset: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.story-progress-dots li {
+  width: 8px;
+  height: 8px;
+  margin-left: -3px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.story-progress-dots li.is-active {
+  background: var(--surfmate-blue);
+  border-color: var(--surfmate-blue);
+  transform: scale(1.25);
+}
+
+/* Scroll track + pinned stage */
+.story-scroll-track {
+  height: 500vh;
+  position: relative;
+}
+
+.story-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Scenes — stacked, only active one visible */
+.story-scene {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.45s ease, visibility 0.45s ease;
+  pointer-events: none;
+}
+
+.story-scene.is-active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.story-scene-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.story-scene-bg--void {
+  background: #000;
+}
+
+.story-scene-bg--ocean {
+  opacity: var(--ocean, 0);
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 20, 40, 0.85) 60%, #001a2e 100%),
+    url("../assets/surfmate-beginning.avif") center 30% / cover no-repeat;
+  transform: scale(calc(1.06 - var(--ocean, 0) * 0.06));
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.story-scene-bg--dawn {
+  background: linear-gradient(160deg, #0a1628 0%, #1a3a52 45%, #2d5a72 100%);
+}
+
+.story-scene-bg--chaos {
+  background: linear-gradient(180deg, #1a1a1a 0%, #2a2030 50%, #1a1a1a 100%);
+}
+
+.story-scene-bg--calm {
+  background: linear-gradient(180deg, #0d1b2a 0%, #1b2838 100%);
+}
+
+.story-scene-bg--yours {
+  background: linear-gradient(180deg, #0a1628 0%, #0d2137 50%, #001a2e 100%);
+}
+
+/* Wave */
+.story-wave-svg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 28vh;
+  z-index: 2;
+  opacity: var(--wave, 0);
+  pointer-events: none;
+}
+
+.story-wave-path {
+  fill: rgba(115, 201, 235, 0.35);
+}
+
+/* Content */
+.story-scene-content {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 1.5rem 3rem;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.story-scene-content--split {
+  flex-direction: row;
+  gap: 2.5rem;
+  max-width: 960px;
+  text-align: left;
+  align-items: center;
+  justify-content: center;
+}
+
+.story-line {
+  font-family: var(--font-family-heading);
+  font-size: clamp(1.75rem, 5vw, 3rem);
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  margin: 0;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.story-line.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.story-line + .story-line,
+.story-line + .story-chaos-line,
+.story-chaos-line + .story-chaos-line,
+.story-chaos-line + .story-line {
+  margin-top: 0.75rem;
+}
+
+.story-line--small {
+  font-size: clamp(1rem, 2.5vw, 1.35rem);
+  font-family: var(--font-family-primary);
+  line-height: 1.5;
+  max-width: 520px;
+}
+
+/* Scene 2 — Polaroid */
+.story-polaroid {
+  position: relative;
+  flex-shrink: 0;
+  width: min(240px, 40vw);
+  background: #fff;
+  padding: 0.75rem 0.75rem 2.5rem;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  transform: rotate(-4deg) scale(0.92);
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.story-polaroid.is-visible {
+  opacity: 1;
+  transform: rotate(-4deg) scale(1);
+}
+
+.story-polaroid-img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+
+.story-polaroid-caption {
+  position: absolute;
+  bottom: 0.6rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: "Segoe UI", cursive;
+  font-size: 0.85rem;
+  color: #333;
+}
+
+.story-first-surf-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.story-tattoo {
+  width: 100%;
+  max-width: 210px;
+  margin-top: 1.25rem;
+  color: var(--surfmate-blue);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.story-tattoo.is-visible {
+  opacity: 1;
+}
+
+.story-tattoo-path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1.4s ease;
+}
+
+.story-tattoo.is-drawn .story-tattoo-path {
+  stroke-dashoffset: 0;
+}
+
+/* Scene 3 — Lost */
+.story-chaos-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.story-scatter {
+  position: absolute;
+  opacity: 0;
+  transition: opacity 0.4s ease, transform 0.6s ease;
+}
+
+.story-scene--lost.is-active .story-scatter.is-visible {
+  opacity: 1;
+}
+
+.story-scatter--photo-1 {
+  top: 14%;
+  left: 8%;
+  width: clamp(72px, 12vw, 120px);
+  transform: rotate(-12deg) translate(var(--sx1, 0px), var(--sy1, 0px));
+}
+
+.story-scatter--photo-2 {
+  top: 16%;
+  right: 8%;
+  width: clamp(64px, 10vw, 100px);
+  transform: rotate(8deg) translate(var(--sx2, 0px), var(--sy2, 0px));
+}
+
+.story-scatter--photo-3 {
+  bottom: 18%;
+  left: 12%;
+  width: clamp(68px, 11vw, 110px);
+  transform: rotate(-5deg) translate(var(--sx3, 0px), var(--sy3, 0px));
+}
+
+.story-scatter img {
+  width: 100%;
+  border-radius: 4px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  display: block;
+}
+
+.story-scatter--story-ring {
+  top: 30%;
+  left: 50%;
+  transform: translateX(-50%) translate(var(--sx4, 0px), var(--sy4, 0px));
+  display: flex;
+  gap: 6px;
+}
+
+.story-scatter--story-ring span {
+  width: clamp(32px, 5vw, 52px);
+  height: clamp(32px, 5vw, 52px);
+  border-radius: 50%;
+  border: 2px solid var(--surfmate-blue);
+  background: linear-gradient(135deg, #333, #555);
+}
+
+.story-scatter--weather,
+.story-scatter--map {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--border-radius-md);
+  font-size: 0.8rem;
+  backdrop-filter: blur(8px);
+}
+
+.story-scatter--weather {
+  top: 52%;
+  right: 10%;
+  transform: translate(var(--sx5, 0px), var(--sy5, 0px));
+}
+
+.story-scatter--map {
+  bottom: 32%;
+  right: 16%;
+  transform: translate(var(--sx6, 0px), var(--sy6, 0px));
+}
+
+.story-chaos-line {
+  font-family: var(--font-family-primary-bold);
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0;
+  opacity: 0;
+  transform: translateX(0);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.story-chaos-line.is-visible {
+  opacity: 1;
+}
+
+.story-chaos-line:nth-child(odd).is-visible {
+  transform: translateX(-8px);
+}
+
+.story-chaos-line:nth-child(even).is-visible {
+  transform: translateX(8px);
+}
+
+/* Scene 4 — Turning Point */
+.story-memory-cards {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.story-memory-card {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--border-radius-md);
+  font-size: 0.85rem;
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.story-memory-card.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.story-memory-card--session {
+  top: 18%;
+  left: 10%;
+}
+
+.story-memory-card--spot {
+  top: 22%;
+  right: 8%;
+}
+
+.story-memory-card--photo {
+  bottom: 24%;
+  left: 14%;
+}
+
+.story-memory-card--note {
+  bottom: 18%;
+  right: 10%;
+}
+
+/* Scene 5 — Yours */
+.story-signature {
+  margin: 1.25rem 0 0;
+  font-family: var(--font-family-heading);
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  letter-spacing: 0.02em;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.story-signature.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.story-signature strong {
+  color: var(--surfmate-white);
+}
+
+.story-cta-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-top: 1.75rem;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.story-cta-group.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.story-cta-button {
+  display: inline-block;
+  text-decoration: none;
+  border-radius: var(--border-radius-pill);
+  font-family: var(--font-family-primary-bold);
+  font-size: 16px;
+  line-height: 1;
+  padding: calc(14px + var(--seattle-button-balance)) 28px
+    calc(14px - var(--seattle-button-balance));
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.story-cta-primary {
+  background: var(--surfmate-blue);
+  color: var(--surfmate-dark);
+}
+
+.story-cta-primary:hover {
+  background: #8dd4f0;
+  transform: translateY(-2px);
+}
+
+.story-cta-secondary {
+  background: transparent;
+  color: var(--surfmate-white);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.story-cta-secondary:hover {
+  border-color: var(--surfmate-blue);
+  color: var(--surfmate-blue);
+  transform: translateY(-2px);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .story-scroll-track {
+    height: auto;
+  }
+
+  .story-stage {
+    position: relative;
+    height: auto;
+  }
+
+  .story-scene {
+    position: relative;
+    opacity: 1;
+    visibility: visible;
+    min-height: 80vh;
+    padding: var(--spacing-3xl) 0;
+  }
+
+  .story-scene + .story-scene {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .story-progress {
+    display: none;
+  }
+
+  .story-line,
+  .story-chaos-line,
+  .story-polaroid,
+  .story-tattoo,
+  .story-memory-card,
+  .story-scatter,
+  .story-signature,
+  .story-cta-group {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .story-tattoo-path {
+    stroke-dashoffset: 0;
+  }
+
+  .story-scene-bg--ocean {
+    opacity: 1;
+  }
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-  .story-section {
-    padding: var(--spacing-2xl) 0;
+  .story-progress {
+    left: auto;
+    right: 1rem;
+    top: auto;
+    bottom: 1.5rem;
+    transform: none;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.65rem;
   }
 
-  .story-title {
-    margin-bottom: var(--spacing-lg);
+  .story-progress-track {
+    width: 100px;
+    height: 8px;
+    background: transparent;
   }
 
-  .story-content p {
-    margin-bottom: var(--spacing-md);
+  .story-progress-track::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1.5px;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 1px;
+    z-index: 0;
   }
 
-  .story-signature {
-    margin-top: var(--spacing-lg);
-    font-size: 1.45rem;
+  .story-progress-fill {
+    top: 50%;
+    left: 0;
+    width: 0%;
+    height: 1.5px;
+    transform: translateY(-50%);
+    z-index: 0;
   }
 
-  .surfer-quote {
-    padding-left: var(--spacing-sm);
-    padding-right: var(--spacing-sm);
-    box-sizing: border-box;
+  .story-progress-dots {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .story-progress-dots li {
+    margin: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .story-scroll-track {
+    height: 450vh;
+  }
+
+  .story-scene-content {
+    padding: 4.5rem 1.25rem 2rem;
+  }
+
+  .story-scene-content--split {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .story-polaroid {
+    width: min(200px, 55vw);
+  }
+
+  .story-tattoo {
+    margin: 1rem auto 0;
+  }
+
+  .story-memory-card {
+    font-size: 0.72rem;
+    padding: 0.45rem 0.65rem;
+  }
+
+  .story-memory-card--session {
+    top: 12%;
+    left: 4%;
+  }
+
+  .story-memory-card--spot {
+    top: 14%;
+    right: 4%;
+  }
+
+  .story-memory-card--photo {
+    bottom: 16%;
+    left: 4%;
+  }
+
+  .story-memory-card--note {
+    bottom: 12%;
+    right: 4%;
+  }
+
+  .story-scatter--photo-1,
+  .story-scatter--photo-2,
+  .story-scatter--photo-3 {
+    width: 56px;
+  }
+
+  .story-cta-group {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .story-cta-button {
+    width: 100%;
+    max-width: 280px;
+    text-align: center;
   }
 }
