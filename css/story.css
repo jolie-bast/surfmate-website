@@ -132,13 +132,15 @@
   opacity: var(--ocean, 0);
   background:
     linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 20, 40, 0.85) 60%, #001a2e 100%),
-    url("../assets/surfmate-beginning.avif") center 30% / cover no-repeat;
+    url("../assets/founder-shooting/surfmate-duenen.avif") center 30% / cover no-repeat;
   transform: scale(calc(1.06 - var(--ocean, 0) * 0.06));
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .story-scene-bg--dawn {
-  background: linear-gradient(160deg, #0a1628 0%, #1a3a52 45%, #2d5a72 100%);
+  background:
+    linear-gradient(160deg, rgba(10, 22, 40, 0.72) 0%, rgba(26, 58, 82, 0.65) 45%, rgba(45, 90, 114, 0.7) 100%),
+    url("../assets/founder-shooting/surfmate-jolie-surf-portrait.avif") center / cover no-repeat;
 }
 
 .story-scene-bg--chaos {
@@ -146,7 +148,9 @@
 }
 
 .story-scene-bg--calm {
-  background: linear-gradient(180deg, #0d1b2a 0%, #1b2838 100%);
+  background:
+    linear-gradient(180deg, rgba(13, 27, 42, 0.82) 0%, rgba(27, 40, 56, 0.78) 100%),
+    url("../assets/founder-shooting/surfmate-jolie-surf-blick-nach-oben.avif") center / cover no-repeat;
 }
 
 .story-scene-bg--yours {
