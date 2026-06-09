@@ -516,7 +516,11 @@ window.scrollToHash = scrollToHash;
 
 // Lade Includes wenn DOM geladen ist
 
-const PRIORITY_INCLUDES = new Set(["header.html", "hero.html"]);
+const PRIORITY_INCLUDES = new Set([
+  "header.html",
+  "hero.html",
+  "story.html",
+]);
 
 function initAfterAllIncludes() {
   initAboutIntroOnView();
@@ -544,9 +548,13 @@ document.addEventListener("DOMContentLoaded", () => {
   initNoConnectionBannerAdjustment();
 
   IncludeManager.loadIncludes({ only: PRIORITY_INCLUDES })
-    .then(async () => {
+    .then(() => {
       configureHeroCtaByPlatform();
-      await runHeroTypewriterSequence();
+      void runHeroTypewriterSequence();
+
+      if (typeof window.initStoryJourney === "function") {
+        window.initStoryJourney();
+      }
 
       return IncludeManager.loadIncludes();
     })

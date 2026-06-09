@@ -17,7 +17,7 @@
     if (!connection) return false;
     if (connection.saveData) return true;
 
-    const slowTypes = ["slow-2g", "2g", "3g"];
+    const slowTypes = ["slow-2g", "2g"];
     return slowTypes.includes(connection.effectiveType);
   }
 
