@@ -10,6 +10,7 @@
     <script src="./js/consent.js" defer></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="./js/motion-policy.js"></script>
     <meta
       name="description"
       content="Surfmate is a surf platform to manage spots, share spotchecks with friends, and capture your surf journey."
@@ -52,7 +53,16 @@
     <!-- Main Content -->
     <main class="main-content">
       <!-- Hero Section -->
-      <div data-include="hero.html"></div>
+      <div data-include="hero.html">
+        <section class="hero hero-fallback" aria-hidden="true">
+          <div class="container">
+            <div class="hero-content">
+              <h1 class="hero-title">Your Surf. Your Story.</h1>
+              <p class="hero-subtitle">The platform for your surf journey.</p>
+            </div>
+          </div>
+        </section>
+      </div>
 
       <!-- Story Section -->
       <div data-include="story.html"></div>
@@ -60,8 +70,13 @@
       <!-- About Section -->
       <div data-include="about.html"></div>
 
-      <!-- Q&A Section -->
-      <div data-include="faq.html"></div>
+
+      <!-- Waiting Section -->
+      <div data-include="waiting-section.html"></div>
+
+      <!-- Support Section -->
+      <div data-include="support.html"></div>
+
 
       <!-- Jolie Bast Image -->
       <div data-include="jolie-bast-section.html"></div>
@@ -69,11 +84,8 @@
       <!-- Newsletter Section -->
       <div data-include="waitlist.html"></div>
 
-      <!-- Waiting Section -->
-      <div data-include="waiting-section.html"></div>
-
-      <!-- Support Section -->
-      <div data-include="support.html"></div>
+      <!-- Q&A Section -->
+      <div data-include="faq.html"></div>
     </main>
 
     <!-- Footer -->

@@ -14,9 +14,10 @@ class StoryJourney {
     this.waveFrame = null;
     this.ticking = false;
 
-    this.reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
+    this.reducedMotion =
+      typeof window.shouldSkipAnimations === "function"
+        ? window.shouldSkipAnimations()
+        : window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (this.reducedMotion || !this.track) return;
 

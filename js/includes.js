@@ -1,24 +1,31 @@
 // Include Manager für HTML Partials
 class IncludeManager {
-  static async loadIncludes() {
-    const includes = document.querySelectorAll("[data-include]");
+  static async loadInclude(include) {
+    const file = include.getAttribute("data-include");
+    if (!file) return;
 
-    for (const include of includes) {
-      try {
-        const file = include.getAttribute("data-include");
-        const response = await fetch(`/includes/${file}`);
+    try {
+      const response = await fetch(`/includes/${file}`);
 
-        if (response.ok) {
-          const content = await response.text();
-          include.innerHTML = content;
-          include.removeAttribute("data-include");
-        } else {
-          console.error(`Fehler beim Laden von ${file}:`, response.status);
-        }
-      } catch (error) {
-        console.error("Fehler beim Laden der Include-Datei:", error);
+      if (response.ok) {
+        const content = await response.text();
+        include.innerHTML = content;
+        include.removeAttribute("data-include");
+      } else {
+        console.error(`Fehler beim Laden von ${file}:`, response.status);
       }
+    } catch (error) {
+      console.error("Fehler beim Laden der Include-Datei:", error);
     }
+  }
+
+  static async loadIncludes({ only = null } = {}) {
+    const includes = [...document.querySelectorAll("[data-include]")];
+    const selected = only
+      ? includes.filter((include) => only.has(include.getAttribute("data-include")))
+      : includes;
+
+    await Promise.all(selected.map((include) => this.loadInclude(include)));
   }
 }
 
@@ -37,7 +44,11 @@ function isAndroidDevice() {
   return /Android/i.test(ua);
 }
 
-function prefersReducedMotion() {
+function shouldSkipAnimations() {
+  if (typeof window.shouldSkipAnimations === "function") {
+    return window.shouldSkipAnimations();
+  }
+
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
@@ -82,6 +93,12 @@ function revealHeroSubtitle(subtitleElement, text) {
   });
 }
 
+function revealHeroStatic(title, titleText, subtitle, subtitleText, cta) {
+  if (title) title.textContent = titleText;
+  revealHeroSubtitle(subtitle, subtitleText);
+  revealHeroCta(cta);
+}
+
 async function runHeroTypewriterSequence() {
   const title = document.querySelector("[data-typewriter-title]");
   const subtitle = document.querySelector("[data-typewriter-subtitle]");
@@ -95,19 +112,16 @@ async function runHeroTypewriterSequence() {
   const subtitleText = subtitle?.getAttribute("data-text") || "";
 
   if (!title || !subtitle || !cta) {
-    if (title && titleText) title.textContent = titleText;
-    if (subtitle && subtitleText) revealHeroSubtitle(subtitle, subtitleText);
-    revealHeroCta(cta);
+    revealHeroStatic(title, titleText, subtitle, subtitleText, cta);
     return;
   }
 
-  if (prefersReducedMotion()) {
-    title.textContent = titleText;
-    revealHeroSubtitle(subtitle, subtitleText);
-    revealHeroCta(cta);
+  if (shouldSkipAnimations()) {
+    revealHeroStatic(title, titleText, subtitle, subtitleText, cta);
     return;
   }
 
+  title.textContent = "";
   subtitle.classList.add("hero-subtitle-hidden");
   subtitle.classList.remove("hero-subtitle-visible");
   cta.classList.add("hero-cta-hidden");
@@ -154,7 +168,7 @@ async function runAboutIntroTypewriterSequence() {
     return;
   }
 
-  if (prefersReducedMotion()) {
+  if (shouldSkipAnimations()) {
     aboutTitle.textContent = aboutTitleText;
     revealAboutIntroCopy(aboutCopy);
     return;
@@ -210,7 +224,7 @@ function initCommunityTypewriterOnView() {
     revealCommunityCopy(communityHeading);
   };
 
-  if (prefersReducedMotion()) {
+  if (shouldSkipAnimations()) {
     revealCommunityCopy(communityHeading);
     return;
   }
@@ -250,7 +264,7 @@ function initUseCasesOnView() {
     });
   };
 
-  if (prefersReducedMotion()) {
+  if (shouldSkipAnimations()) {
     cards.forEach((card) => {
       card.classList.add("is-visible");
     });
@@ -308,7 +322,7 @@ function initWaitlistPlaceholderTypewriterOnView() {
     }
   };
 
-  if (prefersReducedMotion()) {
+  if (shouldSkipAnimations()) {
     setFinalPlaceholder();
     return;
   }
@@ -502,35 +516,42 @@ window.scrollToHash = scrollToHash;
 
 // Lade Includes wenn DOM geladen ist
 
+const PRIORITY_INCLUDES = new Set(["header.html", "hero.html"]);
+
+function initAfterAllIncludes() {
+  initAboutIntroOnView();
+  initUseCasesOnView();
+  initCommunityTypewriterOnView();
+  initWaitlistPlaceholderTypewriterOnView();
+
+  if (typeof window.initCustomScrollbars === "function") {
+    window.initCustomScrollbars();
+  }
+  if (typeof window.initNavigation === "function") {
+    window.initNavigation();
+  }
+  if (typeof window.initFaq === "function") {
+    window.initFaq();
+  }
+  if (typeof window.initStoryJourney === "function") {
+    window.initStoryJourney();
+  }
+
+  scrollToCurrentHash({ behavior: "auto" });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   initNoConnectionBannerAdjustment();
 
-  IncludeManager.loadIncludes()
+  IncludeManager.loadIncludes({ only: PRIORITY_INCLUDES })
     .then(async () => {
       configureHeroCtaByPlatform();
       await runHeroTypewriterSequence();
-      initAboutIntroOnView();
-      initUseCasesOnView();
-      initCommunityTypewriterOnView();
-      initWaitlistPlaceholderTypewriterOnView();
 
-      // Initialisiere Custom Scrollbars und Navigation nach dem Laden der Includes
-      if (typeof window.initCustomScrollbars === "function") {
-        window.initCustomScrollbars();
-      }
-      if (typeof window.initNavigation === "function") {
-        window.initNavigation();
-      }
-      if (typeof window.initFaq === "function") {
-        window.initFaq();
-      }
-      if (typeof window.initStoryJourney === "function") {
-        window.initStoryJourney();
-      }
-
-      // Important for links like /index.html#newsletter:
-      // the target may only exist after includes are rendered.
-      scrollToCurrentHash({ behavior: "auto" });
+      return IncludeManager.loadIncludes();
+    })
+    .then(() => {
+      initAfterAllIncludes();
     })
     .catch((error) => {
       console.error("Fehler beim Laden der Includes:", error);

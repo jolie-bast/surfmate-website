@@ -252,6 +252,17 @@
   transform: translateY(0);
 }
 
+html.skip-animations .about-intro-copy-hidden,
+html.skip-animations .community-copy-hidden {
+  opacity: 1;
+  transform: none;
+}
+
+html.skip-animations .use-case-card.reveal-init {
+  opacity: 1;
+  transform: none;
+}
+
 .section-dark strong {
   color: var(--accent-color);
   font-weight: 600;
