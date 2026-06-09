@@ -1,0 +1,33 @@
+.surfskate-section {
+  padding: 0;
+  margin: 0;
+}
+
+.surfskate-image-wrapper {
+  position: relative;
+  width: 100vw;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  max-width: 100vw;
+  overflow: hidden;
+}
+
+.surfskate-image {
+  width: 100vw;
+  min-height: 220px;
+  max-height: 420px;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  margin: 0 auto;
+  border-radius: 0;
+}
+
+@media (max-width: 600px) {
+  .surfskate-image {
+    min-height: 260px;
+    max-height: 340px;
+  }
+}
