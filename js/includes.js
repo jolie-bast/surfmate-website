@@ -466,8 +466,7 @@ function getHashTargetElement(hash) {
   }
 }
 
-function scrollToCurrentHash({ behavior = "auto", attempts = 0 } = {}) {
-  const hash = window.location.hash;
+function scrollToHash(hash, { behavior = "auto", attempts = 0 } = {}) {
   if (!hash || hash === "#") return;
 
   const targetElement = getHashTargetElement(hash);
@@ -490,10 +489,16 @@ function scrollToCurrentHash({ behavior = "auto", attempts = 0 } = {}) {
 
   if (attempts < 12) {
     setTimeout(() => {
-      scrollToCurrentHash({ behavior, attempts: attempts + 1 });
+      scrollToHash(hash, { behavior, attempts: attempts + 1 });
     }, 150);
   }
 }
+
+function scrollToCurrentHash({ behavior = "auto", attempts = 0 } = {}) {
+  scrollToHash(window.location.hash, { behavior, attempts });
+}
+
+window.scrollToHash = scrollToHash;
 
 // Lade Includes wenn DOM geladen ist
 

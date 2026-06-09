@@ -104,63 +104,42 @@ class Navigation {
     // Observer übernimmt wieder, daher hier nichts tun
   }
 
+  getHashFromHref(href) {
+    if (!href) return null;
+    const hashIndex = href.indexOf("#");
+    return hashIndex === -1 ? null : href.slice(hashIndex);
+  }
+
+  isOnIndexPage() {
+    const page = window.location.pathname.split("/").pop() || "index.html";
+    return page === "" || page === "index.html";
+  }
+
+  isIndexSectionLink(href) {
+    if (!href) return false;
+    if (href.startsWith("#")) return true;
+    return /^(\.\/|\/|)index\.html#/.test(href);
+  }
+
   handleAnchorClick(e, link) {
     const href = link.getAttribute("href");
+    const hash = this.getHashFromHref(href);
+    if (!hash) return;
 
-    // Prüfe ob es ein Anker-Link ist (beginnt mit #)
-    if (href && href.startsWith("#")) {
-      e.preventDefault();
+    const shouldScrollOnPage =
+      href.startsWith("#") ||
+      (this.isOnIndexPage() && this.isIndexSectionLink(href));
 
-      const targetId = href;
-      console.log(`Klick auf ${targetId} - suche Section...`);
+    if (!shouldScrollOnPage) return;
 
-      // Versuche mehrmals die Section zu finden (für dynamisch geladene Includes)
-      const findAndScrollToSection = (attempts = 0) => {
-        const targetSection = document.querySelector(targetId);
+    e.preventDefault();
 
-        if (targetSection) {
-          console.log(`Section ${targetId} gefunden!`);
+    if (window.location.hash !== hash) {
+      history.pushState(null, "", hash);
+    }
 
-          // Header-Höhe korrekt berechnen
-          let headerHeight = 80; // CSS Variable --header-height
-
-          if (this.header) {
-            // Tatsächliche Header-Höhe messen
-            const computedHeight = this.header.getBoundingClientRect().height;
-            headerHeight = Math.max(computedHeight, 80); // Mindestens 80px
-            console.log(`Header Höhe gemessen: ${computedHeight}px`);
-          }
-
-          // Perfekte Positionierung ohne zusätzliches Padding
-          const targetPosition = targetSection.offsetTop - headerHeight;
-
-          window.scrollTo({
-            top: Math.max(0, targetPosition),
-            behavior: "smooth",
-          });
-
-          console.log(
-            `Scrolling zu ${targetId}, Position: ${targetPosition}px (Header: ${headerHeight}px)`
-          );
-        } else if (attempts < 5) {
-          console.log(
-            `Section ${targetId} noch nicht gefunden, Versuch ${attempts + 1}/5`
-          );
-          setTimeout(() => findAndScrollToSection(attempts + 1), 200);
-        } else {
-          console.error(`Section ${targetId} nach 5 Versuchen nicht gefunden!`);
-          // Alternative: Scroll zum Ende der Seite als Fallback
-          if (targetId === "#newsletter" || targetId === "#waitlist") {
-            window.scrollTo({
-              top: document.body.scrollHeight,
-              behavior: "smooth",
-            });
-            console.log("Fallback: Scrolle zum Ende der Seite");
-          }
-        }
-      };
-
-      findAndScrollToSection();
+    if (typeof window.scrollToHash === "function") {
+      window.scrollToHash(hash, { behavior: "smooth" });
     }
   }
 
