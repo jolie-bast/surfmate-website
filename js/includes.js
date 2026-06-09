@@ -373,22 +373,21 @@ function initWaitlistPlaceholderTypewriterOnView() {
 }
 
 function configureHeroCtaByPlatform() {
-  const heroCta = document.querySelector(".hero-cta-button");
-  if (!heroCta) return;
+  const storeUrls = {
+    "app-store":
+      "https://apps.apple.com/de/app/surfmate-surf-log-connect/id6760191082",
+    "play-store":
+      "https://play.google.com/store/apps/details?id=com.joliebast.surfmateapp&pcampaignid=web_share",
+  };
 
-  const appStoreUrl =
-    "https://apps.apple.com/de/app/surfmate-surf-log-connect/id6760191082";
-  const playStoreUrl =
-    "https://play.google.com/store/apps/details?id=com.joliebast.surfmateapp&pcampaignid=web_share";
-  const ctaLabel = "Download Now";
+  document.querySelectorAll("[data-hero-store]").forEach((cta) => {
+    const store = cta.dataset.heroStore;
+    if (!storeUrls[store]) return;
 
-  const storeUrl = isAndroidDevice() ? playStoreUrl : appStoreUrl;
-
-  heroCta.href = storeUrl;
-  heroCta.textContent = ctaLabel;
-  heroCta.setAttribute("data-text", ctaLabel);
-  heroCta.target = "_blank";
-  heroCta.rel = "noopener noreferrer";
+    cta.href = storeUrls[store];
+    cta.target = "_blank";
+    cta.rel = "noopener noreferrer";
+  });
 }
 
 function getSafeAreaTopInset() {

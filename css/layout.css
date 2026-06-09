@@ -105,38 +105,46 @@
   }
 }
 
-/* Hero CTA Button */
-.hero-cta-button {
-  display: inline-block;
-  background-color: var(--surfmate-dark);
-  color: var(--surfmate-white);
-  text-decoration: none;
-  border-radius: var(--border-radius-pill);
-  font-family: var(--font-family-primary-bold);
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 1;
-  padding: calc(15px + var(--seattle-button-balance)) 35px
-    calc(15px - var(--seattle-button-balance));
-  cursor: pointer;
-  white-space: nowrap;
+/* Hero store badges */
+.hero-cta-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  align-items: center;
   margin-top: var(--spacing-lg);
-  text-shadow: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  outline: none;
-  transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.2s ease;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.hero-cta-button.hero-cta-hidden {
+.hero-cta-group.hero-cta-hidden {
   opacity: 0;
   transform: translateY(10px);
   pointer-events: none;
 }
 
-.hero-cta-button.hero-cta-visible {
+.hero-cta-group.hero-cta-visible {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
+}
+
+.hero-store-badge {
+  display: inline-block;
+  text-decoration: none;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.hero-store-badge:hover {
+  transform: translateY(-2px);
+  opacity: 0.95;
+}
+
+.hero-store-badge img {
+  display: block;
+  height: 44px;
+  width: auto;
 }
 
 .hero-subtitle.hero-subtitle-hidden {
@@ -149,24 +157,13 @@
   transform: translateY(0);
 }
 
-.hero-cta-button:hover {
-  text-decoration: none;
-}
-
-.hero-cta-button:active,
-.hero-cta-button:focus {
-  background-color: var(--surfmate-blue);
-  color: var(--primary-black);
-  text-decoration: none;
-  outline: none;
-}
-
 @media (max-width: 768px) {
-  .hero-cta-button {
-    font-size: 14px;
-    padding: calc(12px + var(--seattle-button-balance)) 20px
-      calc(12px - var(--seattle-button-balance));
+  .hero-cta-group {
     margin-top: var(--spacing-sm);
+  }
+
+  .hero-store-badge img {
+    height: 36px;
   }
 }
 
@@ -176,7 +173,7 @@
     animation: none;
   }
 
-  .hero-cta-button {
+  .hero-cta-group {
     transition: none;
   }
 
