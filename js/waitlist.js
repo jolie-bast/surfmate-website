@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
           return showError("Please enter a valid email address");
 
         hideError();
-        submitButton.textContent = "Joining...";
+        submitButton.textContent = "Subscribing...";
         submitButton.disabled = true;
 
         const formData = new URLSearchParams();
@@ -94,14 +94,14 @@ document.addEventListener("DOMContentLoaded", function () {
         )
           .then(() => {
             console.log("MailerLite request completed successfully");
-            submitButton.textContent = "Join Waitlist";
+            submitButton.textContent = "Subscribe";
             submitButton.disabled = false;
             emailInput.value = "";
             showSuccess();
           })
           .catch((error) => {
             console.log("MailerLite request error:", error);
-            submitButton.textContent = "Join Waitlist";
+            submitButton.textContent = "Subscribe";
             submitButton.disabled = false;
             emailInput.value = "";
             showSuccess();

@@ -523,7 +523,7 @@ document.addEventListener("DOMContentLoaded", () => {
         window.initStoryJourney();
       }
 
-      // Important for links like /index.html#waitlist:
+      // Important for links like /index.html#newsletter:
       // the target may only exist after includes are rendered.
       scrollToCurrentHash({ behavior: "auto" });
     })

@@ -487,12 +487,11 @@
 .story-store-badge {
   display: inline-block;
   text-decoration: none;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition: transform 0.15s ease;
 }
 
 .story-store-badge:hover {
-  transform: translateY(-2px);
-  opacity: 0.9;
+  transform: scale(1.05);
 }
 
 .story-store-badge img {

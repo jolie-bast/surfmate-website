@@ -150,7 +150,7 @@ class Navigation {
         } else {
           console.error(`Section ${targetId} nach 5 Versuchen nicht gefunden!`);
           // Alternative: Scroll zum Ende der Seite als Fallback
-          if (targetId === "#waitlist") {
+          if (targetId === "#newsletter" || targetId === "#waitlist") {
             window.scrollTo({
               top: document.body.scrollHeight,
               behavior: "smooth",
