@@ -14,17 +14,11 @@ class StoryJourney {
     this.waveFrame = null;
     this.ticking = false;
 
-    this.reducedMotion =
-      typeof window.prefersReducedMotion === "function"
-        ? window.prefersReducedMotion()
-        : window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    this.reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
 
-    if (!this.track) return;
-
-    if (this.reducedMotion) {
-      this.enableStaticMode();
-      return;
-    }
+    if (this.reducedMotion || !this.track) return;
 
     this.onScroll = this.onScroll.bind(this);
     this.animateWave = this.animateWave.bind(this);
@@ -33,27 +27,6 @@ class StoryJourney {
     window.addEventListener("resize", this.onScroll, { passive: true });
     this.onScroll();
     this.startWaveAnimation();
-  }
-
-  enableStaticMode() {
-    this.root.classList.remove("is-active");
-
-    this.scenes.forEach((scene) => {
-      scene.classList.add("is-active");
-      scene.style.setProperty("--ocean", "1");
-      scene.style.setProperty("--wave", "1");
-
-      scene
-        .querySelectorAll(
-          "[data-story-line], .story-polaroid, .story-tattoo, .story-memory-card, .story-scatter, .story-signature, .story-cta-group"
-        )
-        .forEach((el) => {
-          el.classList.add("is-visible");
-        });
-
-      const tattoo = scene.querySelector(".story-tattoo");
-      if (tattoo) tattoo.classList.add("is-drawn");
-    });
   }
 
   clamp(value) {

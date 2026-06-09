@@ -181,21 +181,6 @@
   }
 }
 
-html.skip-hero-animations .hero-subtitle.hero-subtitle-hidden,
-html.skip-hero-animations .hero-cta-group.hero-cta-hidden {
-  opacity: 0.9;
-  transform: none;
-  pointer-events: auto;
-}
-
-.hero-fallback {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #001a2e;
-}
-
 /* Surfmate Logo */
 .surfmate-logo {
   margin-bottom: var(--spacing-2xl);

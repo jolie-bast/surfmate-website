@@ -1,27 +1,24 @@
 // Include Manager für HTML Partials
 class IncludeManager {
-  static async loadInclude(include) {
-    const file = include.getAttribute("data-include");
-    if (!file) return;
-
-    try {
-      const response = await fetch(`/includes/${file}`);
-
-      if (response.ok) {
-        const content = await response.text();
-        include.innerHTML = content;
-        include.removeAttribute("data-include");
-      } else {
-        console.error(`Fehler beim Laden von ${file}:`, response.status);
-      }
-    } catch (error) {
-      console.error("Fehler beim Laden der Include-Datei:", error);
-    }
-  }
-
   static async loadIncludes() {
-    const includes = [...document.querySelectorAll("[data-include]")];
-    await Promise.all(includes.map((include) => this.loadInclude(include)));
+    const includes = document.querySelectorAll("[data-include]");
+
+    for (const include of includes) {
+      try {
+        const file = include.getAttribute("data-include");
+        const response = await fetch(`/includes/${file}`);
+
+        if (response.ok) {
+          const content = await response.text();
+          include.innerHTML = content;
+          include.removeAttribute("data-include");
+        } else {
+          console.error(`Fehler beim Laden von ${file}:`, response.status);
+        }
+      } catch (error) {
+        console.error("Fehler beim Laden der Include-Datei:", error);
+      }
+    }
   }
 }
 
@@ -41,19 +38,7 @@ function isAndroidDevice() {
 }
 
 function prefersReducedMotion() {
-  if (typeof window.prefersReducedMotion === "function") {
-    return window.prefersReducedMotion();
-  }
-
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
-function shouldSkipHeroAnimations() {
-  if (typeof window.shouldSkipHeroAnimations === "function") {
-    return window.shouldSkipHeroAnimations();
-  }
-
-  return prefersReducedMotion();
 }
 
 function sleep(ms) {
@@ -78,64 +63,18 @@ async function typeText(element, text, speedMs = 40) {
   element.classList.remove("is-typing");
 }
 
-function revealHeroCta(ctaElement) {
-  if (!ctaElement) return;
-
-  ctaElement.classList.remove("hero-cta-hidden");
-  requestAnimationFrame(() => {
-    ctaElement.classList.add("hero-cta-visible");
-  });
-}
-
-function revealHeroSubtitle(subtitleElement, text) {
-  if (!subtitleElement) return;
-
-  subtitleElement.textContent = text || "";
-  subtitleElement.classList.remove("hero-subtitle-hidden");
-  requestAnimationFrame(() => {
-    subtitleElement.classList.add("hero-subtitle-visible");
-  });
-}
-
-function revealHeroStatic(title, titleText, subtitle, subtitleText, cta) {
-  if (title) title.textContent = titleText;
-  revealHeroSubtitle(subtitle, subtitleText);
-  revealHeroCta(cta);
-}
-
-async function runHeroTypewriterSequence() {
-  const title = document.querySelector("[data-typewriter-title]");
-  const subtitle = document.querySelector("[data-typewriter-subtitle]");
-  const cta = document.querySelector("[data-typewriter-cta]");
-
-  const baseTitleText = title?.getAttribute("data-text") || "";
+function setupHero() {
+  const title = document.querySelector(".hero-title");
+  const baseTitleText = "Your Surf. Your Story.";
   const isMobileViewport = window.matchMedia("(max-width: 768px)").matches;
-  const titleText = isMobileViewport
-    ? baseTitleText.replace(". ", ".\n")
-    : baseTitleText;
-  const subtitleText = subtitle?.getAttribute("data-text") || "";
 
-  if (!title || !subtitle || !cta) {
-    revealHeroStatic(title, titleText, subtitle, subtitleText, cta);
-    return;
+  if (title) {
+    title.textContent = isMobileViewport
+      ? baseTitleText.replace(". ", ".\n")
+      : baseTitleText;
   }
 
-  if (shouldSkipHeroAnimations()) {
-    revealHeroStatic(title, titleText, subtitle, subtitleText, cta);
-    return;
-  }
-
-  title.textContent = "";
-  subtitle.classList.add("hero-subtitle-hidden");
-  subtitle.classList.remove("hero-subtitle-visible");
-  cta.classList.add("hero-cta-hidden");
-  cta.classList.remove("hero-cta-visible");
-
-  await typeText(title, titleText, 52);
-  await sleep(220);
-  revealHeroSubtitle(subtitle, subtitleText);
-  await sleep(120);
-  revealHeroCta(cta);
+  configureHeroCtaByPlatform();
 }
 
 function revealCommunityCopy(communityHeading) {
@@ -521,8 +460,7 @@ window.scrollToHash = scrollToHash;
 // Lade Includes wenn DOM geladen ist
 
 function initAfterAllIncludes() {
-  configureHeroCtaByPlatform();
-  void runHeroTypewriterSequence();
+  setupHero();
 
   initAboutIntroOnView();
   initUseCasesOnView();
