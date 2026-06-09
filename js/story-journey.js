@@ -93,8 +93,8 @@ class StoryJourney {
     scene.style.setProperty("--ocean", ocean);
     scene.style.setProperty("--wave", wave);
 
-    this.setVisible(scene.querySelector('[data-story-line="dream-1"]'), p > 0.05);
-    this.setVisible(scene.querySelector('[data-story-line="dream-2"]'), p > 0.38);
+    this.setVisible(scene.querySelector('[data-story-line="dream-1"]'), p >= 0);
+    this.setVisible(scene.querySelector('[data-story-line="dream-2"]'), p > 0.35);
   }
 
   animateFirstSurf(scene, p) {

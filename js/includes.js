@@ -19,13 +19,9 @@ class IncludeManager {
     }
   }
 
-  static async loadIncludes({ only = null } = {}) {
+  static async loadIncludes() {
     const includes = [...document.querySelectorAll("[data-include]")];
-    const selected = only
-      ? includes.filter((include) => only.has(include.getAttribute("data-include")))
-      : includes;
-
-    await Promise.all(selected.map((include) => this.loadInclude(include)));
+    await Promise.all(includes.map((include) => this.loadInclude(include)));
   }
 }
 
@@ -524,13 +520,10 @@ window.scrollToHash = scrollToHash;
 
 // Lade Includes wenn DOM geladen ist
 
-const PRIORITY_INCLUDES = new Set([
-  "header.html",
-  "hero.html",
-  "story.html",
-]);
-
 function initAfterAllIncludes() {
+  configureHeroCtaByPlatform();
+  void runHeroTypewriterSequence();
+
   initAboutIntroOnView();
   initUseCasesOnView();
   initCommunityTypewriterOnView();
@@ -555,17 +548,7 @@ function initAfterAllIncludes() {
 document.addEventListener("DOMContentLoaded", () => {
   initNoConnectionBannerAdjustment();
 
-  IncludeManager.loadIncludes({ only: PRIORITY_INCLUDES })
-    .then(() => {
-      configureHeroCtaByPlatform();
-      void runHeroTypewriterSequence();
-
-      if (typeof window.initStoryJourney === "function") {
-        window.initStoryJourney();
-      }
-
-      return IncludeManager.loadIncludes();
-    })
+  IncludeManager.loadIncludes()
     .then(() => {
       initAfterAllIncludes();
     })
