@@ -1,6 +1,6 @@
 /**
- * Decides when to skip typewriters and scroll-driven animations
- * (slow network, save-data mode, prefers-reduced-motion).
+ * Hero-only motion policy for slow networks and save-data mode.
+ * Story and other sections always animate (except prefers-reduced-motion).
  */
 (function () {
   function getNetworkConnection() {
@@ -25,19 +25,19 @@
     return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   }
 
-  function shouldSkipAnimations() {
+  function shouldSkipHeroAnimations() {
     if (prefersReducedMotion()) return true;
-    if (document.documentElement.classList.contains("skip-animations")) {
+    if (document.documentElement.classList.contains("skip-hero-animations")) {
       return true;
     }
     return hasSlowNetworkConnection();
   }
 
   if (hasSlowNetworkConnection()) {
-    document.documentElement.classList.add("skip-animations");
+    document.documentElement.classList.add("skip-hero-animations");
   }
 
   window.prefersReducedMotion = prefersReducedMotion;
-  window.shouldSkipAnimations = shouldSkipAnimations;
+  window.shouldSkipHeroAnimations = shouldSkipHeroAnimations;
   window.hasSlowNetworkConnection = hasSlowNetworkConnection;
 })();

@@ -15,8 +15,8 @@ class StoryJourney {
     this.ticking = false;
 
     this.reducedMotion =
-      typeof window.shouldSkipAnimations === "function"
-        ? window.shouldSkipAnimations()
+      typeof window.prefersReducedMotion === "function"
+        ? window.prefersReducedMotion()
         : window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (!this.track) return;

@@ -44,12 +44,20 @@ function isAndroidDevice() {
   return /Android/i.test(ua);
 }
 
-function shouldSkipAnimations() {
-  if (typeof window.shouldSkipAnimations === "function") {
-    return window.shouldSkipAnimations();
+function prefersReducedMotion() {
+  if (typeof window.prefersReducedMotion === "function") {
+    return window.prefersReducedMotion();
   }
 
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function shouldSkipHeroAnimations() {
+  if (typeof window.shouldSkipHeroAnimations === "function") {
+    return window.shouldSkipHeroAnimations();
+  }
+
+  return prefersReducedMotion();
 }
 
 function sleep(ms) {
@@ -116,7 +124,7 @@ async function runHeroTypewriterSequence() {
     return;
   }
 
-  if (shouldSkipAnimations()) {
+  if (shouldSkipHeroAnimations()) {
     revealHeroStatic(title, titleText, subtitle, subtitleText, cta);
     return;
   }
@@ -168,7 +176,7 @@ async function runAboutIntroTypewriterSequence() {
     return;
   }
 
-  if (shouldSkipAnimations()) {
+  if (prefersReducedMotion()) {
     aboutTitle.textContent = aboutTitleText;
     revealAboutIntroCopy(aboutCopy);
     return;
@@ -224,7 +232,7 @@ function initCommunityTypewriterOnView() {
     revealCommunityCopy(communityHeading);
   };
 
-  if (shouldSkipAnimations()) {
+  if (prefersReducedMotion()) {
     revealCommunityCopy(communityHeading);
     return;
   }
@@ -264,7 +272,7 @@ function initUseCasesOnView() {
     });
   };
 
-  if (shouldSkipAnimations()) {
+  if (prefersReducedMotion()) {
     cards.forEach((card) => {
       card.classList.add("is-visible");
     });
@@ -322,7 +330,7 @@ function initWaitlistPlaceholderTypewriterOnView() {
     }
   };
 
-  if (shouldSkipAnimations()) {
+  if (prefersReducedMotion()) {
     setFinalPlaceholder();
     return;
   }

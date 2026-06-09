@@ -181,8 +181,8 @@
   }
 }
 
-html.skip-animations .hero-subtitle.hero-subtitle-hidden,
-html.skip-animations .hero-cta-group.hero-cta-hidden {
+html.skip-hero-animations .hero-subtitle.hero-subtitle-hidden,
+html.skip-hero-animations .hero-cta-group.hero-cta-hidden {
   opacity: 0.9;
   transform: none;
   pointer-events: auto;

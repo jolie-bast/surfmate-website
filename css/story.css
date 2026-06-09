@@ -500,52 +500,6 @@
   width: auto;
 }
 
-/* Slow connection / reduced motion fallback */
-html.skip-animations .story-scroll-track {
-  height: auto;
-}
-
-html.skip-animations .story-stage {
-  position: relative;
-  height: auto;
-}
-
-html.skip-animations .story-scene {
-  position: relative;
-  opacity: 1;
-  visibility: visible;
-  min-height: 80vh;
-  padding: var(--spacing-3xl) 0;
-}
-
-html.skip-animations .story-scene + .story-scene {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-html.skip-animations .story-progress {
-  display: none;
-}
-
-html.skip-animations .story-line,
-html.skip-animations .story-chaos-line,
-html.skip-animations .story-polaroid,
-html.skip-animations .story-tattoo,
-html.skip-animations .story-memory-card,
-html.skip-animations .story-scatter,
-html.skip-animations .story-signature,
-html.skip-animations .story-cta-group {
-  opacity: 1 !important;
-  transform: none !important;
-}
-
-html.skip-animations .story-tattoo-path {
-  stroke-dashoffset: 0;
-}
-
-html.skip-animations .story-scene-bg--ocean {
-  opacity: 1;
-}
-
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .story-scroll-track {
