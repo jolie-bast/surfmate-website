@@ -58,7 +58,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.65rem;
   background-color: var(--surfmate-blue);
   color: var(--surfmate-dark);
   text-decoration: none;
@@ -66,8 +66,7 @@
   font-family: var(--font-family-primary-bold);
   font-size: 1rem;
   line-height: 1;
-  padding: calc(14px + var(--seattle-button-balance)) 28px
-    calc(14px - var(--seattle-button-balance));
+  padding: 14px 28px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
   transition: transform 0.15s ease, background-color 0.2s ease;
 }
@@ -85,7 +84,12 @@
 }
 
 .waiting-instagram-button .bi {
-  font-size: 1.15em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.45em;
+  line-height: 1;
+  margin-top: 0.05em;
 }
 
 @media (max-width: 600px) {
@@ -102,7 +106,10 @@
 
   .waiting-instagram-button {
     font-size: 0.9rem;
-    padding: calc(12px + var(--seattle-button-balance)) 22px
-      calc(12px - var(--seattle-button-balance));
+    padding: 12px 22px;
+  }
+
+  .waiting-instagram-button .bi {
+    font-size: 1.35em;
   }
 }
