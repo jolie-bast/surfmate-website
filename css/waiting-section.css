@@ -54,42 +54,39 @@
   max-width: 16ch;
 }
 
-.waiting-instagram-button {
+.waiting-team-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.65rem;
-  background-color: var(--surfmate-blue);
-  color: var(--surfmate-dark);
+  background-color: #ffffff;
+  color: #000000;
   text-decoration: none;
   border-radius: var(--border-radius-pill);
   font-family: var(--font-family-primary-bold);
   font-size: 1rem;
   line-height: 1;
-  padding: 14px 28px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-  transition: transform 0.15s ease, background-color 0.2s ease;
+  padding: calc(14px + var(--seattle-button-balance)) 28px
+    calc(14px - var(--seattle-button-balance));
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+    background-color var(--transition-fast);
 }
 
-.waiting-instagram-button:hover {
-  background-color: #8fd6f1;
-  color: var(--surfmate-dark);
+.waiting-team-button:hover {
+  background-color: #f0f0f0;
+  color: #000000;
+  transform: translateY(-1px);
   text-decoration: none;
-  transform: scale(1.05);
 }
 
-.waiting-instagram-button:focus-visible {
-  outline: 2px solid #fff;
+.waiting-team-button:focus-visible {
+  outline: 2px solid #ffffff;
   outline-offset: 3px;
 }
 
-.waiting-instagram-button .bi {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.45em;
-  line-height: 1;
-  margin-top: 0.05em;
+.waiting-team-button:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
 }
 
 @media (max-width: 600px) {
@@ -104,12 +101,8 @@
     padding: 1.5rem 1rem;
   }
 
-  .waiting-instagram-button {
-    font-size: 0.9rem;
-    padding: 12px 22px;
-  }
-
-  .waiting-instagram-button .bi {
-    font-size: 1.35em;
+  .waiting-team-button {
+    width: 100%;
+    max-width: 320px;
   }
 }

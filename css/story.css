@@ -132,7 +132,7 @@
   opacity: var(--ocean, 0);
   background:
     linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 20, 40, 0.85) 60%, #001a2e 100%),
-    url("../assets/founder-shooting/surfmate-jolie-surf-board-ueber-kopf.avif") center center / cover no-repeat;
+    url("../assets/surfmate-beginning.avif") center center / cover no-repeat;
   transform: scale(calc(1.06 - var(--ocean, 0) * 0.06));
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
