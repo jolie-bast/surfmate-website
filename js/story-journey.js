@@ -5,6 +5,7 @@ class StoryJourney {
   constructor(root) {
     this.root = root;
     this.track = root.querySelector(".story-scroll-track");
+    this.stage = root.querySelector(".story-stage");
     this.scenes = [...root.querySelectorAll("[data-story-scene]")];
     this.progressFill = root.querySelector(".story-progress-fill");
     this.progressDots = [...root.querySelectorAll("[data-chapter-dot]")];
@@ -141,27 +142,18 @@ class StoryJourney {
   }
 
   updateProgressUI(overall, chapterIndex) {
-    const journeyTop = this.root.offsetTop;
-    const journeyHeight = this.root.offsetHeight;
-    const scrollY = window.scrollY;
-    const viewportHeight = window.innerHeight;
+    const stageRect = this.stage?.getBoundingClientRect();
+    const isStoryEngaged =
+      stageRect &&
+      stageRect.top <= 0 &&
+      stageRect.bottom > window.innerHeight * 0.2;
 
-    const isInView =
-      scrollY + viewportHeight > journeyTop &&
-      scrollY < journeyTop + journeyHeight;
-
-    this.root.classList.toggle("is-active", isInView);
+    this.root.classList.toggle("is-active", Boolean(isStoryEngaged));
 
     if (this.progressFill) {
-      const isMobile = window.matchMedia("(max-width: 768px)").matches;
       const pct = `${overall * 100}%`;
-      if (isMobile) {
-        this.progressFill.style.width = pct;
-        this.progressFill.style.removeProperty("height");
-      } else {
-        this.progressFill.style.height = pct;
-        this.progressFill.style.width = "100%";
-      }
+      this.progressFill.style.height = pct;
+      this.progressFill.style.width = "100%";
     }
 
     this.progressDots.forEach((dot, i) => {

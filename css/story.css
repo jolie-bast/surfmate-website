@@ -14,9 +14,9 @@
   font-family: var(--font-family-primary-bold);
 }
 
-/* Progress indicator */
+/* Progress indicator — anchored to sticky stage, not viewport */
 .story-progress {
-  position: fixed;
+  position: absolute;
   left: 1.25rem;
   top: 50%;
   transform: translateY(-50%);
@@ -551,52 +551,39 @@
 /* Responsive */
 @media (max-width: 768px) {
   .story-progress {
-    left: auto;
-    right: 1rem;
-    top: auto;
-    bottom: 1.5rem;
-    transform: none;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.65rem;
+    left: 0.85rem;
+    gap: 0.45rem;
+  }
+
+  .story-progress-year {
+    font-size: 0.55rem;
   }
 
   .story-progress-track {
-    width: 100px;
-    height: 8px;
-    background: transparent;
+    width: 2px;
+    height: 110px;
+    background: rgba(255, 255, 255, 0.15);
   }
 
   .story-progress-track::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 50%;
-    height: 1.5px;
-    transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 1px;
-    z-index: 0;
+    content: none;
   }
 
   .story-progress-fill {
-    top: 50%;
+    top: 0;
     left: 0;
-    width: 0%;
-    height: 1.5px;
-    transform: translateY(-50%);
-    z-index: 0;
+    width: 100%;
+    height: 0%;
+    transform: none;
   }
 
   .story-progress-dots {
-    flex-direction: row;
-    align-items: center;
+    flex-direction: column;
     justify-content: space-between;
   }
 
   .story-progress-dots li {
-    margin: 0;
+    margin-left: -3px;
     position: relative;
     z-index: 1;
   }
