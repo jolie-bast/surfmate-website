@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="/css/consent.css" />
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-DKK7DGE8ED"
+    ></script>
+    <script src="/js/gtag-init.js"></script>
+    <script src="/js/consent.js" defer></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Share a surf event with the Surfmate community. Signed-in users can submit events for review."
+    />
+    <title>Share an event – Surfmate</title>
+    <link rel="canonical" href="https://surfmate.eu/events/submit" />
+
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/legal.css" />
+    <link rel="stylesheet" href="/css/event-submit.css" />
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+  </head>
+  <body class="event-submit-page">
+    <div data-include="header.html"></div>
+
+    <main class="main-content" style="padding-top: var(--header-height)">
+      <section class="content-section">
+        <div class="container">
+          <header class="content-header">
+            <h1>Share an event with the Community</h1>
+            <p>
+              Know a contest, festival, or meetup? Share the basics with us — we
+              review every submission before it appears in the app.
+            </p>
+          </header>
+
+          <div class="event-submit-panel">
+            <div id="event-submit-loading" class="event-submit-loading">
+              <span class="spinner" aria-hidden="true"></span>
+              Loading…
+            </div>
+
+            <div id="event-submit-auth" class="event-submit-card" hidden>
+              <h2>Sign in to continue</h2>
+              <p class="auth-intro">
+                Use your Surfmate account. No account yet?
+                <a href="https://apps.apple.com/de/app/surfmate-surf-log-connect/id6760191082" target="_blank" rel="noopener noreferrer">Get the app</a>
+                to sign up.
+              </p>
+
+              <p id="auth-error" class="auth-error" hidden role="alert"></p>
+              <p id="auth-message" class="auth-message" hidden role="status"></p>
+
+              <div
+                id="google-signin-container"
+                class="google-signin-container"
+                aria-live="polite"
+              ></div>
+
+              <div class="auth-divider">or sign in with email</div>
+
+              <div class="auth-tabs" role="tablist" aria-label="Sign in options">
+                <button
+                  type="button"
+                  class="auth-tab is-active"
+                  role="tab"
+                  aria-selected="true"
+                  data-auth-tab="password"
+                >
+                  Email &amp; password
+                </button>
+                <button
+                  type="button"
+                  class="auth-tab"
+                  role="tab"
+                  aria-selected="false"
+                  data-auth-tab="magic"
+                >
+                  Magic link
+                </button>
+              </div>
+
+              <div class="auth-panels">
+                <form
+                  id="sign-in-form"
+                  class="event-submit-form auth-panel is-active"
+                  data-auth-panel="password"
+                >
+                  <div class="form-field">
+                    <label for="sign-in-email">Email</label>
+                    <input
+                      id="sign-in-email"
+                      name="email"
+                      type="email"
+                      autocomplete="email"
+                      placeholder="you@example.com"
+                      required
+                    />
+                  </div>
+                  <div class="form-field">
+                    <label for="sign-in-password">Password</label>
+                    <input
+                      id="sign-in-password"
+                      name="password"
+                      type="password"
+                      autocomplete="current-password"
+                      required
+                    />
+                  </div>
+                  <button type="submit" class="btn-primary btn-block">Sign in</button>
+                </form>
+
+                <form
+                  id="magic-link-form"
+                  class="event-submit-form auth-panel"
+                  data-auth-panel="magic"
+                  hidden
+                >
+                  <div class="form-field">
+                    <label for="magic-link-email">Email</label>
+                    <input
+                      id="magic-link-email"
+                      name="email"
+                      type="email"
+                      autocomplete="email"
+                      placeholder="you@example.com"
+                      required
+                    />
+                    <p class="field-hint">
+                      We send a one-time link that opens this page, already signed in.
+                    </p>
+                  </div>
+                  <button type="submit" class="btn-primary btn-block">
+                    Send magic link
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <div id="event-submit-form-section" class="event-submit-card" hidden>
+              <div class="signed-in-bar">
+                <span>Signed in as <strong id="signed-in-email"></strong></span>
+                <button type="button" id="sign-out-btn" class="btn-ghost btn-sm">
+                  Sign out
+                </button>
+              </div>
+
+              <form id="event-submit-form" class="event-submit-form" novalidate>
+                <section class="form-section" aria-labelledby="section-basics">
+                  <h3 id="section-basics" class="form-section-title">The basics</h3>
+
+                  <div class="form-field">
+                    <label for="event-title">
+                      Event name <span class="required-mark" aria-hidden="true">*</span>
+                    </label>
+                    <input
+                      id="event-title"
+                      name="title"
+                      type="text"
+                      maxlength="200"
+                      placeholder="e.g. Baltic Surf Festival"
+                      required
+                    />
+                  </div>
+
+                  <div class="form-field location-field">
+                    <label for="event-location">
+                      Location <span class="required-mark" aria-hidden="true">*</span>
+                    </label>
+                    <div class="location-autocomplete">
+                      <div class="location-search-wrap">
+                        <input
+                          id="event-location"
+                          name="location"
+                          type="text"
+                          autocomplete="off"
+                          placeholder="Search city, venue, or beach…"
+                          required
+                          aria-describedby="place-hint place-status selected-place"
+                          aria-expanded="false"
+                          aria-controls="place-results"
+                          role="combobox"
+                        />
+                      </div>
+                      <ul id="place-results" class="place-results" role="listbox" hidden></ul>
+                    </div>
+                    <p id="place-hint" class="field-hint">
+                      Start typing, then choose a result from the list.
+                    </p>
+                    <p id="place-status" class="field-status" aria-live="polite"></p>
+                    <div id="selected-place" class="selected-place" hidden>
+                      <span class="selected-place-label">Selected:</span>
+                      <span id="selected-place-name" class="selected-place-name"></span>
+                      <button type="button" id="clear-place-btn" class="selected-place-clear">
+                        Change
+                      </button>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="form-section" aria-labelledby="section-when">
+                  <h3 id="section-when" class="form-section-title">When</h3>
+
+                  <div class="form-field">
+                    <span class="field-label">How specific is the schedule?</span>
+                    <div class="schedule-toggle" role="radiogroup" aria-label="Schedule type">
+                      <label class="schedule-option">
+                        <input
+                          type="radio"
+                          name="scheduleMode"
+                          id="schedule-all-day"
+                          value="exact"
+                          checked
+                        />
+                        <span class="schedule-option-text">
+                          <strong>Dates only</strong>
+                          <small>All-day event — no times needed</small>
+                        </span>
+                      </label>
+                      <label class="schedule-option">
+                        <input
+                          type="radio"
+                          name="scheduleMode"
+                          id="schedule-with-time"
+                          value="exact_datetime"
+                        />
+                        <span class="schedule-option-text">
+                          <strong>Dates &amp; times</strong>
+                          <small>Include start and end times</small>
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="date-grid">
+                    <div class="form-field">
+                      <span class="field-label" id="start-date-label">
+                        Starts <span class="required-mark" aria-hidden="true">*</span>
+                      </span>
+                      <div
+                        id="start-date"
+                        class="date-segments"
+                        role="group"
+                        aria-labelledby="start-date-label"
+                        data-date-required="true"
+                      >
+                        <div class="date-segments-row">
+                          <input
+                            type="text"
+                            inputmode="numeric"
+                            autocomplete="off"
+                            maxlength="2"
+                            placeholder="DD"
+                            class="date-segment"
+                            data-segment="day"
+                            aria-label="Day"
+                          />
+                          <span class="date-segment-sep" aria-hidden="true">/</span>
+                          <input
+                            type="text"
+                            inputmode="numeric"
+                            autocomplete="off"
+                            maxlength="2"
+                            placeholder="MM"
+                            class="date-segment"
+                            data-segment="month"
+                            aria-label="Month"
+                          />
+                          <span class="date-segment-sep" aria-hidden="true">/</span>
+                          <input
+                            type="text"
+                            inputmode="numeric"
+                            autocomplete="off"
+                            maxlength="4"
+                            placeholder="YYYY"
+                            class="date-segment date-segment-year"
+                            data-segment="year"
+                            aria-label="Year"
+                          />
+                        </div>
+                        <p class="field-hint">Day / month / year</p>
+                      </div>
+                    </div>
+                    <div class="form-field">
+                      <span class="field-label" id="end-date-label">Ends</span>
+                      <div
+                        id="end-date"
+                        class="date-segments"
+                        role="group"
+                        aria-labelledby="end-date-label"
+                      >
+                        <div class="date-segments-row">
+                          <input
+                            type="text"
+                            inputmode="numeric"
+                            autocomplete="off"
+                            maxlength="2"
+                            placeholder="DD"
+                            class="date-segment"
+                            data-segment="day"
+                            aria-label="Day"
+                          />
+                          <span class="date-segment-sep" aria-hidden="true">/</span>
+                          <input
+                            type="text"
+                            inputmode="numeric"
+                            autocomplete="off"
+                            maxlength="2"
+                            placeholder="MM"
+                            class="date-segment"
+                            data-segment="month"
+                            aria-label="Month"
+                          />
+                          <span class="date-segment-sep" aria-hidden="true">/</span>
+                          <input
+                            type="text"
+                            inputmode="numeric"
+                            autocomplete="off"
+                            maxlength="4"
+                            placeholder="YYYY"
+                            class="date-segment date-segment-year"
+                            data-segment="year"
+                            aria-label="Year"
+                          />
+                        </div>
+                        <p class="field-hint">Optional — leave empty for a single day.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div id="datetime-fields" class="datetime-fields" hidden>
+                    <div class="date-grid">
+                      <div class="form-field">
+                        <label for="start-time">Start time</label>
+                        <input id="start-time" name="startTime" type="time" />
+                      </div>
+                      <div class="form-field">
+                        <label for="end-time">End time</label>
+                        <input id="end-time" name="endTime" type="time" />
+                        <p class="field-hint">Optional</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <p id="schedule-preview" class="schedule-preview" hidden aria-live="polite"></p>
+                </section>
+
+                <section class="form-section" aria-labelledby="section-types">
+                  <h3 id="section-types" class="form-section-title">
+                    Event type <span class="required-mark" aria-hidden="true">*</span>
+                  </h3>
+                  <p class="field-hint section-hint">Pick one or more — tap to select.</p>
+                  <div id="event-types" class="event-type-chips" role="group" aria-label="Event types"></div>
+                </section>
+
+                <section class="form-section" aria-labelledby="section-about">
+                  <h3 id="section-about" class="form-section-title">About the event</h3>
+                  <div class="form-field">
+                    <label for="event-description">Short description</label>
+                    <textarea
+                      id="event-description"
+                      name="description"
+                      maxlength="600"
+                      placeholder="What's this event about? A few sentences is enough."
+                      aria-describedby="description-hint description-count"
+                    ></textarea>
+                    <p id="description-hint" class="field-hint">
+                      Optional. Shown in the app after we publish your event.
+                    </p>
+                    <p id="description-count" class="field-hint field-hint-right">0 / 600</p>
+                  </div>
+                </section>
+
+                <section class="form-section" aria-labelledby="section-note">
+                  <h3 id="section-note" class="form-section-title">Note for our team</h3>
+                  <div class="form-field">
+                    <label for="submitter-note" class="visually-hidden">Note for our team</label>
+                    <textarea
+                      id="submitter-note"
+                      name="note"
+                      maxlength="500"
+                      placeholder="e.g. Lineup TBA, link to tickets coming soon…"
+                      aria-describedby="note-hint note-count"
+                    ></textarea>
+                    <p id="note-hint" class="field-hint">
+                      Optional. Only visible to us during review — not shown in the app.
+                    </p>
+                    <p id="note-count" class="field-hint field-hint-right">0 / 500</p>
+                  </div>
+                </section>
+
+                <p id="form-error" class="form-error" hidden role="alert"></p>
+
+                <button type="submit" id="submit-event-btn" class="btn-primary btn-block">
+                  Submit for review
+                </button>
+                <p class="submit-footnote">
+                  Your event won't appear in the app until our team approves it.
+                </p>
+              </form>
+            </div>
+
+            <div id="event-submit-success" class="event-submit-card success-card" hidden>
+              <div class="success-icon" aria-hidden="true">✓</div>
+              <h2>Thanks — we'll review your event soon.</h2>
+              <p>
+                Your suggestion is in our queue. Once approved, it will appear in
+                the Surfmate app calendar.
+              </p>
+              <div class="success-actions">
+                <a href="/index.html" class="btn-primary btn-block">Back to homepage</a>
+                <button type="button" id="submit-another-btn" class="btn-secondary btn-block">
+                  Submit another event
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div data-include="footer.html"></div>
+
+    <script src="/js/includes.js"></script>
+    <script src="/js/navigation.js"></script>
+    <script src="/js/supabase-config.js"></script>
+    <script type="module" src="/js/event-submit.js"></script>
+  </body>
+</html>
