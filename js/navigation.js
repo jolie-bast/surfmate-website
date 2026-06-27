@@ -144,19 +144,25 @@ class Navigation {
   }
 
   setActiveLink() {
-    const currentPath = window.location.pathname;
-    const currentPage =
-      currentPath === "/" ? "index.html" : currentPath.split("/").pop();
+    const currentPath =
+      window.location.pathname.replace(/\/+$/, "") || "/index.html";
 
     this.navLinks.forEach((link) => {
       link.classList.remove("active");
       const href = link.getAttribute("href");
+      if (!href || href.startsWith("#")) return;
 
-      if (
-        href === currentPage ||
-        (currentPage === "index.html" && href === "./") ||
-        (currentPath === "/" && href === "./")
-      ) {
+      let linkPath = href;
+      if (!href.startsWith("http")) {
+        try {
+          linkPath = new URL(href, window.location.origin).pathname;
+        } catch {
+          linkPath = href;
+        }
+      }
+      linkPath = linkPath.replace(/\/+$/, "") || "/index.html";
+
+      if (linkPath === currentPath) {
         link.classList.add("active");
       }
     });

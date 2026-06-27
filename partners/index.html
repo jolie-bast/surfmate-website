@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="/css/consent.css" />
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-DKK7DGE8ED"
+    ></script>
+    <script src="/js/gtag-init.js"></script>
+    <script src="/js/consent.js" defer></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Surfmate partners — local surf spots, event series and brands in our community."
+    />
+    <title>Partners – Surfmate</title>
+    <link rel="canonical" href="https://surfmate.eu/partners/" />
+
+    <link rel="stylesheet" href="/css/main.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v3.9.4/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/partners.css" />
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+  </head>
+  <body class="partners-page">
+    <div data-include="header.html"></div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        let attempts = 0;
+        const maxAttempts = 10;
+
+        const makeHeaderDark = () => {
+          attempts++;
+          const header = document.querySelector(".header");
+          if (header) {
+            header.classList.add("scrolled");
+            header.style.background = "rgba(0, 0, 0, 0.95)";
+            header.style.backdropFilter = "blur(10px)";
+          } else if (attempts < maxAttempts) {
+            setTimeout(makeHeaderDark, 300);
+          }
+        };
+
+        makeHeaderDark();
+      });
+    </script>
+
+    <main class="partners-main">
+      <section class="partners-hero" aria-labelledby="partners-heading">
+        <div class="partners-hero-media">
+          <img
+            src="/assets/surfmate-kirsten-frank-loggertour.avif"
+            alt=""
+            class="partners-hero-img"
+            width="2400"
+            height="1350"
+            fetchpriority="high"
+            decoding="async"
+          />
+          <a
+            href="https://kirstenfrank.myportfolio.com/"
+            class="partners-hero-photo-credit"
+            target="_blank"
+            rel="noopener noreferrer"
+            >@ Kirsten Frank</a
+          >
+        </div>
+        <div class="partners-hero-inner">
+          <h1 id="partners-heading" class="partners-hero-title">Partners in our surf community</h1>
+          <p class="partners-hero-subline">
+            The brands, events and local spots that ride with Surfmate.
+          </p>
+        </div>
+      </section>
+
+      <section
+        id="partners-local-section"
+        class="partners-local-section"
+        aria-labelledby="partners-local-title"
+        hidden
+      >
+        <div class="partners-section-inner">
+          <div class="partners-section-header">
+            <h2 id="partners-local-title" class="partners-section-title">Local surf spots we love</h2>
+            <p class="partners-section-lead">Shops, schools and camps in our community.</p>
+          </div>
+          <div class="partners-marquee-wrap" aria-label="Local partner logos">
+            <div id="partners-marquee" class="partners-marquee"></div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="partners-events-section"
+        class="partners-events-section"
+        aria-labelledby="partners-events-title"
+        hidden
+      >
+        <div class="partners-section-inner">
+          <div class="partners-section-header">
+            <h2 id="partners-events-title" class="partners-section-title">Event partners</h2>
+            <p class="partners-section-lead">Series and tours we love and support.</p>
+          </div>
+          <div id="partners-events-grid" class="partners-events-grid"></div>
+        </div>
+      </section>
+
+      <section
+        id="partners-product-section"
+        class="partners-product-section"
+        aria-labelledby="partners-product-title"
+        hidden
+      >
+        <div class="partners-section-inner">
+          <div class="partners-section-header">
+            <h2 id="partners-product-title" class="partners-section-title">Product partners</h2>
+            <p class="partners-section-lead">Brands and makers our community rides with.</p>
+          </div>
+          <div id="partners-product-grid" class="partners-product-grid"></div>
+        </div>
+      </section>
+
+      <section class="partners-map-section" aria-labelledby="partners-map-title">
+        <div class="partners-section-inner">
+          <div class="partners-section-header">
+            <h2 id="partners-map-title" class="partners-section-title">On the map</h2>
+            <ul class="partners-map-legend" aria-label="Map legend">
+              <li>
+                <span class="partners-legend-dot partners-legend-dot--local" aria-hidden="true"></span>
+                Local spots
+              </li>
+              <li>
+                <span class="partners-legend-dot partners-legend-dot--event" aria-hidden="true"></span>
+                Event stops
+              </li>
+            </ul>
+          </div>
+          <div id="partners-map-status" class="partners-status" role="status" aria-live="polite" hidden></div>
+          <div id="partners-map" class="partners-map" role="region" aria-label="Partner locations map"></div>
+        </div>
+      </section>
+
+      <section class="partners-cta-section" aria-labelledby="partners-cta-title">
+        <div class="partners-section-inner">
+          <div class="partners-cta">
+            <h2 id="partners-cta-title" class="partners-cta-title">You think, we match?</h2>
+            <p class="partners-cta-text">
+              Send a mail at
+              <a href="mailto:jolie@surfmate.eu" class="partners-cta-link">jolie@surfmate.eu</a>
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div data-include="footer.html"></div>
+
+    <script src="/js/includes.js"></script>
+    <script src="/js/navigation.js"></script>
+    <script src="/js/supabase-config.js"></script>
+    <script src="/js/mapbox-config.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.9.4/mapbox-gl.js"></script>
+    <script src="/js/partners.js" defer></script>
+  </body>
+</html>

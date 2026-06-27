@@ -59,8 +59,14 @@
 
 .use-cases-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--spacing-lg);
+}
+
+@media (min-width: 1024px) {
+  .use-cases-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 .use-case-card {
