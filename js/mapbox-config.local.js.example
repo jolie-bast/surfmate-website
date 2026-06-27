@@ -1,5 +1,5 @@
 /**
- * Optional local override — copy to mapbox-config.local.js (gitignored).
+ * Local dev only (gitignored). Copy this file to mapbox-config.local.js
  * Same value as EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN in the Surfmate app.
  */
 window.SURFMATE_SUPABASE = window.SURFMATE_SUPABASE || {};
