@@ -1,4 +1,8 @@
-const config = window.SURFMATE_SUPABASE;
+function getConfig() {
+  return window.SURFMATE_SUPABASE;
+}
+
+const config = getConfig();
 
 const els = {
   mapStatus: document.getElementById("partners-map-status"),
@@ -231,7 +235,7 @@ function fitMapToPins(pins) {
 }
 
 function initMap(pins) {
-  const token = config?.mapboxToken?.trim();
+  const token = getConfig()?.mapboxToken?.trim();
   if (!token) {
     setMapStatus("Map is not configured yet.", true);
     els.mapContainer?.classList.add("is-hidden");

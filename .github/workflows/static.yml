@@ -36,10 +36,11 @@ jobs:
           MAPBOX_PUBLIC_TOKEN: ${{ secrets.MAPBOX_PUBLIC_TOKEN }}
         run: |
           if [ -z "$MAPBOX_PUBLIC_TOKEN" ]; then
-            echo "::warning::MAPBOX_PUBLIC_TOKEN secret not set — partners map will not load on the live site."
-            exit 0
+            echo "::error::MAPBOX_PUBLIC_TOKEN secret is not set. Add it in repo Settings → Secrets → Actions."
+            exit 1
           fi
           printf '%s\n' \
+            '/** Injected at deploy — do not commit real tokens. */' \
             'window.SURFMATE_SUPABASE = window.SURFMATE_SUPABASE || {};' \
             "window.SURFMATE_SUPABASE.mapboxToken = \"${MAPBOX_PUBLIC_TOKEN}\";" \
             > js/mapbox-config.js

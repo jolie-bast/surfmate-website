@@ -1,7 +1,6 @@
 /**
- * Copy to mapbox-config.js and set your Mapbox public token (pk.…).
+ * Optional local override — copy to mapbox-config.local.js (gitignored).
  * Same value as EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN in the Surfmate app.
- * mapbox-config.js is gitignored — never commit the real token.
  */
 window.SURFMATE_SUPABASE = window.SURFMATE_SUPABASE || {};
 window.SURFMATE_SUPABASE.mapboxToken = "pk.YOUR_MAPBOX_PUBLIC_TOKEN";

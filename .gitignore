@@ -1,2 +1,2 @@
-# Local secrets / overrides (never commit)
-js/mapbox-config.js
+# Local overrides (optional)
+js/mapbox-config.local.js
