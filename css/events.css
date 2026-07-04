@@ -26,6 +26,85 @@
   border: 0;
 }
 
+/* Download banner — sticky below fixed header */
+.events-download-banner {
+  position: sticky;
+  top: var(--header-height);
+  z-index: 900;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  background: linear-gradient(
+    90deg,
+    #5ebde3 0%,
+    var(--surfmate-blue) 50%,
+    #5ebde3 100%
+  );
+  box-shadow: 0 4px 16px rgba(115, 201, 235, 0.25);
+  animation: events-download-banner-slide-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
+}
+
+@keyframes events-download-banner-slide-in {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.events-download-banner-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.85rem 1.25rem;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0.65rem var(--spacing-lg);
+}
+
+.events-download-banner-label {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family-primary-bold);
+  font-size: 0.92rem;
+  letter-spacing: 0.01em;
+  color: var(--surfmate-dark);
+  white-space: nowrap;
+}
+
+.events-download-banner-stores {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.events-store-badge {
+  display: inline-block;
+  padding: 0;
+  line-height: 0;
+  text-decoration: none;
+  border-radius: 6px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  transition: transform var(--transition-fast);
+}
+
+.events-store-badge:hover,
+.events-store-badge:focus-visible {
+  transform: scale(1.04);
+  text-decoration: none;
+}
+
+.events-store-badge img {
+  display: block;
+  height: 36px;
+  width: auto;
+  max-width: none;
+}
+
 /* Hero */
 .events-hero {
   position: relative;
@@ -669,6 +748,19 @@
 }
 
 @media (max-width: 768px) {
+  .events-download-banner-inner {
+    padding: 0.55rem var(--spacing-md);
+    gap: 0.55rem 0.85rem;
+  }
+
+  .events-download-banner-label {
+    font-size: 0.85rem;
+  }
+
+  .events-store-badge img {
+    height: 32px;
+  }
+
   .events-hero-img {
     object-position: center 30%;
   }
@@ -728,6 +820,15 @@
 @media (prefers-reduced-motion: reduce) {
   .events-spinner {
     animation: none;
+  }
+
+  .events-download-banner {
+    animation: none;
+  }
+
+  .events-store-badge:hover,
+  .events-store-badge:focus-visible {
+    transform: none;
   }
 
   .events-on-dot {
