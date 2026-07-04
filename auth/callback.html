@@ -89,6 +89,8 @@
       var error = params.get("error") || query.get("error");
       var errorDescription =
         params.get("error_description") || query.get("error_description");
+      var authCode = query.get("code");
+      var nextUrl = query.get("next") || "/events/submit/";
 
       /** Opens the app sign-in screen (email + password). */
       var signInDeepLink = "surfmate://auth/email-sign-in";
@@ -98,6 +100,28 @@
 
       function isMobileUa() {
         return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent || "");
+      }
+
+      function redirectToNextWithQuery() {
+        try {
+          var target = new URL(nextUrl, window.location.origin);
+          query.forEach(function (value, key) {
+            if (key !== "next") {
+              target.searchParams.set(key, value);
+            }
+          });
+          main.innerHTML =
+            "<h1>Signing you in…</h1>" +
+            '<p class="muted"><span class="spinner" aria-hidden="true"></span>Redirecting back to Surfmate…</p>';
+          window.location.replace(target.toString());
+          return true;
+        } catch (redirectError) {
+          main.innerHTML =
+            "<h1>Sign-in incomplete</h1>" +
+            '<p class="error">Could not continue sign-in.</p>' +
+            '<p><a class="button" href="/events/submit/">Back to event submit</a></p>';
+          return false;
+        }
       }
 
       function render(title, bodyHtml, buttonHref, buttonLabel) {
@@ -153,6 +177,16 @@
 
       function scheduleConfirmedButton() {
         setTimeout(renderConfirmedReady, confirmedButtonDelayMs);
+      }
+
+      if (error && query.get("next")) {
+        redirectToNextWithQuery();
+        return;
+      }
+
+      if (authCode) {
+        redirectToNextWithQuery();
+        return;
       }
 
       if (error) {

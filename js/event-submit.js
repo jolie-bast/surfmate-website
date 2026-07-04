@@ -355,7 +355,7 @@ function updateSchedulePreview() {
       preview += ` at ${formatDisplayTime(els.endTime.value)}`;
     }
   } else if (withTime && els.endTime?.value) {
-    preview += ` → ends ${formatDisplayTime(els.endTime.value)}`;
+    preview += `, until ${formatDisplayTime(els.endTime.value)}`;
   } else if (!endLabel) {
     preview += withTime ? " (single day)" : " (all day, single date)";
   } else {
@@ -643,10 +643,13 @@ async function handleGoogleSignIn() {
   showAuthMessage(null);
   googleSignInBusy = true;
 
+  const callbackUrl = new URL("/auth/callback.html", window.location.origin);
+  callbackUrl.searchParams.set("next", SUBMIT_PAGE_URL);
+
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: SUBMIT_PAGE_URL,
+      redirectTo: callbackUrl.href,
     },
   });
 

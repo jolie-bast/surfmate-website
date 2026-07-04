@@ -170,6 +170,13 @@
   color: #b91c1c;
 }
 
+.optional-mark {
+  font-family: var(--font-family-primary);
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -362,6 +369,22 @@
 
 .datetime-fields[hidden] {
   display: none !important;
+}
+
+.datetime-fields {
+  margin-top: var(--spacing-md);
+}
+
+.datetime-fields .form-field input[type="time"] {
+  min-height: 48px;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.datetime-fields .form-field input[type="time"]::-webkit-calendar-picker-indicator {
+  margin-left: 4px;
+  cursor: pointer;
+  opacity: 0.65;
 }
 
 .schedule-preview {

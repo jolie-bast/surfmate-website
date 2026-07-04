@@ -210,25 +210,25 @@
                         <input
                           type="radio"
                           name="scheduleMode"
-                          id="schedule-all-day"
-                          value="exact"
+                          id="schedule-with-time"
+                          value="exact_datetime"
                           checked
                         />
                         <span class="schedule-option-text">
-                          <strong>Dates only</strong>
-                          <small>All-day event — no times needed</small>
+                          <strong>Dates &amp; times</strong>
+                          <small>Include start and end times</small>
                         </span>
                       </label>
                       <label class="schedule-option">
                         <input
                           type="radio"
                           name="scheduleMode"
-                          id="schedule-with-time"
-                          value="exact_datetime"
+                          id="schedule-all-day"
+                          value="exact"
                         />
                         <span class="schedule-option-text">
-                          <strong>Dates &amp; times</strong>
-                          <small>Include start and end times</small>
+                          <strong>Dates only</strong>
+                          <small>All-day event — no times needed</small>
                         </span>
                       </label>
                     </div>
@@ -330,16 +330,17 @@
                     </div>
                   </div>
 
-                  <div id="datetime-fields" class="datetime-fields" hidden>
+                  <div id="datetime-fields" class="datetime-fields">
                     <div class="date-grid">
                       <div class="form-field">
                         <label for="start-time">Start time</label>
-                        <input id="start-time" name="startTime" type="time" />
+                        <input id="start-time" name="startTime" type="time" step="60" />
                       </div>
                       <div class="form-field">
-                        <label for="end-time">End time</label>
-                        <input id="end-time" name="endTime" type="time" />
-                        <p class="field-hint">Optional</p>
+                        <label for="end-time">
+                          End time <span class="optional-mark">(optional)</span>
+                        </label>
+                        <input id="end-time" name="endTime" type="time" step="60" />
                       </div>
                     </div>
                   </div>
