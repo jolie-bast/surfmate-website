@@ -16,7 +16,7 @@ const els = {
 };
 
 const EUROPE_CENTER = { lng: 10, lat: 52 };
-const DEFAULT_ZOOM = 3.5;
+const DEFAULT_ZOOM = 4;
 
 const BUSINESS_TYPE_LABELS = {
   surf_shop: "Surf shop",
@@ -198,78 +198,69 @@ function buildPopupHtml(title, subtitle, url, tags = []) {
 }
 
 function addMapMarker({ lng, lat, type, title, subtitle, url, tags }) {
-  if (!map || typeof lng !== "number" || typeof lat !== "number") return null;
+  if (!map || !window.L || typeof lng !== "number" || typeof lat !== "number") return null;
 
-  const element = document.createElement("div");
-  element.className = `partners-map-marker partners-map-marker--${type}`;
+  const icon = L.divIcon({
+    className: `partners-map-marker partners-map-marker--${type} leaflet-div-icon`,
+    html: "",
+    iconSize: [18, 18],
+    iconAnchor: [9, 9],
+    popupAnchor: [0, -12],
+  });
 
-  const marker = new mapboxgl.Marker({ element }).setLngLat([lng, lat]);
-
-  const popup = new mapboxgl.Popup({ offset: 16, closeButton: true, closeOnClick: true }).setHTML(
-    buildPopupHtml(title, subtitle, url, tags),
-  );
-  marker.setPopup(popup);
-
-  marker.addTo(map);
-  return marker;
+  return L.marker([lat, lng], { icon })
+    .addTo(map)
+    .bindPopup(buildPopupHtml(title, subtitle, url, tags), {
+      closeButton: true,
+      maxWidth: 280,
+    });
 }
 
 function fitMapToPins(pins) {
-  if (!map || !pins.length) {
-    map?.setCenter([EUROPE_CENTER.lng, EUROPE_CENTER.lat]);
-    map?.setZoom(DEFAULT_ZOOM);
+  if (!map) return;
+
+  if (!pins.length) {
+    map.setView([EUROPE_CENTER.lat, EUROPE_CENTER.lng], DEFAULT_ZOOM);
     return;
   }
 
   if (pins.length === 1) {
-    map.setCenter([pins[0].lng, pins[0].lat]);
-    map.setZoom(8);
+    map.setView([pins[0].lat, pins[0].lng], 8);
     return;
   }
 
-  const bounds = new mapboxgl.LngLatBounds();
-  for (const pin of pins) {
-    bounds.extend([pin.lng, pin.lat]);
-  }
-  map.fitBounds(bounds, { padding: 56, maxZoom: 10, duration: 0 });
+  const bounds = L.latLngBounds(pins.map((pin) => [pin.lat, pin.lng]));
+  map.fitBounds(bounds, { padding: [56, 56], maxZoom: 10 });
 }
 
 function initMap(pins) {
-  const token = getConfig()?.mapboxToken?.trim();
-  if (!token) {
-    setMapStatus("Map is not configured yet.", true);
-    els.mapContainer?.classList.add("is-hidden");
-    return;
-  }
-
-  if (!window.mapboxgl) {
+  if (!window.L || !els.mapContainer) {
     setMapStatus("Map failed to load.", true);
     els.mapContainer?.classList.add("is-hidden");
     return;
   }
 
-  mapboxgl.accessToken = token;
-  map = new mapboxgl.Map({
-    container: els.mapContainer,
-    style: "mapbox://styles/mapbox/streets-v12",
-    center: [EUROPE_CENTER.lng, EUROPE_CENTER.lat],
-    zoom: DEFAULT_ZOOM,
-    attributionControl: true,
-  });
+  map = L.map(els.mapContainer, { zoomControl: true }).setView(
+    [EUROPE_CENTER.lat, EUROPE_CENTER.lng],
+    DEFAULT_ZOOM,
+  );
 
-  map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), "top-right");
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  }).addTo(map);
 
-  map.on("load", () => {
-    for (const pin of pins) {
-      addMapMarker(pin);
-    }
+  for (const pin of pins) {
+    addMapMarker(pin);
+  }
+
+  requestAnimationFrame(() => {
+    map.invalidateSize();
     fitMapToPins(pins);
-    setMapStatus("");
   });
 
-  map.on("error", () => {
-    setMapStatus("Map failed to load.", true);
-  });
+  setMapStatus("");
 }
 
 function collectMapPins(data) {

@@ -1,6 +1,0 @@
-/**
- * Local dev only (gitignored). Copy this file to mapbox-config.local.js
- * Same value as EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN in the Surfmate app.
- */
-window.SURFMATE_SUPABASE = window.SURFMATE_SUPABASE || {};
-window.SURFMATE_SUPABASE.mapboxToken = "pk.YOUR_MAPBOX_PUBLIC_TOKEN";

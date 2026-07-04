@@ -205,16 +205,19 @@
   display: none;
 }
 
-.partners-map .mapboxgl-popup-content {
-  padding: 14px 36px 14px 14px;
+.partners-map .leaflet-popup-content-wrapper {
   border-radius: 12px;
+}
+
+.partners-map .leaflet-popup-content {
+  margin: 14px 36px 14px 14px;
   font-family: var(--font-family-primary);
   font-size: 0.92rem;
   line-height: 1.4;
   color: #0f2737;
 }
 
-.partners-map .mapboxgl-popup-close-button {
+.partners-map .leaflet-popup-close-button {
   top: 6px;
   right: 6px;
   width: 28px;
@@ -226,29 +229,29 @@
   border-radius: 6px;
 }
 
-.partners-map .mapboxgl-popup-close-button:hover {
+.partners-map .leaflet-popup-close-button:hover {
   background: #f3f4f6;
   color: #0f2737;
 }
 
-.partners-map .mapboxgl-popup-content a {
+.partners-map .leaflet-popup-content a {
   color: #2b88ad;
   font-family: var(--font-family-primary-bold);
   text-decoration: none;
 }
 
-.partners-map .mapboxgl-popup-content a:hover {
+.partners-map .leaflet-popup-content a:hover {
   text-decoration: underline;
 }
 
-.partners-map .mapboxgl-popup-content .partners-popup-tags {
+.partners-map .leaflet-popup-content .partners-popup-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   margin-top: 8px;
 }
 
-.partners-map .mapboxgl-popup-content .partners-popup-tag {
+.partners-map .leaflet-popup-content .partners-popup-tag {
   display: inline-block;
   padding: 3px 8px;
   border-radius: 999px;
@@ -259,17 +262,24 @@
   line-height: 1.2;
 }
 
-.partners-map .mapboxgl-popup-content .partners-popup-subtitle {
+.partners-map .leaflet-popup-content .partners-popup-subtitle {
   margin-top: 6px;
   color: #4b5563;
   font-size: 0.85rem;
 }
 
-.partners-map .mapboxgl-popup-content .partners-popup-link {
+.partners-map .leaflet-popup-content .partners-popup-link {
   margin-top: 8px;
 }
 
-.partners-map-marker {
+.partners-map .leaflet-control-attribution {
+  font-size: 10px;
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.partners-map-marker.leaflet-div-icon {
+  display: block;
+  box-sizing: border-box;
   width: 18px;
   height: 18px;
   border-radius: 50%;

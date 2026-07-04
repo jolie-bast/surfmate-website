@@ -31,19 +31,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Inject Mapbox public token
-        env:
-          MAPBOX_PUBLIC_TOKEN: ${{ secrets.MAPBOX_PUBLIC_TOKEN }}
-        run: |
-          if [ -z "$MAPBOX_PUBLIC_TOKEN" ]; then
-            echo "::error::Add MAPBOX_PUBLIC_TOKEN in GitHub → Settings → Secrets → Actions (your pk.… token)."
-            exit 1
-          fi
-          printf '%s\n' \
-            '/** Injected at deploy from MAPBOX_PUBLIC_TOKEN secret. */' \
-            'window.SURFMATE_SUPABASE = window.SURFMATE_SUPABASE || {};' \
-            "window.SURFMATE_SUPABASE.mapboxToken = \"${MAPBOX_PUBLIC_TOKEN}\";" \
-            > js/mapbox-config.js
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact

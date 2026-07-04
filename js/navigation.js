@@ -80,12 +80,14 @@ class Navigation {
         this.closeMobileMenu();
       }
     });
+
+    window.addEventListener("hashchange", () => this.setActiveLink());
   }
 
   toggleMobileMenu() {
-    this.navMenu.classList.toggle("active");
-    this.navToggle.classList.toggle("active");
-    if (this.navMenu.classList.contains("active")) {
+    this.navMenu.classList.toggle("is-open");
+    this.navToggle.classList.toggle("is-open");
+    if (this.navMenu.classList.contains("is-open")) {
       // Nur wenn Navbar aktuell transparent ist, auf dunkel setzen
       if (this.header && !this.header.classList.contains("scrolled")) {
         this.header.classList.add("scrolled");
@@ -99,8 +101,8 @@ class Navigation {
   }
 
   closeMobileMenu() {
-    this.navMenu.classList.remove("active");
-    this.navToggle.classList.remove("active");
+    this.navMenu.classList.remove("is-open");
+    this.navToggle.classList.remove("is-open");
     // Observer übernimmt wieder, daher hier nichts tun
   }
 
@@ -111,8 +113,8 @@ class Navigation {
   }
 
   isOnIndexPage() {
-    const page = window.location.pathname.split("/").pop() || "index.html";
-    return page === "" || page === "index.html";
+    const path = window.location.pathname.replace(/\/+$/, "") || "/";
+    return path === "/" || path === "/index.html";
   }
 
   isIndexSectionLink(href) {
@@ -138,32 +140,55 @@ class Navigation {
       history.pushState(null, "", hash);
     }
 
+    this.setActiveLink();
+
     if (typeof window.scrollToHash === "function") {
       window.scrollToHash(hash, { behavior: "smooth" });
     }
   }
 
+  normalizePath(pathname) {
+    const path = pathname.replace(/\/+$/, "") || "/";
+    return path === "/" ? "/index.html" : path;
+  }
+
+  resolveNavLink(href) {
+    try {
+      return new URL(href, window.location.href);
+    } catch {
+      return null;
+    }
+  }
+
   setActiveLink() {
-    const currentPath =
-      window.location.pathname.replace(/\/+$/, "") || "/index.html";
+    const currentPath = this.normalizePath(window.location.pathname);
+    const currentHash = window.location.hash;
 
     this.navLinks.forEach((link) => {
       link.classList.remove("active");
-      const href = link.getAttribute("href");
-      if (!href || href.startsWith("#")) return;
+      link.removeAttribute("aria-current");
 
-      let linkPath = href;
-      if (!href.startsWith("http")) {
-        try {
-          linkPath = new URL(href, window.location.origin).pathname;
-        } catch {
-          linkPath = href;
+      const href = link.getAttribute("href");
+      if (!href) return;
+
+      const target = this.resolveNavLink(href);
+      if (!target) return;
+
+      const linkHash = target.hash;
+      const linkPath = this.normalizePath(target.pathname);
+
+      // Section links (#story, /index.html#about): only highlight on exact hash match.
+      if (linkHash) {
+        if (currentHash && linkHash === currentHash && linkPath === currentPath) {
+          link.classList.add("active");
+          link.setAttribute("aria-current", "true");
         }
+        return;
       }
-      linkPath = linkPath.replace(/\/+$/, "") || "/index.html";
 
       if (linkPath === currentPath) {
         link.classList.add("active");
+        link.setAttribute("aria-current", "page");
       }
     });
   }
