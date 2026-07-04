@@ -28,14 +28,21 @@ a.events-card:hover {
 .events-card-cover {
   position: relative;
   height: 148px;
+  overflow: hidden;
+  line-height: 0;
   background: rgba(255, 255, 255, 0.04);
 }
 
 .events-card-cover img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
+  max-width: none;
   object-fit: cover;
+  object-position: center;
   display: block;
+  transform: scale(1.06);
 }
 
 .events-card-cover--empty {
@@ -207,6 +214,10 @@ a.events-card:hover {
   }
 
   a.events-card:hover {
+    transform: none;
+  }
+
+  .events-card-cover img {
     transform: none;
   }
 }
