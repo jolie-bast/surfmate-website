@@ -16,6 +16,7 @@ export const SURF_EVENT_TYPES = [
   "national",
   "isa",
   "bwt",
+  "sup",
 ];
 
 export const SURF_EVENT_TYPE_LABELS = {
@@ -31,6 +32,7 @@ export const SURF_EVENT_TYPE_LABELS = {
   national: "National",
   isa: "ISA",
   bwt: "Big Wave",
+  sup: "SUP",
 };
 
 export const COMMUNITY_EVENT_SCHEDULE_TYPES = ["exact", "exact_datetime"];
