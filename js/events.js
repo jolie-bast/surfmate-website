@@ -312,6 +312,26 @@ function getCalendarMonthEvents(filteredEvents) {
   );
 }
 
+function getSelectedCalendarDayEvents(filteredEvents = getBaseFilteredEvents()) {
+  const monthEvents = getCalendarMonthEvents(filteredEvents);
+  const groups = groupSurfEventsForCalendarDay(
+    monthEvents,
+    state.calendarYear,
+    state.calendarMonth,
+    state.calendarDay,
+  );
+
+  return [...groups.exact, ...groups.monthYear, ...groups.yearOnly];
+}
+
+function getMapEvents() {
+  if (state.viewMode === "calendar") {
+    return getSelectedCalendarDayEvents();
+  }
+
+  return getBaseFilteredEvents();
+}
+
 function showViewSection(mode) {
   if (els.listSection) els.listSection.hidden = mode !== "list";
   if (els.calendarSection) els.calendarSection.hidden = mode !== "calendar";
@@ -334,7 +354,7 @@ function refreshMapSize() {
     map.invalidateSize();
     if (state.mapBoundsFilterEnabled) return;
 
-    const withCoords = getBaseFilteredEvents().filter(eventHasMapCoordinates);
+    const withCoords = getMapEvents().filter(eventHasMapCoordinates);
     fitMapToEvents(withCoords);
   });
 }
@@ -470,15 +490,7 @@ function renderCalendar(resetDayPagination = true) {
     <div class="events-calendar-grid">${dayCells}</div>
   `;
 
-  const groups = groupSurfEventsForCalendarDay(
-    monthEvents,
-    state.calendarYear,
-    state.calendarMonth,
-    state.calendarDay,
-  );
-  const dayEvents = [...groups.exact, ...groups.monthYear, ...groups.yearOnly].sort(
-    compareSurfEventsBySchedule,
-  );
+  const dayEvents = getSelectedCalendarDayEvents(monthEvents).sort(compareSurfEventsBySchedule);
 
   if (!dayEvents.length) {
     const emptyMessage = state.mapBoundsFilterEnabled
@@ -508,6 +520,10 @@ function renderCalendar(resetDayPagination = true) {
   }
 
   setStatus(`${monthEvents.length} event${monthEvents.length === 1 ? "" : "s"} this month`);
+
+  if (state.viewMode === "calendar") {
+    renderMap();
+  }
 }
 
 function buildPopupHtml(event) {
@@ -586,7 +602,7 @@ async function renderMap() {
 
   clearMapMarkers();
   const token = ++mapRenderToken;
-  const events = getBaseFilteredEvents();
+  const events = getMapEvents();
   const withCoords = events.filter(eventHasMapCoordinates);
 
   for (let index = 0; index < withCoords.length; index += MAP_MARKER_BATCH_SIZE) {
@@ -606,7 +622,16 @@ async function renderMap() {
 
   if (!state.mapBoundsFilterEnabled) {
     fitMapToEvents(withCoords);
-    setMapStatus(withCoords.length ? "" : "No events with map coordinates match your filters.");
+    if (state.viewMode === "calendar") {
+      const noun = withCoords.length === 1 ? "event" : "events";
+      setMapStatus(
+        withCoords.length
+          ? `${withCoords.length} ${noun} on this day`
+          : "No events with map coordinates on this day.",
+      );
+    } else {
+      setMapStatus(withCoords.length ? "" : "No events with map coordinates match your filters.");
+    }
   } else {
     updateMapAreaStatus();
   }
