@@ -1,29 +1,32 @@
-/* Upcoming events — homepage teaser between hero and story */
+/* Upcoming events — homepage preview (matches events page card UI) */
+
+@import url("./events-cards.css");
 
 .upcoming-events-section {
-  padding: clamp(3rem, 6vw, 4.5rem) 0;
-  background: var(--surfmate-light-gray);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding: clamp(3rem, 6vw, 5rem) 0;
+  background: #000;
+  color: var(--surfmate-white);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .upcoming-events-header {
   text-align: center;
-  max-width: 36rem;
-  margin: 0 auto var(--spacing-xl);
+  max-width: 38rem;
+  margin: 0 auto clamp(2rem, 4vw, 2.75rem);
 }
 
 .upcoming-events-title {
   margin: 0;
   font-family: var(--font-family-primary-bold);
   font-size: clamp(1.5rem, 3.5vw, 2rem);
-  color: var(--surfmate-dark);
+  color: var(--surfmate-white);
 }
 
 .upcoming-events-lead {
   margin: var(--spacing-sm) 0 0;
-  color: rgba(26, 26, 26, 0.65);
+  color: rgba(255, 255, 255, 0.65);
   font-size: 1rem;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 .upcoming-events-loading {
@@ -31,13 +34,13 @@
   align-items: center;
   justify-content: center;
   gap: 0.65rem;
-  color: rgba(26, 26, 26, 0.55);
+  color: rgba(255, 255, 255, 0.55);
   font-size: 0.92rem;
 }
 
 .upcoming-events-loading[hidden],
 .upcoming-events-error[hidden],
-.upcoming-events-list[hidden],
+.upcoming-events-preview[hidden],
 .upcoming-events-empty[hidden] {
   display: none;
 }
@@ -45,7 +48,7 @@
 .upcoming-events-spinner {
   width: 18px;
   height: 18px;
-  border: 2px solid rgba(26, 26, 26, 0.12);
+  border: 2px solid rgba(255, 255, 255, 0.12);
   border-top-color: var(--surfmate-blue);
   border-radius: 50%;
   animation: upcoming-events-spin 0.8s linear infinite;
@@ -59,175 +62,101 @@
 
 .upcoming-events-error {
   text-align: center;
-  color: #b91c1c;
+  color: #fca5a5;
   font-size: 0.92rem;
 }
 
 .upcoming-events-empty {
-  margin: 0;
+  margin: 0 0 var(--spacing-xl);
   text-align: center;
-  color: rgba(26, 26, 26, 0.55);
+  color: rgba(255, 255, 255, 0.55);
   font-size: 0.95rem;
 }
 
-.upcoming-events-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-  max-width: 52rem;
-  margin: 0 auto;
+.upcoming-events-preview {
+  position: relative;
+  margin-bottom: clamp(1.75rem, 4vw, 2.5rem);
 }
 
-.upcoming-event-row {
-  display: grid;
-  grid-template-columns: 7.5rem 1fr auto;
-  align-items: center;
-  gap: var(--spacing-md);
-  padding: 0.85rem 1.1rem;
-  border-radius: 14px;
-  background: var(--surfmate-white);
-  border: 1px solid #cfe1ec;
-  box-shadow: 0 4px 14px rgba(10, 30, 45, 0.06);
-  text-decoration: none;
-  color: inherit;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
-}
-
-a.upcoming-event-row:hover {
-  border-color: var(--surfmate-blue);
-  box-shadow: 0 8px 22px rgba(10, 30, 45, 0.1);
-  transform: translateY(-1px);
-  text-decoration: none;
-}
-
-.upcoming-event-row--static {
-  cursor: default;
-}
-
-.upcoming-event-date {
-  font-family: var(--font-family-primary-bold);
-  font-size: 0.82rem;
-  color: #11415a;
-  line-height: 1.3;
-}
-
-.upcoming-event-main {
-  min-width: 0;
-}
-
-.upcoming-event-title {
-  margin: 0;
-  font-family: var(--font-family-primary-bold);
-  font-size: 0.98rem;
-  color: var(--surfmate-dark);
-  line-height: 1.3;
-  white-space: nowrap;
+.upcoming-events-grid {
+  max-height: clamp(28rem, 62vh, 36rem);
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-.upcoming-event-location {
-  margin: 0.2rem 0 0;
-  font-size: 0.82rem;
-  color: rgba(26, 26, 26, 0.55);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.upcoming-events-preview:not(.has-more) .upcoming-events-fade {
+  display: none;
 }
 
-.upcoming-event-badges {
-  display: flex;
-  flex-shrink: 0;
-  gap: 0.35rem;
-}
-
-.upcoming-event-badge {
-  display: inline-block;
-  padding: 0.15rem 0.45rem;
-  border-radius: 999px;
-  font-family: var(--font-family-primary-bold);
-  font-size: 0.62rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.upcoming-event-badge--on {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  background: rgba(34, 197, 94, 0.12);
-  color: #15803d;
-}
-
-.upcoming-on-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #22c55e;
-  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.3);
-}
-
-.upcoming-event-badge--partner {
-  background: rgba(115, 201, 235, 0.18);
-  color: #1565a8;
+.upcoming-events-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: clamp(5rem, 12vw, 7rem);
+  background: linear-gradient(to bottom, transparent, #000 85%);
+  pointer-events: none;
 }
 
 .upcoming-events-footer {
-  margin-top: var(--spacing-xl);
-  text-align: center;
+  display: flex;
+  justify-content: center;
 }
 
-.upcoming-events-cta {
+.upcoming-events-discover-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.65rem 1.25rem;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.85rem 1.5rem;
   border-radius: 999px;
-  background: var(--surfmate-dark);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(115, 201, 235, 0.35);
   color: var(--surfmate-white);
   font-family: var(--font-family-primary-bold);
-  font-size: 0.92rem;
+  font-size: clamp(0.92rem, 2vw, 1rem);
   text-decoration: none;
-  transition: background var(--transition-fast), transform var(--transition-fast);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
-.upcoming-events-cta:hover,
-.upcoming-events-cta:focus-visible {
-  background: #000;
+.upcoming-events-discover-btn:hover,
+.upcoming-events-discover-btn:focus-visible {
+  background: rgba(115, 201, 235, 0.12);
+  border-color: rgba(115, 201, 235, 0.65);
   color: var(--surfmate-white);
   text-decoration: none;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+.upcoming-events-count {
+  display: inline-block;
+  min-width: 1.5ch;
+  color: var(--surfmate-blue);
+  font-variant-numeric: tabular-nums;
+}
+
+.upcoming-events-discover-btn .bi {
+  font-size: 1.05em;
+  transition: transform var(--transition-fast);
+}
+
+.upcoming-events-discover-btn:hover .bi,
+.upcoming-events-discover-btn:focus-visible .bi {
+  transform: translateX(3px);
 }
 
 @media (max-width: 640px) {
-  .upcoming-event-row {
-    grid-template-columns: 1fr auto;
-    grid-template-rows: auto auto;
-    gap: 0.35rem var(--spacing-sm);
-    padding: 0.85rem 1rem;
-  }
-
-  .upcoming-event-date {
-    grid-column: 1 / -1;
-    font-size: 0.78rem;
-  }
-
-  .upcoming-event-main {
-    grid-column: 1;
-  }
-
-  .upcoming-event-badges {
-    grid-column: 2;
-    grid-row: 2;
-    align-self: start;
-  }
-
-  .upcoming-event-title {
-    white-space: normal;
-  }
-
-  .upcoming-event-location {
-    white-space: normal;
+  .upcoming-events-discover-btn {
+    width: 100%;
+    max-width: 22rem;
+    padding-inline: 1.15rem;
+    text-align: center;
+    flex-wrap: wrap;
   }
 }
 
@@ -236,8 +165,10 @@ a.upcoming-event-row:hover {
     animation: none;
   }
 
-  a.upcoming-event-row:hover,
-  .upcoming-events-cta:hover {
+  .upcoming-events-discover-btn:hover,
+  .upcoming-events-discover-btn:focus-visible,
+  .upcoming-events-discover-btn:hover .bi,
+  .upcoming-events-discover-btn:focus-visible .bi {
     transform: none;
   }
 }

@@ -1,44 +1,36 @@
+import { buildEventCard } from "./events-cards.js";
 import {
   compareSurfEventsBySchedule,
   filterEvents,
-  formatEventLocationLabel,
-  formatSurfEventSchedule,
-  isSurfEventLiveNow,
   mapEventRow,
 } from "./events-shared.js";
 
-const UPCOMING_LIMIT = 5;
+const UPCOMING_PREVIEW_LIMIT = 6;
 
 const els = {
   section: null,
   loading: null,
   error: null,
-  list: null,
+  preview: null,
+  grid: null,
   empty: null,
+  count: null,
+  discover: null,
 };
 
 function getConfig() {
   return window.SURFMATE_SUPABASE;
 }
 
-function escapeHtml(value) {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
-}
-
-function hasWebsite(url) {
-  return typeof url === "string" && url.trim().length > 0;
-}
-
 function findElements() {
   els.section = document.getElementById("upcoming-events");
   els.loading = document.getElementById("upcoming-events-loading");
   els.error = document.getElementById("upcoming-events-error");
-  els.list = document.getElementById("upcoming-events-list");
+  els.preview = document.getElementById("upcoming-events-preview");
+  els.grid = document.getElementById("upcoming-events-grid");
   els.empty = document.getElementById("upcoming-events-empty");
+  els.count = document.getElementById("upcoming-events-count");
+  els.discover = document.getElementById("upcoming-events-discover");
 }
 
 function setLoading(isLoading) {
@@ -50,6 +42,32 @@ function setError(message) {
   const text = String(message ?? "").trim();
   els.error.textContent = text;
   els.error.hidden = !text;
+}
+
+function formatListedCount(count) {
+  return new Intl.NumberFormat(undefined).format(count);
+}
+
+function updateDiscoverCta(totalListed) {
+  if (!els.count || !els.discover) return;
+
+  if (typeof totalListed !== "number" || totalListed <= 0) {
+    els.count.textContent = "all";
+    els.discover.setAttribute(
+      "aria-label",
+      "Discover all listed surf events on the events page",
+    );
+    return;
+  }
+
+  const label = formatListedCount(totalListed);
+  els.count.textContent = label;
+
+  const eventWord = totalListed === 1 ? "event" : "events";
+  els.discover.setAttribute(
+    "aria-label",
+    `Discover ${label} listed surf ${eventWord} on the events page`,
+  );
 }
 
 async function fetchEvents(maxAttempts = 3) {
@@ -96,70 +114,38 @@ async function fetchEvents(maxAttempts = 3) {
   throw lastError ?? new Error("Could not load events.");
 }
 
-function buildEventRow(event) {
-  const dateLabel = formatSurfEventSchedule(
-    event.scheduleType,
-    event.startsAt,
-    event.endsAt,
-    event.eventYear,
-    event.eventMonth,
-  );
-  const locationLabel = formatEventLocationLabel(event.locationName, event.countryCode);
-  const isOn = isSurfEventLiveNow(
-    event.scheduleType,
-    event.startsAt,
-    event.endsAt,
-    event.eventYear,
-    event.eventMonth,
-  );
-
-  const badges = [
-    isOn ? '<span class="upcoming-event-badge upcoming-event-badge--on"><span class="upcoming-on-dot" aria-hidden="true"></span>ON</span>' : "",
-    event.isPartner ? '<span class="upcoming-event-badge upcoming-event-badge--partner">Partner</span>' : "",
-  ]
-    .filter(Boolean)
-    .join("");
-
-  const inner = `
-    <span class="upcoming-event-date">${escapeHtml(dateLabel)}</span>
-    <div class="upcoming-event-main">
-      <p class="upcoming-event-title">${escapeHtml(event.title)}</p>
-      <p class="upcoming-event-location">${escapeHtml(locationLabel)}</p>
-    </div>
-    ${badges ? `<div class="upcoming-event-badges">${badges}</div>` : ""}
-  `;
-
-  const href = hasWebsite(event.websiteUrl) ? event.websiteUrl.trim() : "/events/";
-
-  if (hasWebsite(event.websiteUrl)) {
-    return `<a href="${escapeHtml(href)}" class="upcoming-event-row" target="_blank" rel="noopener noreferrer">${inner}</a>`;
-  }
-
-  return `<a href="/events/" class="upcoming-event-row">${inner}</a>`;
-}
-
 function renderUpcomingEvents(events) {
+  const totalListed = events.length;
+  updateDiscoverCta(totalListed);
+
   const upcoming = filterEvents(events, {
     searchQuery: "",
     selectedTypes: new Set(),
     upcomingOnly: true,
-  })
-    .sort(compareSurfEventsBySchedule)
-    .slice(0, UPCOMING_LIMIT);
+  }).sort(compareSurfEventsBySchedule);
 
-  if (!upcoming.length) {
-    if (els.list) {
-      els.list.hidden = true;
-      els.list.innerHTML = "";
+  const preview = upcoming.slice(0, UPCOMING_PREVIEW_LIMIT);
+  const hasMore = upcoming.length > preview.length;
+
+  if (!preview.length) {
+    if (els.preview) {
+      els.preview.hidden = true;
+      els.preview.classList.remove("has-more");
     }
+    if (els.grid) els.grid.innerHTML = "";
     if (els.empty) els.empty.hidden = false;
     return;
   }
 
   if (els.empty) els.empty.hidden = true;
-  if (els.list) {
-    els.list.innerHTML = upcoming.map(buildEventRow).join("");
-    els.list.hidden = false;
+  if (els.preview) {
+    els.preview.hidden = false;
+    els.preview.classList.toggle("has-more", hasMore);
+  }
+  if (els.grid) {
+    els.grid.innerHTML = preview
+      .map((event) => buildEventCard(event, { selectedTypes: new Set() }))
+      .join("");
   }
 }
 
@@ -176,7 +162,12 @@ async function initHomeUpcomingEvents() {
   } catch (error) {
     console.error("Home upcoming events failed:", error);
     setError("Could not load events right now.");
-    if (els.list) els.list.hidden = true;
+    updateDiscoverCta(null);
+    if (els.preview) {
+      els.preview.hidden = true;
+      els.preview.classList.remove("has-more");
+    }
+    if (els.grid) els.grid.innerHTML = "";
     if (els.empty) els.empty.hidden = true;
   } finally {
     setLoading(false);

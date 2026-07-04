@@ -1,3 +1,4 @@
+import { buildEventCard } from "./events-cards.js";
 import {
   SURF_EVENT_TYPES,
   SURF_EVENT_TYPE_LABELS,
@@ -86,9 +87,8 @@ function hasWebsite(url) {
   return typeof url === "string" && url.trim().length > 0;
 }
 
-function isInvertFriendlyLogo(url) {
-  const path = String(url).split(/[?#]/)[0].toLowerCase();
-  return /\.(png|webp|svg)$/.test(path);
+function renderEventCard(event) {
+  return buildEventCard(event, { selectedTypes: state.selectedTypes });
 }
 
 function setLoading(isLoading) {
@@ -295,77 +295,6 @@ function refreshMapSize() {
   });
 }
 
-function buildTypeTagsHtml(eventTypes, selectedTypes) {
-  if (!eventTypes?.length) return "";
-
-  const chips = eventTypes
-    .map((type) => {
-      const label = SURF_EVENT_TYPE_LABELS[type] ?? type;
-      const highlighted = selectedTypes.has(type) ? " is-highlighted" : "";
-      return `<span class="events-type-tag${highlighted}">${escapeHtml(label)}</span>`;
-    })
-    .join("");
-
-  return `<div class="events-card-tags">${chips}</div>`;
-}
-
-function buildEventCard(event) {
-  const dateLabel = formatSurfEventSchedule(
-    event.scheduleType,
-    event.startsAt,
-    event.endsAt,
-    event.eventYear,
-    event.eventMonth,
-  );
-  const locationLabel = formatEventLocationLabel(event.locationName, event.countryCode);
-  const isLive = isSurfEventLiveNow(
-    event.scheduleType,
-    event.startsAt,
-    event.endsAt,
-    event.eventYear,
-    event.eventMonth,
-  );
-
-  const coverHtml = event.coverImageUrl
-    ? `<div class="events-card-cover"><img src="${escapeHtml(event.coverImageUrl)}" alt="" loading="lazy" decoding="async" /></div>`
-    : `<div class="events-card-cover events-card-cover--empty"></div>`;
-
-  const logoHtml = event.logoUrl
-    ? `<div class="events-card-logo${isInvertFriendlyLogo(event.logoUrl) ? " is-logo-mono" : ""}"><img src="${escapeHtml(event.logoUrl)}" alt="" loading="lazy" decoding="async" /></div>`
-    : "";
-
-  const partnerBadge = event.isPartner
-    ? `<span class="events-card-badge events-card-badge--partner">Partner</span>`
-    : "";
-
-  const liveBadge = isLive
-    ? `<span class="events-card-badge events-card-badge--live"><span class="events-on-dot" aria-hidden="true"></span>ON</span>`
-    : "";
-
-  const liveHeatsLink = hasWebsite(event.liveHeatsUrl)
-    ? `<a href="${escapeHtml(event.liveHeatsUrl.trim())}" class="events-card-live-link" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Live heats</a>`
-    : "";
-
-  const inner = `
-    ${coverHtml}
-    ${logoHtml}
-    <div class="events-card-body">
-      <div class="events-card-badges">${partnerBadge}${liveBadge}</div>
-      <h3 class="events-card-title">${escapeHtml(event.title)}</h3>
-      <p class="events-card-meta"><i class="bi bi-calendar3" aria-hidden="true"></i> ${escapeHtml(dateLabel)}</p>
-      <p class="events-card-meta"><i class="bi bi-geo-alt" aria-hidden="true"></i> ${escapeHtml(locationLabel)}</p>
-      ${buildTypeTagsHtml(event.eventTypes, state.selectedTypes)}
-      ${liveHeatsLink}
-    </div>
-  `;
-
-  if (hasWebsite(event.websiteUrl)) {
-    return `<a href="${escapeHtml(event.websiteUrl.trim())}" class="events-card${isLive ? " events-card--on" : ""}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(event.title)}">${inner}</a>`;
-  }
-
-  return `<article class="events-card events-card--static${isLive ? " events-card--on" : ""}" aria-label="${escapeHtml(event.title)}">${inner}</article>`;
-}
-
 function renderList(resetPagination = true) {
   if (!els.listGrid) return;
 
@@ -386,7 +315,7 @@ function renderList(resetPagination = true) {
   }
 
   const visible = events.slice(0, state.listVisibleCount);
-  els.listGrid.innerHTML = visible.map(buildEventCard).join("");
+  els.listGrid.innerHTML = visible.map(renderEventCard).join("");
 
   const hasMore = visible.length < events.length;
   updateLoadSentinel(els.listSentinel, hasMore);
@@ -515,7 +444,7 @@ function renderCalendar(resetDayPagination = true) {
     updateLoadSentinel(els.calendarSentinel, false);
   } else {
     const visibleDayEvents = dayEvents.slice(0, state.calendarDayVisibleCount);
-    els.calendarDayList.innerHTML = visibleDayEvents.map(buildEventCard).join("");
+    els.calendarDayList.innerHTML = visibleDayEvents.map(renderEventCard).join("");
 
     const hasMoreDayEvents = visibleDayEvents.length < dayEvents.length;
     updateLoadSentinel(els.calendarSentinel, hasMoreDayEvents);
