@@ -30,18 +30,23 @@ const els = {
   upcomingToggle: document.getElementById("events-upcoming-toggle"),
   filterChips: document.getElementById("events-filter-chips"),
   viewToggle: document.getElementById("events-view-toggle"),
+  splitLayout: document.getElementById("events-split-layout"),
   listSection: document.getElementById("events-list-section"),
   listGrid: document.getElementById("events-list-grid"),
   calendarSection: document.getElementById("events-calendar-section"),
   calendarRoot: document.getElementById("events-calendar"),
   calendarDayList: document.getElementById("events-calendar-day-list"),
-  mapSection: document.getElementById("events-map-section"),
+  calendarSentinel: document.getElementById("events-calendar-sentinel"),
+  listSentinel: document.getElementById("events-list-sentinel"),
+  splitMap: document.querySelector(".events-split-map"),
   mapStatus: document.getElementById("events-map-status"),
   mapContainer: document.getElementById("events-map"),
 };
 
 const EUROPE_CENTER = { lng: 10, lat: 52 };
 const DEFAULT_ZOOM = 4;
+const LIST_BATCH_SIZE = 12;
+const MAP_MARKER_BATCH_SIZE = 20;
 
 const state = {
   allEvents: [],
@@ -49,17 +54,25 @@ const state = {
   searchQuery: "",
   selectedTypes: new Set(),
   upcomingOnly: true,
+  listVisibleCount: LIST_BATCH_SIZE,
+  calendarDayVisibleCount: LIST_BATCH_SIZE,
   calendarYear: new Date().getFullYear(),
   calendarMonth: new Date().getMonth() + 1,
   calendarDay: getDefaultSelectedDayForMonth(
     new Date().getFullYear(),
     new Date().getMonth() + 1,
   ),
+  mapBoundsFilterEnabled: false,
 };
 
 let map = null;
 let mapMarkers = [];
+let mapRenderToken = 0;
+let mapViewportDebounceTimer = null;
+let mapVisibilityObserver = null;
 let searchDebounceTimer = null;
+let listLoadObserver = null;
+let calendarLoadObserver = null;
 
 function escapeHtml(value) {
   return String(value)
@@ -104,7 +117,63 @@ function setMapStatus(message, isError = false) {
   els.mapStatus.hidden = !text;
 }
 
-function getFilteredEvents() {
+function resetListPagination() {
+  state.listVisibleCount = LIST_BATCH_SIZE;
+}
+
+function resetCalendarDayPagination() {
+  state.calendarDayVisibleCount = LIST_BATCH_SIZE;
+}
+
+function formatCountStatus(visible, total, noun = "event") {
+  const plural = total === 1 ? noun : `${noun}s`;
+  if (visible < total) {
+    return `Showing ${visible} of ${total} ${plural}`;
+  }
+  return `${total} ${plural}`;
+}
+
+function updateLoadSentinel(sentinel, hasMore) {
+  if (!sentinel) return;
+
+  sentinel.hidden = !hasMore;
+  sentinel.innerHTML = hasMore
+    ? `<span class="events-load-more-inner"><span class="events-spinner" aria-hidden="true"></span>Loading more events…</span>`
+    : "";
+}
+
+function bindInfiniteScroll(sentinel, getHasMore, onLoadMore, currentObserver) {
+  if (currentObserver?.disconnect) {
+    currentObserver.disconnect();
+  }
+
+  if (!sentinel || !window.IntersectionObserver) {
+    return null;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (entries[0]?.isIntersecting && getHasMore()) {
+        onLoadMore();
+      }
+    },
+    { root: null, rootMargin: "280px 0px" },
+  );
+
+  observer.observe(sentinel);
+  return observer;
+}
+
+function eventHasMapCoordinates(event) {
+  return typeof event.latitude === "number" && typeof event.longitude === "number";
+}
+
+function isEventInMapBounds(event, bounds) {
+  if (!eventHasMapCoordinates(event)) return false;
+  return bounds.contains([event.latitude, event.longitude]);
+}
+
+function getBaseFilteredEvents() {
   const filtered = filterEvents(state.allEvents, {
     searchQuery: state.searchQuery,
     selectedTypes: state.selectedTypes,
@@ -112,6 +181,85 @@ function getFilteredEvents() {
   });
 
   return [...filtered].sort(compareSurfEventsBySchedule);
+}
+
+function getFilteredEvents() {
+  const events = getBaseFilteredEvents();
+
+  if (!state.mapBoundsFilterEnabled || !map) {
+    return events;
+  }
+
+  const bounds = map.getBounds();
+  return events.filter((event) => isEventInMapBounds(event, bounds));
+}
+
+function updateMapAreaStatus() {
+  if (!state.mapBoundsFilterEnabled || !map) return;
+
+  const inView = getFilteredEvents().length;
+  if (inView === 0) {
+    setMapStatus("No events in this map area — try zooming out or panning.");
+    return;
+  }
+
+  setMapStatus(`${inView} event${inView === 1 ? "" : "s"} in this map area`);
+}
+
+function setMapBoundsFilterEnabled(enabled) {
+  const next = Boolean(enabled);
+  if (state.mapBoundsFilterEnabled === next) return;
+
+  state.mapBoundsFilterEnabled = next;
+  els.splitLayout?.classList.toggle("is-map-bounds-filter", next);
+  resetListPagination();
+  resetCalendarDayPagination();
+  renderContentViews(true);
+  updateMapAreaStatus();
+}
+
+function onMapViewportChanged() {
+  if (!state.mapBoundsFilterEnabled) return;
+
+  clearTimeout(mapViewportDebounceTimer);
+  mapViewportDebounceTimer = setTimeout(() => {
+    resetListPagination();
+    resetCalendarDayPagination();
+    renderContentViews(false);
+    updateMapAreaStatus();
+  }, 180);
+}
+
+function setupMapBoundsFilter() {
+  if (!els.splitMap || !window.IntersectionObserver) return;
+
+  if (mapVisibilityObserver) {
+    mapVisibilityObserver.disconnect();
+  }
+
+  mapVisibilityObserver = new IntersectionObserver(
+    (entries) => {
+      setMapBoundsFilterEnabled(Boolean(entries[0]?.isIntersecting));
+    },
+    { threshold: 0.2 },
+  );
+
+  mapVisibilityObserver.observe(els.splitMap);
+}
+
+function bindMapViewportEvents() {
+  if (!map) return;
+
+  map.on("moveend", onMapViewportChanged);
+  map.on("zoomend", onMapViewportChanged);
+}
+
+function renderContentViews(resetPagination = true) {
+  if (state.viewMode === "list") {
+    renderList(resetPagination);
+  } else {
+    renderCalendar(resetPagination);
+  }
 }
 
 function getCalendarMonthEvents(filteredEvents) {
@@ -123,7 +271,6 @@ function getCalendarMonthEvents(filteredEvents) {
 function showViewSection(mode) {
   if (els.listSection) els.listSection.hidden = mode !== "list";
   if (els.calendarSection) els.calendarSection.hidden = mode !== "calendar";
-  if (els.mapSection) els.mapSection.hidden = mode !== "map";
 
   if (els.viewToggle) {
     for (const button of els.viewToggle.querySelectorAll("[data-view]")) {
@@ -133,12 +280,19 @@ function showViewSection(mode) {
     }
   }
 
-  if (mode === "map" && map) {
-    requestAnimationFrame(() => {
-      map.invalidateSize();
-      fitMapToEvents(getFilteredEvents());
-    });
-  }
+  refreshMapSize();
+}
+
+function refreshMapSize() {
+  if (!map) return;
+
+  requestAnimationFrame(() => {
+    map.invalidateSize();
+    if (state.mapBoundsFilterEnabled) return;
+
+    const withCoords = getBaseFilteredEvents().filter(eventHasMapCoordinates);
+    fitMapToEvents(withCoords);
+  });
 }
 
 function buildTypeTagsHtml(eventTypes, selectedTypes) {
@@ -185,7 +339,7 @@ function buildEventCard(event) {
     : "";
 
   const liveBadge = isLive
-    ? `<span class="events-card-badge events-card-badge--live">ON</span>`
+    ? `<span class="events-card-badge events-card-badge--live"><span class="events-on-dot" aria-hidden="true"></span>ON</span>`
     : "";
 
   const liveHeatsLink = hasWebsite(event.liveHeatsUrl)
@@ -206,25 +360,52 @@ function buildEventCard(event) {
   `;
 
   if (hasWebsite(event.websiteUrl)) {
-    return `<a href="${escapeHtml(event.websiteUrl.trim())}" class="events-card" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(event.title)}">${inner}</a>`;
+    return `<a href="${escapeHtml(event.websiteUrl.trim())}" class="events-card${isLive ? " events-card--on" : ""}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(event.title)}">${inner}</a>`;
   }
 
-  return `<article class="events-card events-card--static" aria-label="${escapeHtml(event.title)}">${inner}</article>`;
+  return `<article class="events-card events-card--static${isLive ? " events-card--on" : ""}" aria-label="${escapeHtml(event.title)}">${inner}</article>`;
 }
 
-function renderList() {
+function renderList(resetPagination = true) {
   if (!els.listGrid) return;
+
+  if (resetPagination) {
+    resetListPagination();
+  }
 
   const events = getFilteredEvents();
 
   if (!events.length) {
-    els.listGrid.innerHTML = `<p class="events-empty">No events match your filters.</p>`;
-    setStatus("");
+    const emptyMessage = state.mapBoundsFilterEnabled
+      ? "No events in the current map view."
+      : "No events match your filters.";
+    els.listGrid.innerHTML = `<p class="events-empty">${emptyMessage}</p>`;
+    updateLoadSentinel(els.listSentinel, false);
+    setStatus(state.mapBoundsFilterEnabled ? "No events in map view" : "");
     return;
   }
 
-  els.listGrid.innerHTML = events.map(buildEventCard).join("");
-  setStatus(`${events.length} event${events.length === 1 ? "" : "s"}`);
+  const visible = events.slice(0, state.listVisibleCount);
+  els.listGrid.innerHTML = visible.map(buildEventCard).join("");
+
+  const hasMore = visible.length < events.length;
+  updateLoadSentinel(els.listSentinel, hasMore);
+
+  const suffix = state.mapBoundsFilterEnabled ? " in map view" : "";
+  setStatus(`${formatCountStatus(visible.length, events.length)}${suffix}`);
+
+  listLoadObserver = bindInfiniteScroll(
+    els.listSentinel,
+    () => state.listVisibleCount < getFilteredEvents().length,
+    () => {
+      state.listVisibleCount = Math.min(
+        state.listVisibleCount + LIST_BATCH_SIZE,
+        getFilteredEvents().length,
+      );
+      renderList(false);
+    },
+    listLoadObserver,
+  );
 }
 
 function isToday(year, month, day) {
@@ -254,8 +435,12 @@ function hasEventMarkerForDay(day, monthEvents) {
   return false;
 }
 
-function renderCalendar() {
+function renderCalendar(resetDayPagination = true) {
   if (!els.calendarRoot || !els.calendarDayList) return;
+
+  if (resetDayPagination) {
+    resetCalendarDayPagination();
+  }
 
   const filtered = getFilteredEvents();
   const monthEvents = getCalendarMonthEvents(filtered);
@@ -323,9 +508,30 @@ function renderCalendar() {
   );
 
   if (!dayEvents.length) {
-    els.calendarDayList.innerHTML = `<p class="events-empty">No events on this day.</p>`;
+    const emptyMessage = state.mapBoundsFilterEnabled
+      ? "No events in the current map view."
+      : "No events on this day.";
+    els.calendarDayList.innerHTML = `<p class="events-empty">${emptyMessage}</p>`;
+    updateLoadSentinel(els.calendarSentinel, false);
   } else {
-    els.calendarDayList.innerHTML = dayEvents.map(buildEventCard).join("");
+    const visibleDayEvents = dayEvents.slice(0, state.calendarDayVisibleCount);
+    els.calendarDayList.innerHTML = visibleDayEvents.map(buildEventCard).join("");
+
+    const hasMoreDayEvents = visibleDayEvents.length < dayEvents.length;
+    updateLoadSentinel(els.calendarSentinel, hasMoreDayEvents);
+
+    calendarLoadObserver = bindInfiniteScroll(
+      els.calendarSentinel,
+      () => state.calendarDayVisibleCount < dayEvents.length,
+      () => {
+        state.calendarDayVisibleCount = Math.min(
+          state.calendarDayVisibleCount + LIST_BATCH_SIZE,
+          dayEvents.length,
+        );
+        renderCalendar(false);
+      },
+      calendarLoadObserver,
+    );
   }
 
   setStatus(`${monthEvents.length} event${monthEvents.length === 1 ? "" : "s"} this month`);
@@ -378,34 +584,59 @@ function fitMapToEvents(events) {
   map.fitBounds(bounds, { padding: [56, 56], maxZoom: 10 });
 }
 
-function renderMap() {
+function addMapMarker(event) {
+  const isLive = isSurfEventLiveNow(
+    event.scheduleType,
+    event.startsAt,
+    event.endsAt,
+    event.eventYear,
+    event.eventMonth,
+  );
+
+  const icon = L.divIcon({
+    className: `events-map-marker${isLive ? " events-map-marker--on" : ""} leaflet-div-icon`,
+    html: "",
+    iconSize: [18, 18],
+    iconAnchor: [9, 9],
+    popupAnchor: [0, -12],
+  });
+
+  const marker = L.marker([event.latitude, event.longitude], { icon })
+    .addTo(map)
+    .bindPopup(buildPopupHtml(event), { closeButton: true, maxWidth: 280 });
+
+  mapMarkers.push(marker);
+}
+
+async function renderMap() {
   if (!map || !window.L) return;
 
   clearMapMarkers();
-  const events = getFilteredEvents();
-  const withCoords = events.filter(
-    (event) => typeof event.latitude === "number" && typeof event.longitude === "number",
-  );
+  const token = ++mapRenderToken;
+  const events = getBaseFilteredEvents();
+  const withCoords = events.filter(eventHasMapCoordinates);
 
-  for (const event of withCoords) {
-    const icon = L.divIcon({
-      className: "events-map-marker leaflet-div-icon",
-      html: "",
-      iconSize: [18, 18],
-      iconAnchor: [9, 9],
-      popupAnchor: [0, -12],
-    });
+  for (let index = 0; index < withCoords.length; index += MAP_MARKER_BATCH_SIZE) {
+    if (token !== mapRenderToken) return;
 
-    const marker = L.marker([event.latitude, event.longitude], { icon })
-      .addTo(map)
-      .bindPopup(buildPopupHtml(event), { closeButton: true, maxWidth: 280 });
+    const batch = withCoords.slice(index, index + MAP_MARKER_BATCH_SIZE);
+    for (const event of batch) {
+      addMapMarker(event);
+    }
 
-    mapMarkers.push(marker);
+    if (index + MAP_MARKER_BATCH_SIZE < withCoords.length) {
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+    }
   }
 
-  fitMapToEvents(withCoords);
-  setMapStatus(withCoords.length ? "" : "No events with map coordinates match your filters.");
-  setStatus(`${withCoords.length} event${withCoords.length === 1 ? "" : "s"} on map`);
+  if (token !== mapRenderToken) return;
+
+  if (!state.mapBoundsFilterEnabled) {
+    fitMapToEvents(withCoords);
+    setMapStatus(withCoords.length ? "" : "No events with map coordinates match your filters.");
+  } else {
+    updateMapAreaStatus();
+  }
 }
 
 function initMap() {
@@ -428,6 +659,8 @@ function initMap() {
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   }).addTo(map);
 
+  bindMapViewportEvents();
+  setupMapBoundsFilter();
   renderMap();
 }
 
@@ -443,15 +676,10 @@ function renderFilterChips() {
 
 function renderAll() {
   showViewSection(state.viewMode);
+  renderContentViews(true);
 
-  if (state.viewMode === "list") {
-    renderList();
-  } else if (state.viewMode === "calendar") {
-    renderCalendar();
-  } else if (state.viewMode === "map") {
-    if (!map) initMap();
-    else renderMap();
-  }
+  if (!map) initMap();
+  else renderMap();
 }
 
 function bindEvents() {
@@ -525,7 +753,7 @@ function bindEvents() {
         }
 
         state.calendarDay = getDefaultSelectedDayForMonth(state.calendarYear, state.calendarMonth);
-        renderCalendar();
+        renderCalendar(true);
         return;
       }
 
@@ -533,7 +761,7 @@ function bindEvents() {
       if (!dayButton) return;
 
       state.calendarDay = Number(dayButton.dataset.day);
-      renderCalendar();
+      renderCalendar(true);
     });
   }
 }
@@ -599,6 +827,12 @@ async function fetchEvents(maxAttempts = 3) {
 async function init() {
   renderFilterChips();
   bindEvents();
+
+  if (els.splitLayout && window.ResizeObserver) {
+    const observer = new ResizeObserver(() => refreshMapSize());
+    observer.observe(els.splitLayout);
+  }
+
   setLoading(true);
 
   try {

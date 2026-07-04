@@ -78,7 +78,7 @@
         <div class="events-hero-inner">
           <h1 id="events-heading" class="events-hero-title">Surf events</h1>
           <p class="events-hero-subline">
-            Contests, festivals and meetups in our community — browse by list, calendar or map.
+            Contests, festivals and meetups in our community — browse by list or calendar, with the map always in view.
           </p>
         </div>
       </section>
@@ -111,9 +111,6 @@
               <button type="button" class="events-view-btn" data-view="calendar" role="tab" aria-selected="false">
                 <i class="bi bi-calendar3" aria-hidden="true"></i> Calendar
               </button>
-              <button type="button" class="events-view-btn" data-view="map" role="tab" aria-selected="false">
-                <i class="bi bi-map" aria-hidden="true"></i> Map
-              </button>
             </div>
           </div>
 
@@ -134,37 +131,36 @@
         </div>
       </section>
 
-      <section
-        id="events-list-section"
-        class="events-list-section"
-        aria-label="Event list"
-      >
+      <section class="events-split-section" aria-label="Events discovery">
         <div class="events-section-inner">
-          <div id="events-list-grid" class="events-list-grid"></div>
-        </div>
-      </section>
+          <div id="events-split-layout" class="events-split-layout">
+            <div class="events-split-main">
+              <div
+                id="events-list-section"
+                class="events-list-panel"
+                aria-label="Event list"
+              >
+                <div id="events-list-grid" class="events-list-grid"></div>
+                <div id="events-list-sentinel" class="events-list-sentinel" hidden></div>
+              </div>
 
-      <section
-        id="events-calendar-section"
-        class="events-calendar-section"
-        aria-label="Event calendar"
-        hidden
-      >
-        <div class="events-section-inner">
-          <div id="events-calendar" class="events-calendar"></div>
-          <div id="events-calendar-day-list" class="events-calendar-day-list"></div>
-        </div>
-      </section>
+              <div
+                id="events-calendar-section"
+                class="events-calendar-panel"
+                aria-label="Event calendar"
+                hidden
+              >
+                <div id="events-calendar" class="events-calendar"></div>
+                <div id="events-calendar-day-list" class="events-calendar-day-list"></div>
+                <div id="events-calendar-sentinel" class="events-list-sentinel" hidden></div>
+              </div>
+            </div>
 
-      <section
-        id="events-map-section"
-        class="events-map-section"
-        aria-label="Event map"
-        hidden
-      >
-        <div class="events-section-inner">
-          <div id="events-map-status" class="events-status" role="status" aria-live="polite" hidden></div>
-          <div id="events-map" class="events-map" role="region" aria-label="Event locations map"></div>
+            <aside class="events-split-map" aria-label="Event map">
+              <div id="events-map-status" class="events-status" role="status" aria-live="polite" hidden></div>
+              <div id="events-map" class="events-map" role="region" aria-label="Event locations map"></div>
+            </aside>
+          </div>
         </div>
       </section>
 

@@ -114,7 +114,7 @@ function buildEventRow(event) {
   );
 
   const badges = [
-    isOn ? '<span class="upcoming-event-badge upcoming-event-badge--on">ON</span>' : "",
+    isOn ? '<span class="upcoming-event-badge upcoming-event-badge--on"><span class="upcoming-on-dot" aria-hidden="true"></span>ON</span>' : "",
     event.isPartner ? '<span class="upcoming-event-badge upcoming-event-badge--partner">Partner</span>' : "",
   ]
     .filter(Boolean)
