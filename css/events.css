@@ -185,21 +185,33 @@
 
 .events-search-wrap {
   position: relative;
+  display: block;
   flex: 1 1 220px;
   max-width: 420px;
+  padding-top: 0;
+  margin: 0;
 }
 
 .events-search-icon {
   position: absolute;
   left: 0.9rem;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
   color: rgba(255, 255, 255, 0.45);
   pointer-events: none;
+  z-index: 1;
 }
 
 .events-search-input {
+  display: block;
   width: 100%;
+  margin: 0;
   padding: 0.72rem 0.9rem 0.72rem 2.4rem;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -650,16 +662,21 @@
   }
 
   .events-toolbar {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.65rem;
   }
 
   .events-search-wrap {
+    flex: 1 1 auto;
+    min-width: 0;
     max-width: none;
   }
 
   .events-view-toggle {
-    align-self: flex-start;
+    flex-shrink: 0;
+    align-self: center;
   }
 
   .events-list-grid,
