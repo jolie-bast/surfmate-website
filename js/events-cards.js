@@ -55,9 +55,13 @@ export function buildEventCard(event, options = {}) {
     event.eventMonth,
   );
 
+  const omitEmptyCover = Boolean(options.omitEmptyCover);
+
   const coverHtml = event.coverImageUrl
     ? `<div class="events-card-cover"><img src="${escapeHtml(event.coverImageUrl)}" alt="" loading="lazy" decoding="async" /></div>`
-    : `<div class="events-card-cover events-card-cover--empty"></div>`;
+    : omitEmptyCover
+      ? ""
+      : `<div class="events-card-cover events-card-cover--empty"></div>`;
 
   const logoHtml = event.logoUrl
     ? `<div class="events-card-logo${isInvertFriendlyLogo(event.logoUrl) ? " is-logo-mono" : ""}"><img src="${escapeHtml(event.logoUrl)}" alt="" loading="lazy" decoding="async" /></div>`

@@ -144,7 +144,9 @@ function renderUpcomingEvents(events) {
   }
   if (els.grid) {
     els.grid.innerHTML = preview
-      .map((event) => buildEventCard(event, { selectedTypes: new Set() }))
+      .map((event) =>
+        buildEventCard(event, { selectedTypes: new Set(), omitEmptyCover: true }),
+      )
       .join("");
   }
 }

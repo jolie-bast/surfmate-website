@@ -14,6 +14,8 @@ import {
   groupSurfEventsForCalendarDay,
   isSurfEventLiveNow,
   mapEventRow,
+  readEventsPageUrlState,
+  buildEventsPageSearchParams,
   surfEventOverlapsCalendarMonth,
 } from "./events-shared.js";
 
@@ -89,6 +91,48 @@ function hasWebsite(url) {
 
 function renderEventCard(event) {
   return buildEventCard(event, { selectedTypes: state.selectedTypes });
+}
+
+function resetPageStateToDefaults() {
+  state.searchQuery = "";
+  state.selectedTypes = new Set();
+  state.upcomingOnly = true;
+  state.viewMode = "list";
+  if (els.search) els.search.value = "";
+  if (els.upcomingToggle) els.upcomingToggle.checked = true;
+}
+
+function applyUrlState() {
+  const urlState = readEventsPageUrlState(window.location.search);
+
+  if (urlState.selectedTypes.size > 0) {
+    state.selectedTypes = new Set(urlState.selectedTypes);
+  }
+
+  if (urlState.searchQuery) {
+    state.searchQuery = urlState.searchQuery;
+    if (els.search) els.search.value = urlState.searchQuery;
+  }
+
+  state.upcomingOnly = urlState.upcomingOnly;
+  if (els.upcomingToggle) els.upcomingToggle.checked = urlState.upcomingOnly;
+
+  state.viewMode = urlState.viewMode;
+}
+
+function syncUrlFromState() {
+  if (typeof window === "undefined" || !window.history?.replaceState) return;
+
+  const params = buildEventsPageSearchParams(state);
+  const query = params.toString();
+  const nextUrl = query
+    ? `${window.location.pathname}?${query}`
+    : window.location.pathname;
+  const currentUrl = `${window.location.pathname}${window.location.search}`;
+
+  if (nextUrl !== currentUrl) {
+    window.history.replaceState(null, "", nextUrl);
+  }
 }
 
 function setLoading(isLoading) {
@@ -606,6 +650,7 @@ function renderFilterChips() {
 function renderAll() {
   showViewSection(state.viewMode);
   renderContentViews(true);
+  syncUrlFromState();
 
   if (!map) initMap();
   else renderMap();
@@ -645,6 +690,13 @@ function bindEvents() {
       renderAll();
     });
   }
+
+  window.addEventListener("popstate", () => {
+    resetPageStateToDefaults();
+    applyUrlState();
+    renderFilterChips();
+    renderAll();
+  });
 
   if (els.viewToggle) {
     els.viewToggle.addEventListener("click", (event) => {
@@ -754,6 +806,7 @@ async function fetchEvents(maxAttempts = 3) {
 }
 
 async function init() {
+  applyUrlState();
   renderFilterChips();
   bindEvents();
 

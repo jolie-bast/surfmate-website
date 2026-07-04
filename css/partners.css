@@ -205,6 +205,11 @@
   display: none;
 }
 
+.partners-map .leaflet-top,
+.partners-map .leaflet-bottom {
+  z-index: 400;
+}
+
 .partners-map .leaflet-popup-content-wrapper {
   border-radius: 12px;
 }

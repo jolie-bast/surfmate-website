@@ -56,6 +56,7 @@ a.events-card:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+.events-card:not(:has(.events-card-cover)) .events-card-logo,
 .events-card:has(.events-card-cover--empty) .events-card-logo {
   position: relative;
   left: auto;
@@ -170,7 +171,7 @@ a.events-card:hover {
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
-  margin-top: 0.25rem;
+  margin-top: 0.65rem;
 }
 
 .events-type-tag {

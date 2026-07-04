@@ -449,6 +449,99 @@ export function filterEvents(events, filters) {
   });
 }
 
+/** Resolve a URL slug or label to a canonical event type id. */
+export function resolveEventTypeSlug(raw) {
+  const value = String(raw ?? "").trim().toLowerCase();
+  if (!value) return null;
+
+  if (SURF_EVENT_TYPES.includes(value)) return value;
+
+  for (const type of SURF_EVENT_TYPES) {
+    const label = (SURF_EVENT_TYPE_LABELS[type] ?? type).toLowerCase();
+    if (label === value || label.replace(/\s+/g, "-") === value) {
+      return type;
+    }
+  }
+
+  return null;
+}
+
+export function parseEventTypesFromUrlValue(raw) {
+  const value = String(raw ?? "").trim();
+  if (!value) return new Set();
+
+  const types = new Set();
+  for (const part of value.split(",")) {
+    const resolved = resolveEventTypeSlug(part);
+    if (resolved) types.add(resolved);
+  }
+
+  return types;
+}
+
+const EVENTS_PAGE_VIEW_MODES = new Set(["list", "calendar"]);
+
+/**
+ * Read shareable filter state from ?type=contest,festival&q=…&upcoming=0&view=calendar
+ * Also accepts ?types=… or ?filter=… as aliases for type.
+ */
+export function readEventsPageUrlState(searchParams) {
+  const params = searchParams instanceof URLSearchParams
+    ? searchParams
+    : new URLSearchParams(searchParams);
+
+  const typeRaw =
+    params.get("type") ?? params.get("types") ?? params.get("filter") ?? "";
+  const selectedTypes = parseEventTypesFromUrlValue(typeRaw);
+
+  const searchQuery = String(params.get("q") ?? params.get("search") ?? "").trim();
+
+  let upcomingOnly = true;
+  const upcomingRaw = params.get("upcoming");
+  const pastRaw = params.get("past");
+  if (upcomingRaw != null) {
+    upcomingOnly = !["0", "false", "no"].includes(upcomingRaw.trim().toLowerCase());
+  } else if (pastRaw != null) {
+    upcomingOnly = !["1", "true", "yes"].includes(pastRaw.trim().toLowerCase());
+  }
+
+  let viewMode = "list";
+  const viewRaw = String(params.get("view") ?? "").trim().toLowerCase();
+  if (EVENTS_PAGE_VIEW_MODES.has(viewRaw)) {
+    viewMode = viewRaw;
+  }
+
+  return { selectedTypes, searchQuery, upcomingOnly, viewMode };
+}
+
+/** Build query string for the current events page filter state (defaults omitted). */
+export function buildEventsPageSearchParams(filters) {
+  const {
+    searchQuery = "",
+    selectedTypes = new Set(),
+    upcomingOnly = true,
+    viewMode = "list",
+  } = filters;
+
+  const params = new URLSearchParams();
+
+  if (selectedTypes.size > 0) {
+    const types = [...selectedTypes]
+      .filter((type) => SURF_EVENT_TYPES.includes(type))
+      .sort();
+    if (types.length) params.set("type", types.join(","));
+  }
+
+  const query = String(searchQuery ?? "").trim();
+  if (query) params.set("q", query);
+
+  if (!upcomingOnly) params.set("upcoming", "0");
+
+  if (viewMode === "calendar") params.set("view", "calendar");
+
+  return params;
+}
+
 export function mapEventRow(row) {
   return {
     id: row.id,

@@ -521,6 +521,12 @@
   display: none;
 }
 
+/* Leaflet top/bottom default to z-index 1000 — below fixed header */
+.events-map .leaflet-top,
+.events-map .leaflet-bottom {
+  z-index: 400;
+}
+
 .events-map .leaflet-popup-content-wrapper {
   border-radius: 12px;
 }
