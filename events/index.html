@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="/css/consent.css" />
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-DKK7DGE8ED"
+    ></script>
+    <script src="/js/gtag-init.js"></script>
+    <script src="/js/consent.js" defer></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Surf events on Surfmate — contests, festivals, meetups and tours in list, calendar and map view."
+    />
+    <title>Surf events – Surfmate</title>
+    <link rel="canonical" href="https://surfmate.eu/events/" />
+
+    <link rel="stylesheet" href="/css/main.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/css/events.css" />
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+  </head>
+  <body class="events-page">
+    <div data-include="header.html"></div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        let attempts = 0;
+        const maxAttempts = 10;
+
+        const makeHeaderDark = () => {
+          attempts++;
+          const header = document.querySelector(".header");
+          if (header) {
+            header.classList.add("scrolled");
+            header.style.background = "rgba(0, 0, 0, 0.95)";
+            header.style.backdropFilter = "blur(10px)";
+          } else if (attempts < maxAttempts) {
+            setTimeout(makeHeaderDark, 300);
+          }
+        };
+
+        makeHeaderDark();
+      });
+    </script>
+
+    <main class="events-main">
+      <section class="events-hero" aria-labelledby="events-heading">
+        <div class="events-hero-media">
+          <img
+            src="/assets/surfmate-kirsten-frank-loggertour.avif"
+            alt=""
+            class="events-hero-img"
+            width="2400"
+            height="1350"
+            fetchpriority="high"
+            decoding="async"
+          />
+          <a
+            href="https://kirstenfrank.myportfolio.com/"
+            class="events-hero-photo-credit"
+            target="_blank"
+            rel="noopener noreferrer"
+            >@ Kirsten Frank</a
+          >
+        </div>
+        <div class="events-hero-inner">
+          <h1 id="events-heading" class="events-hero-title">Surf events</h1>
+          <p class="events-hero-subline">
+            Contests, festivals and meetups in our community — browse by list, calendar or map.
+          </p>
+        </div>
+      </section>
+
+      <section class="events-toolbar-section" aria-label="Event filters">
+        <div class="events-section-inner">
+          <div class="events-toolbar">
+            <label class="events-search-wrap">
+              <span class="visually-hidden">Search events</span>
+              <i class="bi bi-search events-search-icon" aria-hidden="true"></i>
+              <input
+                id="events-search"
+                class="events-search-input"
+                type="search"
+                placeholder="Search events…"
+                autocomplete="off"
+                enterkeyhint="search"
+              />
+            </label>
+
+            <div
+              id="events-view-toggle"
+              class="events-view-toggle"
+              role="tablist"
+              aria-label="View mode"
+            >
+              <button type="button" class="events-view-btn is-active" data-view="list" role="tab" aria-selected="true">
+                <i class="bi bi-list-ul" aria-hidden="true"></i> List
+              </button>
+              <button type="button" class="events-view-btn" data-view="calendar" role="tab" aria-selected="false">
+                <i class="bi bi-calendar3" aria-hidden="true"></i> Calendar
+              </button>
+              <button type="button" class="events-view-btn" data-view="map" role="tab" aria-selected="false">
+                <i class="bi bi-map" aria-hidden="true"></i> Map
+              </button>
+            </div>
+          </div>
+
+          <div id="events-filter-chips" class="events-filter-chips" aria-label="Event type filters"></div>
+
+          <label class="events-upcoming-toggle">
+            <input id="events-upcoming-toggle" type="checkbox" checked />
+            <span>Upcoming only</span>
+          </label>
+
+          <div id="events-loading" class="events-loading" role="status">
+            <span class="events-spinner" aria-hidden="true"></span>
+            Loading events…
+          </div>
+
+          <div id="events-error" class="events-error" role="alert" hidden></div>
+          <div id="events-status" class="events-status" role="status" aria-live="polite" hidden></div>
+        </div>
+      </section>
+
+      <section
+        id="events-list-section"
+        class="events-list-section"
+        aria-label="Event list"
+      >
+        <div class="events-section-inner">
+          <div id="events-list-grid" class="events-list-grid"></div>
+        </div>
+      </section>
+
+      <section
+        id="events-calendar-section"
+        class="events-calendar-section"
+        aria-label="Event calendar"
+        hidden
+      >
+        <div class="events-section-inner">
+          <div id="events-calendar" class="events-calendar"></div>
+          <div id="events-calendar-day-list" class="events-calendar-day-list"></div>
+        </div>
+      </section>
+
+      <section
+        id="events-map-section"
+        class="events-map-section"
+        aria-label="Event map"
+        hidden
+      >
+        <div class="events-section-inner">
+          <div id="events-map-status" class="events-status" role="status" aria-live="polite" hidden></div>
+          <div id="events-map" class="events-map" role="region" aria-label="Event locations map"></div>
+        </div>
+      </section>
+
+      <section class="events-cta-section" aria-labelledby="events-cta-title">
+        <div class="events-section-inner">
+          <div class="events-cta">
+            <h2 id="events-cta-title" class="events-cta-title">Know an event?</h2>
+            <p class="events-cta-text">
+              <a href="/events/submit/" class="events-cta-link">Share it with the community</a>
+              — we review every submission before it goes live.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div data-include="footer.html"></div>
+
+    <script src="/js/includes.js"></script>
+    <script src="/js/navigation.js"></script>
+    <script src="/js/supabase-config.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin="anonymous"
+    ></script>
+    <script type="module" src="/js/events.js"></script>
+  </body>
+</html>

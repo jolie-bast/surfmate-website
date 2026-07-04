@@ -148,7 +148,11 @@ class Navigation {
   }
 
   normalizePath(pathname) {
-    const path = pathname.replace(/\/+$/, "") || "/";
+    let path = pathname.replace(/\/+$/, "") || "/";
+    if (path === "/") return "/index.html";
+    if (path.endsWith("/index.html")) {
+      path = path.slice(0, -"/index.html".length) || "/";
+    }
     return path === "/" ? "/index.html" : path;
   }
 
