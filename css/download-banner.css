@@ -1,4 +1,4 @@
-/* Sticky app-store download strip (home after story, events page always visible). */
+/* Sticky app-store download strip (events: under nav; home: after story journey). */
 .download-banner {
   position: sticky;
   top: var(--header-height);
@@ -12,6 +12,17 @@
     #5ebde3 100%
   );
   box-shadow: 0 4px 16px rgba(115, 201, 235, 0.25);
+}
+
+/* Home: in document flow after story — no sticky until revealed (avoids hero/layout shift). */
+.download-banner--home:not(.is-visible) {
+  display: none;
+}
+
+.download-banner--home.is-visible {
+  display: block;
+  position: sticky;
+  top: var(--header-height);
 }
 
 .download-banner:not(.is-visible) {
