@@ -27,7 +27,7 @@
 }
 
 .download-banner.is-visible.is-immediate .download-banner-inner {
-  animation-delay: 0.45s;
+  animation-delay: 0.85s;
 }
 
 @keyframes download-banner-slide-in {
