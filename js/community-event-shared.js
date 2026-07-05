@@ -6,6 +6,7 @@
 export const SURF_EVENT_TYPES = [
   "shortboard",
   "longboard",
+  "bodyboard",
   "festival",
   "contest",
   "film",
@@ -22,6 +23,7 @@ export const SURF_EVENT_TYPES = [
 export const SURF_EVENT_TYPE_LABELS = {
   shortboard: "Shortboard",
   longboard: "Longboard",
+  bodyboard: "Bodyboard",
   festival: "Festival",
   contest: "Contest",
   film: "Film",

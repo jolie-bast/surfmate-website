@@ -1,6 +1,60 @@
 /**
  * Scroll-driven story journey — single pinned stage
  */
+
+const HOME_DOWNLOAD_BANNER_ID = "home-download-banner";
+const HOME_DOWNLOAD_BANNER_STORAGE_KEY = "surfmate-home-download-banner";
+/** Scroll progress through the story track that counts as “finished”. */
+const STORY_COMPLETE_SCROLL_PROGRESS = 0.9;
+
+function getHomeDownloadBanner() {
+  return document.getElementById(HOME_DOWNLOAD_BANNER_ID);
+}
+
+function showHomeDownloadBanner() {
+  const banner = getHomeDownloadBanner();
+  if (!banner || banner.classList.contains("is-visible")) return;
+
+  banner.classList.add("is-visible");
+  banner.removeAttribute("hidden");
+
+  try {
+    sessionStorage.setItem(HOME_DOWNLOAD_BANNER_STORAGE_KEY, "1");
+  } catch {
+    // Ignore private browsing / quota errors.
+  }
+}
+
+function restoreHomeDownloadBannerFromSession() {
+  try {
+    if (sessionStorage.getItem(HOME_DOWNLOAD_BANNER_STORAGE_KEY) !== "1") return;
+  } catch {
+    return;
+  }
+
+  showHomeDownloadBanner();
+}
+
+function initHomeDownloadBannerFallbackObserver(storyRoot) {
+  const banner = getHomeDownloadBanner();
+  if (!banner || banner.classList.contains("is-visible")) return;
+
+  const lastScene = storyRoot?.querySelector(".story-scene--yours");
+  if (!lastScene) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (entries.some((entry) => entry.isIntersecting && entry.intersectionRatio >= 0.45)) {
+        showHomeDownloadBanner();
+        observer.disconnect();
+      }
+    },
+    { threshold: [0.45, 0.65] },
+  );
+
+  observer.observe(lastScene);
+}
+
 class StoryJourney {
   constructor(root) {
     this.root = root;
@@ -178,6 +232,10 @@ class StoryJourney {
 
     this.animateChapter(this.scenes[chapterIndex], chapterIndex, localProgress);
     this.updateProgressUI(overall, chapterIndex);
+
+    if (overall >= STORY_COMPLETE_SCROLL_PROGRESS) {
+      showHomeDownloadBanner();
+    }
   }
 
   onScroll() {
@@ -253,6 +311,8 @@ function initStoryJourney() {
 
   root.dataset.storyInitialized = "true";
   configureStoryCtas();
+  restoreHomeDownloadBannerFromSession();
+  initHomeDownloadBannerFallbackObserver(root);
   new StoryJourney(root);
 }
 
