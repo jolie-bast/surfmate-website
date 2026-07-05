@@ -3,6 +3,7 @@
   position: sticky;
   top: var(--header-height);
   z-index: 900;
+  overflow: hidden;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   background: linear-gradient(
     90deg,
@@ -19,10 +20,13 @@
 
 .download-banner.is-visible {
   display: block;
+}
+
+.download-banner.is-visible .download-banner-inner {
   animation: download-banner-slide-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.download-banner.is-visible.is-immediate {
+.download-banner.is-visible.is-immediate .download-banner-inner {
   animation-delay: 0.45s;
 }
 
@@ -40,6 +44,7 @@
 
 .download-banner-inner {
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
@@ -61,13 +66,21 @@
 
 .download-banner-stores {
   display: flex;
+  flex-direction: row;
   align-items: center;
   flex-wrap: wrap;
   gap: 0.55rem;
 }
 
+.download-banner a,
+.download-banner p {
+  padding-top: 0;
+  margin-bottom: 0;
+}
+
 .download-store-badge {
-  display: inline-block;
+  display: inline-flex;
+  flex-shrink: 0;
   padding: 0;
   line-height: 0;
   text-decoration: none;
@@ -89,6 +102,15 @@
   max-width: none;
 }
 
+body.events-page .download-banner {
+  background: linear-gradient(
+    90deg,
+    #5ebde3 0%,
+    var(--surfmate-blue) 50%,
+    #5ebde3 100%
+  );
+}
+
 @media (max-width: 768px) {
   .download-banner-inner {
     padding: 0.55rem var(--spacing-md);
@@ -105,7 +127,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .download-banner.is-visible {
+  .download-banner.is-visible .download-banner-inner {
     animation: none;
   }
 
