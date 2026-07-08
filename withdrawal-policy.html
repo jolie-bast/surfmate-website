@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./css/consent.css" />
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-DKK7DGE8ED"
+    ></script>
+    <script src="./js/gtag-init.js"></script>
+    <script src="./js/consent.js" defer></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Right of withdrawal for Surfmate product orders – cancellation policy for consumers."
+    />
+    <title>Right of Withdrawal – Surfmate</title>
+
+    <link rel="stylesheet" href="./css/main.css" />
+    <link rel="stylesheet" href="./css/legal.css" />
+    <link rel="stylesheet" href="./css/datenschutz.css" />
+
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+  </head>
+  <body>
+    <div data-include="header.html"></div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        let attempts = 0;
+        const maxAttempts = 10;
+
+        const makeHeaderBlack = () => {
+          attempts++;
+          const header = document.querySelector(".header");
+
+          if (header) {
+            header.classList.add("scrolled");
+            header.style.background = "rgba(0, 0, 0, 0.95)";
+            header.style.backdropFilter = "blur(10px)";
+          } else if (attempts < maxAttempts) {
+            setTimeout(makeHeaderBlack, 300);
+          }
+        };
+
+        makeHeaderBlack();
+      });
+    </script>
+
+    <main class="main-content" style="padding-top: var(--header-height)">
+      <section class="content-section">
+        <div class="container">
+          <header class="content-header">
+            <h1>Right of Withdrawal</h1>
+          </header>
+
+          <div class="content-body">
+            <p><strong>Last updated:</strong> 8 July 2026</p>
+
+            <p>
+              This notice applies to purchases of <strong>Surfmate products</strong>
+              ordered via Instagram or other direct communication channels. For
+              general terms of sale, see our
+              <a href="./terms-of-sale.html">General Terms and Conditions</a>.
+            </p>
+
+            <h2>Right of withdrawal</h2>
+            <p>
+              You have the right to withdraw from this contract within
+              <strong>fourteen days</strong> without giving any reason.
+            </p>
+            <p>
+              The withdrawal period is fourteen days from the day on which you
+              or a third party named by you (who is not the carrier) took
+              possession of the goods.
+            </p>
+            <p>
+              To exercise your right of withdrawal, send a clear statement by
+              email to:
+            </p>
+            <p>
+              <strong>Jolie Bast</strong> (under the brand “Surfmate”)<br />
+              Deelwisch 43<br />
+              22529 Hamburg<br />
+              Germany<br />
+              Email:
+              <a href="mailto:jolie@surfmate.eu">jolie@surfmate.eu</a>
+            </p>
+            <p>
+              To meet the withdrawal deadline, it is sufficient that you send
+              your communication concerning exercise of the right of withdrawal
+              before the withdrawal period has expired.
+            </p>
+
+            <h2>Consequences of withdrawal</h2>
+            <p>
+              If you withdraw from this contract, we will reimburse all payments
+              received from you, including standard delivery costs, without
+              undue delay and at the latest within fourteen days from the day on
+              which we received your notice of withdrawal.
+            </p>
+            <p>
+              For reimbursement we will use the same means of payment you used
+              for the original transaction, unless expressly agreed otherwise.
+            </p>
+            <p>
+              We may withhold reimbursement until we have received the goods back
+              or you have supplied evidence of having sent back the goods,
+              whichever is the earlier.
+            </p>
+            <p>
+              You must return the goods without undue delay and at the latest
+              within fourteen days of your withdrawal to:
+            </p>
+            <p>
+              <strong>Jolie Bast</strong><br />
+              Deelwisch 43<br />
+              22529 Hamburg<br />
+              Germany
+            </p>
+            <p>You bear the direct cost of returning the goods.</p>
+            <p>
+              You are only liable for any diminished value of the goods
+              resulting from handling other than what is necessary to establish
+              the nature, characteristics and functioning of the goods.
+            </p>
+
+            <p>
+              <strong>Note:</strong> This withdrawal policy is intended for
+              consumers under EU distance-selling rules. Have it reviewed by
+              qualified legal counsel if your sales channels or customer base
+              change.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div data-include="footer.html"></div>
+
+    <script src="./js/includes.js"></script>
+    <script src="./js/navigation.js"></script>
+  </body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./css/consent.css" />
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-DKK7DGE8ED"
+    ></script>
+    <script src="./js/gtag-init.js"></script>
+    <script src="./js/consent.js" defer></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="General Terms and Conditions for Surfmate product orders."
+    />
+    <title>Terms of Sale – Surfmate</title>
+
+    <link rel="stylesheet" href="./css/main.css" />
+    <link rel="stylesheet" href="./css/legal.css" />
+    <link rel="stylesheet" href="./css/datenschutz.css" />
+
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+  </head>
+  <body>
+    <div data-include="header.html"></div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        let attempts = 0;
+        const maxAttempts = 10;
+
+        const makeHeaderBlack = () => {
+          attempts++;
+          const header = document.querySelector(".header");
+
+          if (header) {
+            header.classList.add("scrolled");
+            header.style.background = "rgba(0, 0, 0, 0.95)";
+            header.style.backdropFilter = "blur(10px)";
+          } else if (attempts < maxAttempts) {
+            setTimeout(makeHeaderBlack, 300);
+          }
+        };
+
+        makeHeaderBlack();
+      });
+    </script>
+
+    <main class="main-content" style="padding-top: var(--header-height)">
+      <section class="content-section">
+        <div class="container">
+          <header class="content-header">
+            <h1>General Terms and Conditions</h1>
+          </header>
+
+          <div class="content-body">
+            <p><strong>Last updated:</strong> 8 July 2026</p>
+
+            <p>
+              These General Terms and Conditions (“GTC”) apply to orders for
+              <strong>Surfmate products</strong> placed via Instagram or other
+              direct communication channels. For use of the Surfmate app and
+              website, see our
+              <a href="./terms.html">Terms of Service</a>. For your right to
+              cancel a product purchase, see our
+              <a href="./withdrawal-policy.html">Right of Withdrawal</a>.
+            </p>
+
+            <h2>1. Scope</h2>
+            <p>
+              These General Terms and Conditions apply to all orders for
+              products of the Surfmate brand placed via Instagram or other
+              direct communication channels.
+            </p>
+
+            <h2>2. Contracting party</h2>
+            <p>
+              The contracting party is:<br />
+              <strong>Jolie Bast</strong> (under the brand “Surfmate”)<br />
+              Deelwisch 43<br />
+              22529 Hamburg<br />
+              Germany<br />
+              Email:
+              <a href="mailto:jolie@surfmate.eu">jolie@surfmate.eu</a>
+            </p>
+
+            <h2>3. Conclusion of contract</h2>
+            <p>
+              A purchase contract is concluded once the order has been confirmed
+              by Jolie Bast and the full purchase price has been received.
+            </p>
+
+            <h2>4. Prices and payment</h2>
+            <p>All prices are stated in euros.</p>
+            <p>
+              Payment is made exclusively by advance payment (bank transfer or
+              another agreed payment method).
+            </p>
+            <p>Shipping takes place after full payment has been received.</p>
+            <p>
+              In accordance with § 19 of the German VAT Act (UStG), no VAT is
+              charged or displayed (small business regulation —
+              <em>Kleinunternehmerregelung</em>).
+            </p>
+
+            <h2>5. Shipping</h2>
+            <p>
+              Delivery is made to the delivery address provided by the buyer.
+            </p>
+            <p>
+              Delivery time is typically <strong>7–24 working days</strong> after
+              receipt of payment, unless stated otherwise. More precise
+              information is provided individually, as production capacity is
+              limited. Products can only be produced when Jolie is on Mallorca.
+            </p>
+
+            <h2>6. Retention of title</h2>
+            <p>
+              The goods remain the property of Jolie Bast until full payment has
+              been made.
+            </p>
+
+            <h2>7. Warranty</h2>
+            <p>The statutory warranty rights apply.</p>
+
+            <h2>8. Final provisions</h2>
+            <p>
+              The law of the Federal Republic of Germany applies, excluding the
+              UN Convention on Contracts for the International Sale of Goods
+              (CISG), to the extent permitted by law. Mandatory consumer
+              protections in your country of residence remain unaffected if you
+              qualify as a consumer.
+            </p>
+
+            <p>
+              <strong>Note:</strong> This document is provided for transparency.
+              Have it reviewed by qualified legal counsel if your sales process
+              or product range changes.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div data-include="footer.html"></div>
+
+    <script src="./js/includes.js"></script>
+    <script src="./js/navigation.js"></script>
+  </body>
+</html>
