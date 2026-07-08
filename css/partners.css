@@ -114,8 +114,41 @@
 .partners-map-section,
 .partners-local-section,
 .partners-events-section,
-.partners-product-section {
+.partners-product-section,
+.partners-loading-section {
   padding: clamp(2.5rem, 5vw, 4rem) var(--spacing-lg);
+}
+
+.partners-loading-section {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.partners-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.92rem;
+}
+
+.partners-loading[hidden],
+.partners-loading-section[hidden] {
+  display: none;
+}
+
+.partners-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-top-color: var(--surfmate-blue);
+  border-radius: 50%;
+  animation: partners-spin 0.8s linear infinite;
+}
+
+@keyframes partners-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .partners-local-section {
@@ -199,6 +232,14 @@
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: #0f172a;
+}
+
+.partners-map:not(.is-ready) {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(115, 201, 235, 0.08) 100%
+  );
 }
 
 .partners-map.is-hidden {

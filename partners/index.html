@@ -16,17 +16,12 @@
     />
     <title>Partners – Surfmate</title>
     <link rel="canonical" href="https://surfmate.eu/partners/" />
+    <link rel="preconnect" href="https://jycbthjasldnqavajrlf.supabase.co" crossorigin />
 
     <link rel="stylesheet" href="/css/main.css" />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
-      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-      crossorigin="anonymous"
     />
     <link rel="stylesheet" href="/css/partners.css" />
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
@@ -80,6 +75,20 @@
           <p class="partners-hero-subline">
             The brands, events and local spots that ride with Surfmate.
           </p>
+        </div>
+      </section>
+
+      <section
+        id="partners-loading-section"
+        class="partners-loading-section"
+        aria-live="polite"
+      >
+        <div class="partners-section-inner">
+          <div id="partners-loading" class="partners-loading" role="status">
+            <span class="partners-spinner" aria-hidden="true"></span>
+            Loading partners…
+          </div>
+          <div id="partners-error" class="partners-status is-error" role="alert" hidden></div>
         </div>
       </section>
 
@@ -168,11 +177,6 @@
     <script src="/js/includes.js"></script>
     <script src="/js/navigation.js"></script>
     <script src="/js/supabase-config.js"></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
-      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-      crossorigin="anonymous"
-    ></script>
     <script src="/js/partners.js" defer></script>
   </body>
 </html>

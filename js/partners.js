@@ -5,6 +5,9 @@ function getConfig() {
 const config = getConfig();
 
 const els = {
+  loadingSection: document.getElementById("partners-loading-section"),
+  loading: document.getElementById("partners-loading"),
+  pageError: document.getElementById("partners-error"),
   mapStatus: document.getElementById("partners-map-status"),
   mapContainer: document.getElementById("partners-map"),
   localSection: document.getElementById("partners-local-section"),
@@ -17,6 +20,10 @@ const els = {
 
 const EUROPE_CENTER = { lng: 10, lat: 52 };
 const DEFAULT_ZOOM = 4;
+const LEAFLET_CSS_URL =
+  "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css";
+const LEAFLET_JS_URL =
+  "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js";
 
 const BUSINESS_TYPE_LABELS = {
   surf_shop: "Surf shop",
@@ -29,6 +36,9 @@ const BUSINESS_TYPE_LABELS = {
 };
 
 let map = null;
+let mapInitStarted = false;
+let mapObserver = null;
+let leafletPromise = null;
 
 function formatBusinessTypeTags(types) {
   if (!Array.isArray(types) || !types.length) return [];
@@ -48,6 +58,25 @@ function escapeHtml(value) {
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;");
+}
+
+function setLoading(isLoading) {
+  if (els.loading) els.loading.hidden = !isLoading;
+}
+
+function hideLoadingSection() {
+  if (els.loadingSection) els.loadingSection.hidden = true;
+}
+
+function setPageError(message) {
+  const text = String(message ?? "").trim();
+  if (!els.pageError) return;
+  els.pageError.textContent = text;
+  els.pageError.hidden = !text;
+  if (text) {
+    setLoading(false);
+    if (els.loadingSection) els.loadingSection.hidden = false;
+  }
 }
 
 function setMapStatus(message, isError = false) {
@@ -233,6 +262,37 @@ function fitMapToPins(pins) {
   map.fitBounds(bounds, { padding: [56, 56], maxZoom: 10 });
 }
 
+function loadLeafletAssets() {
+  if (window.L) return Promise.resolve(window.L);
+  if (leafletPromise) return leafletPromise;
+
+  leafletPromise = new Promise((resolve, reject) => {
+    if (!document.querySelector('link[data-leaflet-css="partners"]')) {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = LEAFLET_CSS_URL;
+      link.crossOrigin = "anonymous";
+      link.dataset.leafletCss = "partners";
+      document.head.appendChild(link);
+    }
+
+    const script = document.createElement("script");
+    script.src = LEAFLET_JS_URL;
+    script.crossOrigin = "anonymous";
+    script.onload = () => {
+      if (window.L) {
+        resolve(window.L);
+        return;
+      }
+      reject(new Error("Map failed to load."));
+    };
+    script.onerror = () => reject(new Error("Map failed to load."));
+    document.body.appendChild(script);
+  });
+
+  return leafletPromise;
+}
+
 function initMap(pins) {
   if (!window.L || !els.mapContainer) {
     setMapStatus("Map failed to load.", true);
@@ -255,12 +315,51 @@ function initMap(pins) {
     addMapMarker(pin);
   }
 
+  els.mapContainer.classList.add("is-ready");
   requestAnimationFrame(() => {
     map.invalidateSize();
     fitMapToPins(pins);
   });
 
   setMapStatus("");
+}
+
+async function ensureMapReady(pins) {
+  if (map || mapInitStarted) return;
+  mapInitStarted = true;
+
+  try {
+    await loadLeafletAssets();
+    initMap(pins);
+  } catch (error) {
+    console.error("Partners map failed:", error);
+    setMapStatus("Map failed to load.", true);
+    els.mapContainer?.classList.add("is-hidden");
+  }
+}
+
+function scheduleMapInit(pins) {
+  if (!els.mapContainer) return;
+
+  if (!window.IntersectionObserver) {
+    void ensureMapReady(pins);
+    return;
+  }
+
+  if (mapObserver) {
+    mapObserver.disconnect();
+  }
+
+  mapObserver = new IntersectionObserver(
+    (entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      mapObserver?.disconnect();
+      void ensureMapReady(pins);
+    },
+    { rootMargin: "240px 0px", threshold: 0.01 },
+  );
+
+  mapObserver.observe(els.mapContainer);
 }
 
 function collectMapPins(data) {
@@ -296,13 +395,15 @@ function collectMapPins(data) {
   return pins;
 }
 
-function renderPartnersPage(data) {
+function renderPartnersContent(data) {
   renderLocalMarquee(data.local_businesses ?? []);
   renderPartnerCards(data.event_partners ?? [], els.eventsGrid, els.eventsSection, "Event partner");
   renderPartnerCards(data.product_partners ?? [], els.productGrid, els.productSection, "Partner");
+}
 
-  const pins = collectMapPins(data);
-  initMap(pins);
+function renderPartnersPage(data) {
+  renderPartnersContent(data);
+  scheduleMapInit(collectMapPins(data));
 }
 
 function normalizeFetchError(error) {
@@ -320,7 +421,7 @@ function normalizeFetchError(error) {
   return message || "Could not load partners.";
 }
 
-async function fetchPartners(maxAttempts = 3) {
+async function fetchPartners(maxAttempts = 2) {
   if (!config?.url || !config?.anonKey) {
     throw new Error("Supabase is not configured.");
   }
@@ -355,7 +456,7 @@ async function fetchPartners(maxAttempts = 3) {
     } catch (error) {
       lastError = error;
       if (attempt < maxAttempts) {
-        await new Promise((resolve) => setTimeout(resolve, 600 * attempt));
+        await new Promise((resolve) => setTimeout(resolve, 350 * attempt));
       }
     }
   }
@@ -364,12 +465,17 @@ async function fetchPartners(maxAttempts = 3) {
 }
 
 async function init() {
+  setLoading(true);
+  setPageError("");
+
   try {
     const data = await fetchPartners();
+    hideLoadingSection();
     renderPartnersPage(data);
   } catch (error) {
     console.error("Partners page failed:", error);
-    setMapStatus(normalizeFetchError(error), true);
+    setPageError(normalizeFetchError(error));
+    setMapStatus("", false);
     els.mapContainer?.classList.add("is-hidden");
     hideSection(els.localSection);
     hideSection(els.eventsSection);
