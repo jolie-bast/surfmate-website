@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="/css/consent.css" />
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-DKK7DGE8ED"
+    ></script>
+    <script src="/js/gtag-init.js"></script>
+    <script src="/js/consent.js" defer></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Order Surfmate products — how to buy via Instagram DM."
+    />
+    <title>Shop – Surfmate</title>
+    <link rel="canonical" href="https://surf-mate.de/shop/" />
+
+    <link rel="stylesheet" href="/css/main.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link rel="stylesheet" href="/css/shop.css" />
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+  </head>
+  <body class="shop-page">
+    <div data-include="header.html"></div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        let attempts = 0;
+        const maxAttempts = 10;
+
+        const makeHeaderDark = () => {
+          attempts++;
+          const header = document.querySelector(".header");
+          if (header) {
+            header.classList.add("scrolled");
+            header.style.background = "rgba(0, 0, 0, 0.95)";
+            header.style.backdropFilter = "blur(10px)";
+          } else if (attempts < maxAttempts) {
+            setTimeout(makeHeaderDark, 300);
+          }
+        };
+
+        makeHeaderDark();
+      });
+    </script>
+
+    <main class="shop-main">
+      <section class="shop-hero" aria-labelledby="shop-heading">
+        <div class="shop-hero-media">
+          <img
+            src="/assets/surfmate-hoodie.JPG"
+            alt=""
+            class="shop-hero-img"
+            width="6864"
+            height="4576"
+            fetchpriority="high"
+            decoding="async"
+          />
+        </div>
+        <div class="shop-hero-inner">
+          <h1 id="shop-heading" class="shop-hero-title">Shop</h1>
+          <p class="shop-hero-subline">
+            Surfmate gear — order directly via Instagram.
+          </p>
+        </div>
+      </section>
+
+      <section class="shop-content-section" aria-labelledby="shop-order-heading">
+        <div class="shop-section-inner">
+          <p class="shop-intro">
+            No checkout on this site — just message us on Instagram and we’ll
+            take it from there.
+          </p>
+
+          <h2 id="shop-order-heading" class="shop-order-heading">
+            How to Order
+          </h2>
+
+          <ol class="shop-steps">
+            <li class="shop-step">
+              <span class="shop-step-number" aria-hidden="true">1</span>
+              <p class="shop-step-text">Send us a DM on Instagram.</p>
+            </li>
+            <li class="shop-step">
+              <span class="shop-step-number" aria-hidden="true">2</span>
+              <p class="shop-step-text">
+                Tell us your size, color and shipping address.
+              </p>
+            </li>
+            <li class="shop-step">
+              <span class="shop-step-number" aria-hidden="true">3</span>
+              <p class="shop-step-text">We’ll send you an invoice.</p>
+            </li>
+            <li class="shop-step">
+              <span class="shop-step-number" aria-hidden="true">4</span>
+              <p class="shop-step-text">Pay via bank transfer.</p>
+            </li>
+            <li class="shop-step">
+              <span class="shop-step-number" aria-hidden="true">5</span>
+              <p class="shop-step-text">
+                We ship your order within 3–7 business days. 🌊
+              </p>
+            </li>
+          </ol>
+
+          <div class="shop-cta">
+            <a
+              href="https://www.instagram.com/jolie.bast/"
+              class="shop-instagram-button"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <i class="bi bi-instagram" aria-hidden="true"></i>
+              Message us on Instagram
+            </a>
+          </div>
+
+          <p class="shop-legal-note">
+            Orders are subject to our
+            <a href="/terms-of-sale.html">General Terms and Conditions</a>
+            and
+            <a href="/withdrawal-policy.html">Right of Withdrawal</a>.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <div data-include="footer.html"></div>
+
+    <script src="/js/includes.js"></script>
+    <script src="/js/navigation.js"></script>
+  </body>
+</html>
