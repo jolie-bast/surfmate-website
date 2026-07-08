@@ -6,6 +6,10 @@ const HOME_DOWNLOAD_BANNER_ID = "home-download-banner";
 const HOME_DOWNLOAD_BANNER_STORAGE_KEY = "surfmate-home-download-banner";
 /** Scroll progress through the story track that counts as “finished”. */
 const STORY_COMPLETE_SCROLL_PROGRESS = 0.9;
+const HOME_SCROLL_DIRECTION_THRESHOLD = 6;
+
+let homeDownloadBannerUnlocked = false;
+let lastHomeScrollY = typeof window !== "undefined" ? window.scrollY : 0;
 
 function getHomeDownloadBanner() {
   return document.getElementById(HOME_DOWNLOAD_BANNER_ID);
@@ -15,6 +19,7 @@ function showHomeDownloadBanner() {
   const banner = getHomeDownloadBanner();
   if (!banner || banner.classList.contains("is-visible")) return;
 
+  homeDownloadBannerUnlocked = true;
   banner.classList.add("is-visible");
   banner.removeAttribute("hidden");
 
@@ -25,6 +30,67 @@ function showHomeDownloadBanner() {
   }
 }
 
+function hideHomeDownloadBanner() {
+  const banner = getHomeDownloadBanner();
+  if (!banner || !banner.classList.contains("is-visible")) return;
+
+  banner.classList.remove("is-visible");
+  banner.setAttribute("hidden", "");
+}
+
+function getHomeScrollDirection() {
+  const currentScrollY = window.scrollY;
+  const delta = currentScrollY - lastHomeScrollY;
+
+  if (Math.abs(delta) < HOME_SCROLL_DIRECTION_THRESHOLD) {
+    return null;
+  }
+
+  lastHomeScrollY = currentScrollY;
+  return delta > 0 ? "down" : "up";
+}
+
+function getStoryScrollProgress() {
+  const root = document.querySelector("[data-story-journey]");
+  const track = root?.querySelector(".story-scroll-track");
+  if (!track) return 0;
+
+  const rect = track.getBoundingClientRect();
+  const scrollable = track.offsetHeight - window.innerHeight;
+  if (scrollable <= 0) return 0;
+
+  return Math.min(1, Math.max(0, -rect.top / scrollable));
+}
+
+function isHomeDownloadBannerEligible() {
+  return getStoryScrollProgress() >= STORY_COMPLETE_SCROLL_PROGRESS;
+}
+
+function syncHomeDownloadBannerOnScroll() {
+  if (!homeDownloadBannerUnlocked) return;
+
+  const direction = getHomeScrollDirection();
+  if (!direction) return;
+
+  if (direction === "up") {
+    hideHomeDownloadBanner();
+    return;
+  }
+
+  if (direction === "down" && isHomeDownloadBannerEligible()) {
+    showHomeDownloadBanner();
+  }
+}
+
+function initHomeDownloadBannerScrollBehavior() {
+  if (!getHomeDownloadBanner()) return;
+
+  lastHomeScrollY = window.scrollY;
+  window.addEventListener("scroll", syncHomeDownloadBannerOnScroll, {
+    passive: true,
+  });
+}
+
 function restoreHomeDownloadBannerFromSession() {
   try {
     if (sessionStorage.getItem(HOME_DOWNLOAD_BANNER_STORAGE_KEY) !== "1") return;
@@ -32,6 +98,7 @@ function restoreHomeDownloadBannerFromSession() {
     return;
   }
 
+  homeDownloadBannerUnlocked = true;
   showHomeDownloadBanner();
 }
 
@@ -234,7 +301,11 @@ class StoryJourney {
     this.updateProgressUI(overall, chapterIndex);
 
     if (overall >= STORY_COMPLETE_SCROLL_PROGRESS) {
-      showHomeDownloadBanner();
+      if (!homeDownloadBannerUnlocked) {
+        showHomeDownloadBanner();
+      }
+    } else if (homeDownloadBannerUnlocked) {
+      hideHomeDownloadBanner();
     }
   }
 
@@ -312,6 +383,7 @@ function initStoryJourney() {
   root.dataset.storyInitialized = "true";
   configureStoryCtas();
   restoreHomeDownloadBannerFromSession();
+  initHomeDownloadBannerScrollBehavior();
   initHomeDownloadBannerFallbackObserver(root);
   new StoryJourney(root);
 }
