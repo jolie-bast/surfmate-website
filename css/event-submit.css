@@ -233,6 +233,13 @@
 .wizard-step {
   display: grid;
   gap: var(--spacing-md);
+}
+
+.wizard-step:not(.is-active) {
+  animation: none;
+}
+
+.wizard-step.is-active {
   animation: wizard-step-in 0.28s ease both;
 }
 

@@ -298,14 +298,17 @@
 }
 
 .partners-map .leaflet-popup-content .partners-popup-tag {
-  display: inline-block;
-  padding: 3px 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0.25rem 0.5rem;
+  padding-top: 0;
   border-radius: 999px;
   background: #e9f5fb;
   color: #11415a;
   font-size: 0.75rem;
   font-family: var(--font-family-primary-bold);
-  line-height: 1.2;
 }
 
 .partners-map .leaflet-popup-content .partners-popup-subtitle {

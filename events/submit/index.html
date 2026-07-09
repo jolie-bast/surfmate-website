@@ -16,16 +16,10 @@
     />
     <title>Share an event – Surfmate</title>
     <link rel="canonical" href="https://surfmate.eu/events/submit" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <link rel="preconnect" href="https://esm.sh" crossorigin />
 
     <link rel="stylesheet" href="/css/main.css" />
     <link rel="stylesheet" href="/css/legal.css" />
-    <link rel="stylesheet" href="/css/event-submit.css" />
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
   </head>
   <body class="event-submit-page">
@@ -47,15 +41,76 @@
           </header>
 
           <div class="event-submit-panel">
-            <div id="event-submit-loading" class="event-submit-loading">
-              <span class="spinner" aria-hidden="true"></span>
-              Loading…
-            </div>
-
-            <div id="event-submit-form-section" class="event-submit-card" hidden>
+            <div id="event-submit-form-section" class="event-submit-card">
               <form id="event-submit-form" class="event-submit-form" novalidate>
                 <nav class="wizard-progress" aria-label="Submission steps">
-                  <ol id="wizard-steps-map" class="wizard-steps-map"></ol>
+                  <ol id="wizard-steps-map" class="wizard-steps-map">
+                    <li class="wizard-step-marker is-active" data-step-marker="1">
+                      <button
+                        type="button"
+                        class="wizard-step-marker-btn"
+                        data-step-jump="1"
+                        aria-label="Go to step 1: Contact"
+                        aria-current="step"
+                        disabled
+                      >
+                        1
+                      </button>
+                      <span class="wizard-step-marker-label">Contact</span>
+                    </li>
+                    <li class="wizard-step-marker" data-step-marker="2">
+                      <button
+                        type="button"
+                        class="wizard-step-marker-btn"
+                        data-step-jump="2"
+                        aria-label="Go to step 2: Event"
+                        aria-current="false"
+                        disabled
+                      >
+                        2
+                      </button>
+                      <span class="wizard-step-marker-label">Event</span>
+                    </li>
+                    <li class="wizard-step-marker" data-step-marker="3">
+                      <button
+                        type="button"
+                        class="wizard-step-marker-btn"
+                        data-step-jump="3"
+                        aria-label="Go to step 3: When"
+                        aria-current="false"
+                        disabled
+                      >
+                        3
+                      </button>
+                      <span class="wizard-step-marker-label">When</span>
+                    </li>
+                    <li class="wizard-step-marker" data-step-marker="4">
+                      <button
+                        type="button"
+                        class="wizard-step-marker-btn"
+                        data-step-jump="4"
+                        aria-label="Go to step 4: Type"
+                        aria-current="false"
+                        disabled
+                      >
+                        4
+                      </button>
+                      <span class="wizard-step-marker-label">Type</span>
+                    </li>
+                    <li class="wizard-step-marker" data-step-marker="5">
+                      <button
+                        type="button"
+                        class="wizard-step-marker-btn"
+                        data-step-jump="5"
+                        aria-label="Go to step 5: Send"
+                        aria-current="false"
+                        disabled
+                      >
+                        5
+                      </button>
+                      <span class="wizard-step-marker-label">Send</span>
+                    </li>
+                  </ol>
                 </nav>
 
                 <div class="wizard-step-header">

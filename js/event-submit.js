@@ -1,4 +1,3 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import {
   SURF_EVENT_TYPES,
   SURF_EVENT_TYPE_LABELS,
@@ -47,7 +46,8 @@ const WIZARD_STEPS = [
   },
 ];
 
-let supabase = null;
+let supabaseClient = null;
+let supabaseLoadPromise = null;
 let selectedPlace = null;
 let placeSearchTimer = null;
 let currentWizardStep = 1;
@@ -105,6 +105,31 @@ const FIELD_ERROR_ELEMENTS = {
   eventTypes: () => els.eventTypesError,
   schedule: () => els.scheduleError,
 };
+
+function getSupabase() {
+  if (!config?.url || !config?.anonKey) {
+    return Promise.reject(new Error("Supabase is not configured on this page."));
+  }
+
+  if (supabaseClient) {
+    return Promise.resolve(supabaseClient);
+  }
+
+  if (!supabaseLoadPromise) {
+    supabaseLoadPromise = import("https://esm.sh/@supabase/supabase-js@2.49.1").then(
+      ({ createClient }) => {
+        supabaseClient = createClient(config.url, config.anonKey);
+        return supabaseClient;
+      },
+    );
+  }
+
+  return supabaseLoadPromise;
+}
+
+function prefetchSupabase() {
+  getSupabase().catch(() => {});
+}
 
 function refreshWizardElements() {
   els.wizardStepPanels = document.querySelectorAll(".wizard-step");
@@ -358,8 +383,45 @@ function showForm() {
   goToWizardStep(1, { focus: false });
 }
 
+function bindWizardStepJumpHandlers() {
+  if (!els.wizardStepsMap || els.wizardStepsMap.dataset.jumpBound === "true") return;
+
+  els.wizardStepsMap.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-step-jump]");
+    if (!button) return;
+
+    const step = Number(button.dataset.stepJump);
+    if (!Number.isFinite(step) || step >= currentWizardStep) return;
+    goToWizardStep(step);
+  });
+
+  els.wizardStepsMap.dataset.jumpBound = "true";
+}
+
+function updateWizardProgressMarker(marker, step) {
+  marker.classList.toggle("is-complete", step.id < currentWizardStep);
+  marker.classList.toggle("is-active", step.id === currentWizardStep);
+
+  const button = marker.querySelector("[data-step-jump]");
+  if (!button) return;
+
+  button.disabled = step.id >= currentWizardStep;
+  button.setAttribute("aria-current", step.id === currentWizardStep ? "step" : "false");
+  button.textContent = step.id < currentWizardStep ? "✓" : String(step.id);
+}
+
 function renderWizardProgressMap() {
   if (!els.wizardStepsMap) return;
+
+  const existingMarkers = els.wizardStepsMap.querySelectorAll("[data-step-marker]");
+  if (existingMarkers.length === WIZARD_STEP_COUNT) {
+    existingMarkers.forEach((marker) => {
+      const stepId = Number(marker.dataset.stepMarker);
+      const step = WIZARD_STEPS.find((item) => item.id === stepId);
+      if (step) updateWizardProgressMarker(marker, step);
+    });
+    return;
+  }
 
   els.wizardStepsMap.innerHTML = WIZARD_STEPS.map((step) => {
     const state =
@@ -387,14 +449,6 @@ function renderWizardProgressMap() {
       </li>
     `;
   }).join("");
-
-  els.wizardStepsMap.querySelectorAll("[data-step-jump]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const step = Number(button.dataset.stepJump);
-      if (!Number.isFinite(step) || step >= currentWizardStep) return;
-      goToWizardStep(step);
-    });
-  });
 }
 
 function getWizardStepConfig(step = currentWizardStep) {
@@ -1447,7 +1501,17 @@ async function handleFinalSubmit() {
   els.submitBtn.disabled = true;
   els.submitBtn.textContent = "Submitting…";
 
-  const { data: eventId, error } = await supabase.rpc("submit_community_event", {
+  let client;
+  try {
+    client = await getSupabase();
+  } catch {
+    els.submitBtn.disabled = false;
+    els.submitBtn.textContent = "Submit for review";
+    showFormError("Supabase is not configured on this page.");
+    return;
+  }
+
+  const { data: eventId, error } = await client.rpc("submit_community_event", {
     p_title: input.title.trim(),
     p_location_name: input.locationName.trim(),
     p_country_code: input.countryCode,
@@ -1490,6 +1554,7 @@ function handleFormSubmit(event) {
 }
 
 function bindEvents() {
+  bindWizardStepJumpHandlers();
   els.wizardBack?.addEventListener("click", handleWizardBack);
   els.wizardNext?.addEventListener("click", handleWizardNext);
   els.submitBtn?.addEventListener("click", handleFinalSubmit);
@@ -1564,29 +1629,20 @@ function bindEvents() {
   });
 }
 
-async function init() {
+function init() {
   refreshWizardElements();
-
-  if (!config?.url || !config?.anonKey) {
-    hide(els.loading);
-    showFormError("Supabase is not configured on this page.");
-    show(els.formSection);
-    goToWizardStep(1, { focus: false });
-    return;
-  }
-
-  supabase = createClient(config.url, config.anonKey);
 
   renderEventTypeChips();
   updateDatetimeVisibility();
   bindEvents();
   showForm();
+
+  if (!config?.url || !config?.anonKey) {
+    showFormError("Supabase is not configured on this page.");
+    return;
+  }
+
+  prefetchSupabase();
 }
 
-init().catch((error) => {
-  console.error("Event submit init failed:", error);
-  hide(els.loading);
-  showFormError("Something went wrong loading this page. Please refresh and try again.");
-  show(els.formSection);
-  goToWizardStep(1, { focus: false });
-});
+init();

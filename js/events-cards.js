@@ -36,6 +36,12 @@ function buildTypeTagsHtml(eventTypes, selectedTypes = new Set()) {
   return `<div class="events-card-tags">${chips}</div>`;
 }
 
+function buildEventLogoHtml(logoUrl) {
+  if (!logoUrl) return "";
+
+  return `<div class="events-card-logo${isInvertFriendlyLogo(logoUrl) ? " is-logo-mono" : ""}"><img src="${escapeHtml(logoUrl)}" alt="" loading="lazy" decoding="async" /></div>`;
+}
+
 export function buildEventCard(event, options = {}) {
   const selectedTypes = options.selectedTypes ?? new Set();
 
@@ -56,19 +62,19 @@ export function buildEventCard(event, options = {}) {
   );
 
   const omitEmptyCover = Boolean(options.omitEmptyCover);
+  const logoHtml = buildEventLogoHtml(event.logoUrl);
 
-  const coverHtml = event.coverImageUrl
-    ? `<div class="events-card-cover"><img src="${escapeHtml(event.coverImageUrl)}" alt="" loading="lazy" decoding="async" /></div>`
-    : omitEmptyCover
-      ? ""
-      : `<div class="events-card-cover events-card-cover--empty"></div>`;
-
-  const logoHtml = event.logoUrl
-    ? `<div class="events-card-logo${isInvertFriendlyLogo(event.logoUrl) ? " is-logo-mono" : ""}"><img src="${escapeHtml(event.logoUrl)}" alt="" loading="lazy" decoding="async" /></div>`
-    : "";
+  let coverHtml;
+  if (event.coverImageUrl) {
+    coverHtml = `<div class="events-card-cover"><img src="${escapeHtml(event.coverImageUrl)}" alt="" loading="lazy" decoding="async" />${logoHtml}</div>`;
+  } else if (omitEmptyCover) {
+    coverHtml = logoHtml;
+  } else {
+    coverHtml = `<div class="events-card-cover events-card-cover--empty">${logoHtml}</div>`;
+  }
 
   const partnerBadge = event.isPartner
-    ? `<span class="events-card-badge events-card-badge--partner">Partner</span>`
+    ? `<span class="events-card-badge events-card-badge--partner">Community Pick</span>`
     : "";
 
   const liveBadge = isLive
@@ -81,7 +87,6 @@ export function buildEventCard(event, options = {}) {
 
   const inner = `
     ${coverHtml}
-    ${logoHtml}
     <div class="events-card-body">
       <div class="events-card-badges">${partnerBadge}${liveBadge}</div>
       <h3 class="events-card-title">${escapeHtml(event.title)}</h3>
@@ -125,7 +130,7 @@ export function buildMobileStripCard(event, options = {}) {
     : "";
 
   const badges = [
-    event.isPartner ? `<span class="events-strip-card-badge">Partner</span>` : "",
+    event.isPartner ? `<span class="events-strip-card-badge">Community Pick</span>` : "",
     isLive
       ? `<span class="events-strip-card-badge events-strip-card-badge--live"><span class="events-on-dot" aria-hidden="true"></span>Live</span>`
       : "",

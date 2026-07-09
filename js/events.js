@@ -41,6 +41,7 @@ const els = {
   calendarSentinel: document.getElementById("events-calendar-sentinel"),
   listSentinel: document.getElementById("events-list-sentinel"),
   splitMap: document.querySelector(".events-split-map"),
+  mapFullscreenChrome: document.querySelector(".events-map-fullscreen-chrome"),
   mapStatus: document.getElementById("events-map-status"),
   mapContainer: document.getElementById("events-map"),
   mobileStrip: document.getElementById("events-mobile-strip"),
@@ -49,7 +50,6 @@ const els = {
   mapBack: document.getElementById("events-map-back"),
   mapExpand: document.getElementById("events-map-expand"),
   mapFilterChips: document.getElementById("events-map-filter-chips"),
-  toolbarSection: document.querySelector(".events-toolbar-section"),
 };
 
 const EUROPE_CENTER = { lng: 10, lat: 52 };
@@ -79,7 +79,6 @@ const state = {
   mobileMapMode: false,
   mapFullscreen: false,
   mapFullscreenScrollY: 0,
-  mapFullscreenAutoEnabled: true,
 };
 
 let map = null;
@@ -91,6 +90,116 @@ let mapVisibilityObserver = null;
 let searchDebounceTimer = null;
 let listLoadObserver = null;
 let calendarLoadObserver = null;
+let calendarMapHeightObserver = null;
+let mobileMapHeightObserver = null;
+
+function shouldSyncCalendarMapHeight() {
+  return (
+    !isMobileLayout() &&
+    state.viewMode === "calendar" &&
+    Boolean(els.splitLayout?.classList.contains("is-calendar-view")) &&
+    Boolean(els.calendarRoot) &&
+    Boolean(els.splitMap) &&
+    Boolean(els.mapContainer)
+  );
+}
+
+function clearCalendarMapHeight() {
+  els.splitMap?.style.removeProperty("height");
+  els.splitMap?.style.removeProperty("min-height");
+  els.mapContainer?.style.removeProperty("height");
+}
+
+function shouldSyncMobileMapHeight() {
+  return (
+    isMobileLayout() &&
+    !state.mapFullscreen &&
+    state.viewMode === "list" &&
+    Boolean(els.splitMap) &&
+    Boolean(els.mapContainer)
+  );
+}
+
+function getMobileMapStackHeight() {
+  const hero = document.querySelector(".events-hero");
+  const toolbarSection = document.querySelector(".events-toolbar-section");
+  const splitSection = document.querySelector(".events-split-section");
+  let height = 0;
+
+  if (hero) height += hero.getBoundingClientRect().height;
+  if (toolbarSection) height += toolbarSection.getBoundingClientRect().height;
+  if (splitSection) {
+    const styles = window.getComputedStyle(splitSection);
+    height += parseFloat(styles.paddingTop) || 0;
+  }
+
+  return height;
+}
+
+function syncMobileMapHeight() {
+  if (!shouldSyncMobileMapHeight()) {
+    els.splitMap?.style.removeProperty("height");
+    els.splitMap?.style.removeProperty("min-height");
+    if (!shouldSyncCalendarMapHeight()) {
+      els.mapContainer?.style.removeProperty("height");
+    }
+    return;
+  }
+
+  const height = Math.max(
+    280,
+    Math.round(window.innerHeight - getTopChromeHeight() - getMobileMapStackHeight()),
+  );
+
+  els.splitMap.style.removeProperty("min-height");
+  els.splitMap.style.height = `${height}px`;
+  els.mapContainer.style.height = `${height}px`;
+}
+
+function bindMobileMapHeightObserver() {
+  if (!window.ResizeObserver) return;
+
+  mobileMapHeightObserver?.disconnect();
+
+  if (!isMobileLayout() || state.viewMode !== "list") return;
+
+  const targets = [
+    document.querySelector(".events-hero"),
+    document.querySelector(".events-toolbar-section"),
+  ].filter(Boolean);
+
+  if (!targets.length) return;
+
+  mobileMapHeightObserver = new ResizeObserver(() => {
+    syncMobileMapHeight();
+    map?.invalidateSize();
+  });
+
+  for (const target of targets) {
+    mobileMapHeightObserver.observe(target);
+  }
+}
+
+function syncCalendarMapHeight() {
+  if (!shouldSyncCalendarMapHeight()) {
+    clearCalendarMapHeight();
+    return;
+  }
+
+  const height = Math.round(els.calendarRoot.getBoundingClientRect().height);
+  if (!height) return;
+
+  els.splitMap.style.height = `${height}px`;
+  els.mapContainer.style.height = `${height}px`;
+}
+
+function bindCalendarMapHeightObserver() {
+  if (!window.ResizeObserver || !els.calendarRoot) return;
+
+  calendarMapHeightObserver?.disconnect();
+  calendarMapHeightObserver = new ResizeObserver(() => syncCalendarMapHeight());
+  calendarMapHeightObserver.observe(els.calendarRoot);
+}
 
 const STRIP_DRAG_THRESHOLD_PX = 10;
 const stripInteraction = {
@@ -101,9 +210,27 @@ const stripInteraction = {
   scrolled: false,
 };
 let stripScrollResetTimer = null;
-let mapFullscreenScrollRafId = null;
-let mapFullscreenScrollListenerBound = false;
-let lastScrollY = 0;
+
+const filterChipsHome = {
+  parent: null,
+  nextSibling: null,
+};
+
+function mountFullscreenFilterChips() {
+  if (!els.filterChips || !els.mapFullscreenChrome) return;
+
+  filterChipsHome.parent = els.filterChips.parentElement;
+  filterChipsHome.nextSibling = els.filterChips.nextElementSibling;
+  els.mapFullscreenChrome.appendChild(els.filterChips);
+}
+
+function restoreFullscreenFilterChips() {
+  if (!els.filterChips || !filterChipsHome.parent) return;
+
+  filterChipsHome.parent.insertBefore(els.filterChips, filterChipsHome.nextSibling);
+  filterChipsHome.parent = null;
+  filterChipsHome.nextSibling = null;
+}
 
 function getHeaderElement() {
   return document.querySelector(".header");
@@ -145,94 +272,50 @@ function canEnterMapFullscreen() {
 }
 
 function shouldShowMapExpand() {
-  return canEnterMapFullscreen() && !state.mapFullscreenAutoEnabled;
+  return canEnterMapFullscreen();
 }
 
 function syncMapFullscreenControls() {
   if (els.mapBack) els.mapBack.hidden = !state.mapFullscreen;
   if (els.mapExpand) els.mapExpand.hidden = !shouldShowMapExpand();
-  if (els.filterChips) els.filterChips.hidden = state.mapFullscreen;
-  if (els.mapFilterChips) els.mapFilterChips.hidden = !state.mapFullscreen;
+  if (els.mapFilterChips) els.mapFilterChips.hidden = true;
 }
 
 function enterMapFullscreen() {
   if (!canEnterMapFullscreen()) return;
 
-  state.mapFullscreen = true;
   state.mapFullscreenScrollY = window.scrollY;
+  state.mapFullscreen = true;
   document.body.classList.add("is-map-fullscreen");
   document.body.style.overflow = "hidden";
+  els.splitMap?.style.removeProperty("height");
+  els.mapContainer?.style.removeProperty("height");
+  els.mapContainer?.style.removeProperty("min-height");
+  mountFullscreenFilterChips();
   syncTopChromeCssVar();
   syncMapFullscreenControls();
 
   refreshMapSize();
   renderMobileStrip();
+  updateMapAreaStatus();
 }
 
-function exitMapFullscreen({ disableAuto = false } = {}) {
+function exitMapFullscreen() {
   if (!state.mapFullscreen) return;
 
+  const scrollY = state.mapFullscreenScrollY;
   state.mapFullscreen = false;
-  if (disableAuto) {
-    state.mapFullscreenAutoEnabled = false;
-  }
-
   document.body.classList.remove("is-map-fullscreen");
   document.body.style.overflow = "";
+  restoreFullscreenFilterChips();
   syncMapFullscreenControls();
+  setMapStatus("");
 
   refreshMapSize();
 
-  if (els.toolbarSection) {
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    els.toolbarSection.scrollIntoView({
-      behavior: reduceMotion ? "auto" : "smooth",
-      block: "start",
-    });
-  }
-}
-
-function handleMapFullscreenScroll() {
-  if (!canEnterMapFullscreen() || !state.mapFullscreenAutoEnabled) return;
-
-  const topChrome = getTopChromeHeight();
-  const mapRect = els.splitMap?.getBoundingClientRect();
-  if (!mapRect) return;
-
-  const scrollingDown = window.scrollY > lastScrollY;
-  lastScrollY = window.scrollY;
-
-  if (scrollingDown && mapRect.top <= topChrome + 12) {
-    enterMapFullscreen();
-  }
-}
-
-function onMapFullscreenScroll() {
-  if (mapFullscreenScrollRafId !== null) return;
-
-  mapFullscreenScrollRafId = window.requestAnimationFrame(() => {
-    mapFullscreenScrollRafId = null;
-    handleMapFullscreenScroll();
+  requestAnimationFrame(() => {
+    window.scrollTo(0, scrollY);
   });
-}
-
-function bindMapFullscreenScrollListener() {
-  if (mapFullscreenScrollListenerBound) return;
-
-  lastScrollY = window.scrollY;
-  window.addEventListener("scroll", onMapFullscreenScroll, { passive: true });
-  mapFullscreenScrollListenerBound = true;
-}
-
-function unbindMapFullscreenScrollListener() {
-  if (!mapFullscreenScrollListenerBound) return;
-
-  window.removeEventListener("scroll", onMapFullscreenScroll);
-  if (mapFullscreenScrollRafId !== null) {
-    window.cancelAnimationFrame(mapFullscreenScrollRafId);
-    mapFullscreenScrollRafId = null;
-  }
-  mapFullscreenScrollListenerBound = false;
 }
 
 function escapeHtml(value) {
@@ -296,19 +379,26 @@ function updateMobileLayoutMode() {
       mapVisibilityObserver = null;
     }
     setMapBoundsFilterEnabled(true);
-    bindMapFullscreenScrollListener();
 
     if (state.viewMode === "calendar") {
       exitMapFullscreen();
     }
 
     syncMapFullscreenControls();
+    clearCalendarMapHeight();
+    bindMobileMapHeightObserver();
+    syncMobileMapHeight();
     return;
   }
 
+  mobileMapHeightObserver?.disconnect();
+  mobileMapHeightObserver = null;
   exitMapFullscreen();
-  state.mapFullscreenAutoEnabled = true;
-  unbindMapFullscreenScrollListener();
+  if (state.viewMode === "calendar") {
+    syncCalendarMapHeight();
+  } else {
+    clearCalendarMapHeight();
+  }
   state.selectedStripEventId = null;
   setMapBoundsFilterEnabled(false);
   setupMapBoundsFilter();
@@ -333,7 +423,11 @@ function renderMobileStrip() {
   if (!totalInView) {
     els.mobileStripScroll.innerHTML =
       '<p class="events-mobile-strip-empty">Pan or zoom the map to find events.</p>';
-    setMapStatus("");
+    if (state.mapFullscreen) {
+      updateMapAreaStatus();
+    } else {
+      setMapStatus("");
+    }
     return;
   }
 
@@ -349,7 +443,11 @@ function renderMobileStrip() {
     scrollStripToEvent(state.selectedStripEventId);
   }
 
-  setMapStatus("");
+  if (state.mapFullscreen) {
+    updateMapAreaStatus();
+  } else {
+    setMapStatus("");
+  }
 }
 
 function scrollStripToEvent(eventId) {
@@ -440,9 +538,11 @@ function setStatus(message) {
 function setMapStatus(message, isError = false) {
   if (!els.mapStatus) return;
   const text = String(message ?? "").trim();
+  const showOnMap = !isMobileLayout() || state.mapFullscreen;
+
   els.mapStatus.textContent = text;
   els.mapStatus.classList.toggle("is-error", isError);
-  els.mapStatus.hidden = !text;
+  els.mapStatus.hidden = !text || !showOnMap;
 }
 
 function resetListPagination() {
@@ -511,10 +611,14 @@ function getBaseFilteredEvents() {
   return [...filtered].sort(compareSurfEventsBySchedule);
 }
 
+function isMapBoundsFilterActive() {
+  return state.mapBoundsFilterEnabled && state.viewMode !== "calendar" && Boolean(map);
+}
+
 function getFilteredEvents() {
   const events = getBaseFilteredEvents();
 
-  if (!state.mapBoundsFilterEnabled || !map) {
+  if (!isMapBoundsFilterActive()) {
     return events;
   }
 
@@ -523,11 +627,11 @@ function getFilteredEvents() {
 }
 
 function updateMapAreaStatus() {
-  if (!state.mapBoundsFilterEnabled || !map) return;
+  if (!isMapBoundsFilterActive()) return;
 
   const inView = getFilteredEvents().length;
   if (inView === 0) {
-    setMapStatus("No events in this map area — try zooming out or panning.");
+    setMapStatus("No events in this map area.");
     return;
   }
 
@@ -535,6 +639,8 @@ function updateMapAreaStatus() {
 }
 
 function setMapBoundsFilterEnabled(enabled) {
+  if (enabled && state.viewMode === "calendar") return;
+
   const next = Boolean(enabled);
   if (state.mapBoundsFilterEnabled === next) return;
 
@@ -547,7 +653,7 @@ function setMapBoundsFilterEnabled(enabled) {
 }
 
 function onMapViewportChanged() {
-  if (!state.mapBoundsFilterEnabled) return;
+  if (!isMapBoundsFilterActive()) return;
 
   clearTimeout(mapViewportDebounceTimer);
   mapViewportDebounceTimer = setTimeout(() => {
@@ -570,7 +676,8 @@ function setupMapBoundsFilter() {
 
   mapVisibilityObserver = new IntersectionObserver(
     (entries) => {
-      setMapBoundsFilterEnabled(Boolean(entries[0]?.isIntersecting));
+      const visible = Boolean(entries[0]?.isIntersecting);
+      setMapBoundsFilterEnabled(visible && state.viewMode !== "calendar");
     },
     { threshold: 0.2 },
   );
@@ -628,7 +735,18 @@ function showViewSection(mode) {
     exitMapFullscreen();
   }
 
+  if (mode === "calendar") {
+    setMapBoundsFilterEnabled(false);
+  }
+
   syncMapFullscreenControls();
+
+  if (mode === "calendar") {
+    mobileMapHeightObserver?.disconnect();
+    mobileMapHeightObserver = null;
+  } else if (isMobileLayout()) {
+    bindMobileMapHeightObserver();
+  }
 
   if (els.viewToggle) {
     for (const button of els.viewToggle.querySelectorAll("[data-view]")) {
@@ -644,9 +762,16 @@ function showViewSection(mode) {
 function refreshMapSize() {
   if (!map) return;
 
+  syncCalendarMapHeight();
+  syncMobileMapHeight();
+
   requestAnimationFrame(() => {
     map.invalidateSize();
-    if (state.mapBoundsFilterEnabled) return;
+    if (state.viewMode === "calendar") {
+      fitMapToCalendarSelection();
+      return;
+    }
+    if (isMapBoundsFilterActive()) return;
 
     const withCoords = getMapEvents().filter(eventHasMapCoordinates);
     fitMapToEvents(withCoords);
@@ -659,8 +784,8 @@ function renderList(resetPagination = true) {
   if (isMobileLayout()) {
     els.listGrid.innerHTML = "";
     renderMobileStrip();
-    const count = getMobileStripEvents().length;
-    setStatus(count ? `${count} nearby in map view` : "Pan the map to find events");
+    setStatus("");
+    setMapStatus("");
     return;
   }
 
@@ -805,7 +930,7 @@ function renderCalendar(resetDayPagination = true) {
   }
 
   if (!dayEvents.length) {
-    const emptyMessage = state.mapBoundsFilterEnabled
+    const emptyMessage = isMapBoundsFilterActive()
       ? "No events in the current map view."
       : "No events on this day.";
     els.calendarDayList.innerHTML = `<p class="events-empty">${emptyMessage}</p>`;
@@ -834,6 +959,7 @@ function renderCalendar(resetDayPagination = true) {
   setStatus(`${monthEvents.length} event${monthEvents.length === 1 ? "" : "s"} this month`);
 
   if (state.viewMode === "calendar") {
+    syncCalendarMapHeight();
     renderMap();
   }
 }
@@ -886,6 +1012,25 @@ function fitMapToEvents(events) {
   map.fitBounds(bounds, { padding: [56, 56], maxZoom: 10 });
 }
 
+function fitMapToCalendarSelection(events = getMapEvents()) {
+  if (!map || state.viewMode !== "calendar") return;
+
+  const withCoords = events.filter(eventHasMapCoordinates);
+
+  requestAnimationFrame(() => {
+    map.invalidateSize({ animate: false });
+    requestAnimationFrame(() => fitMapToEvents(withCoords));
+  });
+}
+
+function getEventMapMarkerMetrics() {
+  if (isMobileLayout()) {
+    return { size: 44, anchor: 22, popupOffset: -18 };
+  }
+
+  return { size: 18, anchor: 9, popupOffset: -12 };
+}
+
 function addMapMarker(event) {
   const isLive = isSurfEventLiveNow(
     event.scheduleType,
@@ -895,12 +1040,14 @@ function addMapMarker(event) {
     event.eventMonth,
   );
 
+  const metrics = getEventMapMarkerMetrics();
+
   const icon = L.divIcon({
-    className: `events-map-marker${isLive ? " events-map-marker--on" : ""} leaflet-div-icon`,
-    html: "",
-    iconSize: [18, 18],
-    iconAnchor: [9, 9],
-    popupAnchor: [0, -12],
+    className: `events-map-marker${isLive ? " events-map-marker--on" : ""}${isMobileLayout() ? " events-map-marker--touch" : ""} leaflet-div-icon`,
+    html: '<span class="events-map-marker-dot" aria-hidden="true"></span>',
+    iconSize: [metrics.size, metrics.size],
+    iconAnchor: [metrics.anchor, metrics.anchor],
+    popupAnchor: [0, metrics.popupOffset],
   });
 
   const marker = L.marker([event.latitude, event.longitude], { icon })
@@ -941,18 +1088,21 @@ async function renderMap() {
 
   renderMobileStrip();
 
-  if (!state.mapBoundsFilterEnabled) {
+  if (state.viewMode === "calendar") {
+    syncCalendarMapHeight();
+    fitMapToCalendarSelection(withCoords);
+    const noun = withCoords.length === 1 ? "event" : "events";
+    setMapStatus(
+      withCoords.length
+        ? `${withCoords.length} ${noun} on this day`
+        : "No events with map coordinates on this day.",
+    );
+    return;
+  }
+
+  if (!isMapBoundsFilterActive()) {
     fitMapToEvents(withCoords);
-    if (state.viewMode === "calendar") {
-      const noun = withCoords.length === 1 ? "event" : "events";
-      setMapStatus(
-        withCoords.length
-          ? `${withCoords.length} ${noun} on this day`
-          : "No events with map coordinates on this day.",
-      );
-    } else {
-      setMapStatus(withCoords.length ? "" : "No events with map coordinates match your filters.");
-    }
+    setMapStatus(withCoords.length ? "" : "No events with map coordinates match your filters.");
   } else {
     updateMapAreaStatus();
   }
@@ -1140,7 +1290,7 @@ function bindEvents() {
   bindMobileStripInteractions();
 
   if (els.mapBack) {
-    els.mapBack.addEventListener("click", () => exitMapFullscreen({ disableAuto: true }));
+    els.mapBack.addEventListener("click", () => exitMapFullscreen());
   }
 
   if (els.mapExpand) {
@@ -1151,11 +1301,9 @@ function bindEvents() {
     syncTopChromeCssVar();
     if (!isMobileLayout()) {
       exitMapFullscreen();
-      unbindMapFullscreenScrollListener();
-    } else {
-      bindMapFullscreenScrollListener();
     }
     refreshMapSize();
+    syncMapFullscreenControls();
   });
 
   MOBILE_LAYOUT_MQ?.addEventListener("change", () => {
@@ -1267,13 +1415,20 @@ async function init() {
   updateMobileLayoutMode();
   syncMapFullscreenControls();
 
+  bindCalendarMapHeightObserver();
+  bindMobileMapHeightObserver();
+
   if (els.splitLayout && window.ResizeObserver) {
     const observer = new ResizeObserver(() => refreshMapSize());
     observer.observe(els.splitLayout);
   }
 
   if (window.ResizeObserver) {
-    const topChromeObserver = new ResizeObserver(() => syncTopChromeCssVar());
+    const topChromeObserver = new ResizeObserver(() => {
+      syncTopChromeCssVar();
+      syncMobileMapHeight();
+      map?.invalidateSize();
+    });
     const header = getHeaderElement();
     const banner = getDownloadBannerElement();
     if (header) topChromeObserver.observe(header);
@@ -1294,6 +1449,7 @@ async function init() {
     setStatus("");
   } finally {
     setLoading(false);
+    refreshMapSize();
   }
 }
 
