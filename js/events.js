@@ -1,4 +1,4 @@
-import { buildEventCard } from "./events-cards.js";
+import { buildEventCard, buildMobileStripCard } from "./events-cards.js";
 import {
   SURF_EVENT_TYPES,
   SURF_EVENT_TYPE_LABELS,
@@ -44,12 +44,19 @@ const els = {
   splitMap: document.querySelector(".events-split-map"),
   mapStatus: document.getElementById("events-map-status"),
   mapContainer: document.getElementById("events-map"),
+  mobileStrip: document.getElementById("events-mobile-strip"),
+  mobileStripLabel: document.getElementById("events-mobile-strip-label"),
+  mobileStripScroll: document.getElementById("events-mobile-strip-scroll"),
 };
 
 const EUROPE_CENTER = { lng: 10, lat: 52 };
 const DEFAULT_ZOOM = 4;
 const LIST_BATCH_SIZE = 12;
 const MAP_MARKER_BATCH_SIZE = 20;
+const MOBILE_STRIP_LIMIT = 24;
+const MOBILE_LAYOUT_MQ = typeof window !== "undefined"
+  ? window.matchMedia("(max-width: 768px)")
+  : null;
 
 const state = {
   allEvents: [],
@@ -66,10 +73,13 @@ const state = {
     new Date().getMonth() + 1,
   ),
   mapBoundsFilterEnabled: false,
+  selectedStripEventId: null,
+  mobileMapMode: false,
 };
 
 let map = null;
 let mapMarkers = [];
+let markerByEventId = new Map();
 let mapRenderToken = 0;
 let mapViewportDebounceTimer = null;
 let mapVisibilityObserver = null;
@@ -87,6 +97,125 @@ function escapeHtml(value) {
 
 function hasWebsite(url) {
   return typeof url === "string" && url.trim().length > 0;
+}
+
+function isMobileLayout() {
+  return Boolean(MOBILE_LAYOUT_MQ?.matches);
+}
+
+function distanceSquaredToMapCenter(event, center) {
+  const dLat = event.latitude - center.lat;
+  const dLng = event.longitude - center.lng;
+  return dLat * dLat + dLng * dLng;
+}
+
+function getMobileStripSourceEvents() {
+  if (state.viewMode === "calendar") {
+    return getSelectedCalendarDayEvents(getBaseFilteredEvents());
+  }
+
+  return getBaseFilteredEvents();
+}
+
+function getMobileStripEvents() {
+  let events = getMobileStripSourceEvents().filter(eventHasMapCoordinates);
+
+  if (map) {
+    const bounds = map.getBounds();
+    events = events.filter((event) => isEventInMapBounds(event, bounds));
+    const center = map.getCenter();
+    events = [...events].sort(
+      (left, right) =>
+        distanceSquaredToMapCenter(left, center) - distanceSquaredToMapCenter(right, center),
+    );
+  }
+
+  return events.slice(0, MOBILE_STRIP_LIMIT);
+}
+
+function updateMobileLayoutMode() {
+  const mobile = isMobileLayout();
+  state.mobileMapMode = mobile;
+
+  els.splitLayout?.classList.toggle("is-mobile-map", mobile);
+  if (els.mobileStrip) els.mobileStrip.hidden = !mobile;
+
+  if (mobile) {
+    if (mapVisibilityObserver) {
+      mapVisibilityObserver.disconnect();
+      mapVisibilityObserver = null;
+    }
+    setMapBoundsFilterEnabled(true);
+    return;
+  }
+
+  state.selectedStripEventId = null;
+  setMapBoundsFilterEnabled(false);
+  setupMapBoundsFilter();
+}
+
+function renderMobileStrip() {
+  if (!isMobileLayout() || !els.mobileStripScroll) return;
+
+  const events = getMobileStripEvents();
+  const totalInView = events.length;
+
+  if (els.mobileStripLabel) {
+    if (!totalInView) {
+      els.mobileStripLabel.textContent = "No events in this map area";
+    } else if (state.viewMode === "calendar") {
+      els.mobileStripLabel.textContent = `${totalInView} on this day nearby`;
+    } else {
+      els.mobileStripLabel.textContent = `${totalInView} nearby`;
+    }
+  }
+
+  if (!totalInView) {
+    els.mobileStripScroll.innerHTML =
+      '<p class="events-mobile-strip-empty">Pan or zoom the map to find events.</p>';
+    setMapStatus("");
+    return;
+  }
+
+  els.mobileStripScroll.innerHTML = events
+    .map((event) =>
+      buildMobileStripCard(event, {
+        selected: String(event.id) === String(state.selectedStripEventId),
+      }),
+    )
+    .join("");
+
+  if (state.selectedStripEventId) {
+    scrollStripToEvent(state.selectedStripEventId);
+  }
+
+  setMapStatus("");
+}
+
+function scrollStripToEvent(eventId) {
+  if (!els.mobileStripScroll || !eventId) return;
+
+  const card = els.mobileStripScroll.querySelector(`[data-event-id="${CSS.escape(String(eventId))}"]`);
+  card?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+}
+
+function focusEventOnMap(eventId) {
+  const event = state.allEvents.find((item) => String(item.id) === String(eventId));
+  if (!event || !map || !eventHasMapCoordinates(event)) return;
+
+  state.selectedStripEventId = event.id;
+  const marker = markerByEventId.get(event.id);
+
+  map.flyTo([event.latitude, event.longitude], Math.max(map.getZoom(), 9), {
+    animate: true,
+    duration: 0.45,
+  });
+
+  if (marker) {
+    window.setTimeout(() => marker.openPopup(), 320);
+  }
+
+  renderMobileStrip();
 }
 
 function renderEventCard(event) {
@@ -267,15 +396,18 @@ function onMapViewportChanged() {
 
   clearTimeout(mapViewportDebounceTimer);
   mapViewportDebounceTimer = setTimeout(() => {
-    resetListPagination();
-    resetCalendarDayPagination();
+    if (!isMobileLayout()) {
+      resetListPagination();
+      resetCalendarDayPagination();
+    }
     renderContentViews(false);
     updateMapAreaStatus();
+    renderMobileStrip();
   }, 180);
 }
 
 function setupMapBoundsFilter() {
-  if (!els.splitMap || !window.IntersectionObserver) return;
+  if (!els.splitMap || !window.IntersectionObserver || isMobileLayout()) return;
 
   if (mapVisibilityObserver) {
     mapVisibilityObserver.disconnect();
@@ -335,6 +467,7 @@ function getMapEvents() {
 function showViewSection(mode) {
   if (els.listSection) els.listSection.hidden = mode !== "list";
   if (els.calendarSection) els.calendarSection.hidden = mode !== "calendar";
+  els.splitLayout?.classList.toggle("is-calendar-view", mode === "calendar");
 
   if (els.viewToggle) {
     for (const button of els.viewToggle.querySelectorAll("[data-view]")) {
@@ -361,6 +494,14 @@ function refreshMapSize() {
 
 function renderList(resetPagination = true) {
   if (!els.listGrid) return;
+
+  if (isMobileLayout()) {
+    els.listGrid.innerHTML = "";
+    renderMobileStrip();
+    const count = getMobileStripEvents().length;
+    setStatus(count ? `${count} nearby in map view` : "Pan the map to find events");
+    return;
+  }
 
   if (resetPagination) {
     resetListPagination();
@@ -492,6 +633,16 @@ function renderCalendar(resetDayPagination = true) {
 
   const dayEvents = getSelectedCalendarDayEvents(monthEvents).sort(compareSurfEventsBySchedule);
 
+  if (isMobileLayout()) {
+    els.calendarDayList.innerHTML = "";
+    renderMobileStrip();
+    setStatus(`${monthEvents.length} event${monthEvents.length === 1 ? "" : "s"} this month`);
+    if (state.viewMode === "calendar") {
+      renderMap();
+    }
+    return;
+  }
+
   if (!dayEvents.length) {
     const emptyMessage = state.mapBoundsFilterEnabled
       ? "No events in the current map view."
@@ -550,6 +701,7 @@ function clearMapMarkers() {
     marker.remove();
   }
   mapMarkers = [];
+  markerByEventId.clear();
 }
 
 function fitMapToEvents(events) {
@@ -594,7 +746,13 @@ function addMapMarker(event) {
     .addTo(map)
     .bindPopup(buildPopupHtml(event), { closeButton: true, maxWidth: 280 });
 
+  marker.on("click", () => {
+    state.selectedStripEventId = event.id;
+    renderMobileStrip();
+  });
+
   mapMarkers.push(marker);
+  markerByEventId.set(event.id, marker);
 }
 
 async function renderMap() {
@@ -619,6 +777,8 @@ async function renderMap() {
   }
 
   if (token !== mapRenderToken) return;
+
+  renderMobileStrip();
 
   if (!state.mapBoundsFilterEnabled) {
     fitMapToEvents(withCoords);
@@ -658,7 +818,11 @@ function initMap() {
   }).addTo(map);
 
   bindMapViewportEvents();
-  setupMapBoundsFilter();
+  if (isMobileLayout()) {
+    setMapBoundsFilterEnabled(true);
+  } else {
+    setupMapBoundsFilter();
+  }
   renderMap();
 }
 
@@ -732,6 +896,20 @@ function bindEvents() {
       renderAll();
     });
   }
+
+  els.mobileStripScroll?.addEventListener("click", (event) => {
+    if (event.target.closest("[data-strip-link]")) return;
+
+    const card = event.target.closest("[data-event-id]");
+    if (!card) return;
+
+    focusEventOnMap(card.dataset.eventId);
+  });
+
+  MOBILE_LAYOUT_MQ?.addEventListener("change", () => {
+    updateMobileLayoutMode();
+    renderAll();
+  });
 
   if (els.calendarRoot) {
     els.calendarRoot.addEventListener("click", (event) => {
@@ -834,6 +1012,7 @@ async function init() {
   applyUrlState();
   renderFilterChips();
   bindEvents();
+  updateMobileLayoutMode();
 
   if (els.splitLayout && window.ResizeObserver) {
     const observer = new ResizeObserver(() => refreshMapSize());

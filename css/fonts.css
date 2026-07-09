@@ -1,3 +1,6 @@
+/* UI text — dates, tags, meta (headings stay Seattle) */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
 /* Seattle Font - Regular */
 @font-face {
   font-family: "seattle-regular";

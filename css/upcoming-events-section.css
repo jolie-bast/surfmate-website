@@ -7,6 +7,7 @@
   background: #000;
   color: var(--surfmate-white);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-family: var(--font-family-ui);
 }
 
 .upcoming-events-header {
@@ -113,8 +114,9 @@
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(115, 201, 235, 0.35);
   color: var(--surfmate-white);
-  font-family: var(--font-family-primary-bold);
+  font-family: var(--font-family-ui);
   font-size: clamp(0.92rem, 2vw, 1rem);
+  font-weight: 600;
   text-decoration: none;
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
   transition:

@@ -100,3 +100,65 @@ export function buildEventCard(event, options = {}) {
 
   return `<article class="events-card events-card--static${liveClass}" aria-label="${escapeHtml(event.title)}">${inner}</article>`;
 }
+
+export function buildMobileStripCard(event, options = {}) {
+  const isSelected = Boolean(options.selected);
+
+  const dateLabel = formatSurfEventSchedule(
+    event.scheduleType,
+    event.startsAt,
+    event.endsAt,
+    event.eventYear,
+    event.eventMonth,
+  );
+  const locationLabel = formatEventLocationLabel(event.locationName, event.countryCode);
+  const isLive = isSurfEventLiveNow(
+    event.scheduleType,
+    event.startsAt,
+    event.endsAt,
+    event.eventYear,
+    event.eventMonth,
+  );
+
+  const typeLabel = event.eventTypes?.[0]
+    ? SURF_EVENT_TYPE_LABELS[event.eventTypes[0]] ?? event.eventTypes[0]
+    : "";
+
+  const badges = [
+    event.isPartner ? `<span class="events-strip-card-badge">Partner</span>` : "",
+    isLive
+      ? `<span class="events-strip-card-badge events-strip-card-badge--live"><span class="events-on-dot" aria-hidden="true"></span>Live</span>`
+      : "",
+    typeLabel
+      ? `<span class="events-strip-card-badge events-strip-card-badge--type">${escapeHtml(typeLabel)}</span>`
+      : "",
+  ]
+    .filter(Boolean)
+    .join("");
+
+  const websiteLink = hasWebsite(event.websiteUrl)
+    ? `<a href="${escapeHtml(event.websiteUrl.trim())}" class="events-strip-card-link" data-strip-link="true" target="_blank" rel="noopener noreferrer" aria-label="Open website for ${escapeHtml(event.title)}" onclick="event.stopPropagation()"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i></a>`
+    : "";
+
+  const selectedClass = isSelected ? " is-selected" : "";
+  const liveClass = isLive ? " events-strip-card--live" : "";
+
+  return `
+    <button
+      type="button"
+      class="events-strip-card${selectedClass}${liveClass}"
+      data-event-id="${escapeHtml(event.id)}"
+      role="listitem"
+      aria-pressed="${isSelected ? "true" : "false"}"
+      aria-label="${escapeHtml(event.title)}"
+    >
+      <span class="events-strip-card-top">
+        ${badges ? `<span class="events-strip-card-badges">${badges}</span>` : ""}
+        ${websiteLink}
+      </span>
+      <span class="events-strip-card-title">${escapeHtml(event.title)}</span>
+      <span class="events-strip-card-meta"><i class="bi bi-calendar3" aria-hidden="true"></i> ${escapeHtml(dateLabel)}</span>
+      <span class="events-strip-card-meta"><i class="bi bi-geo-alt" aria-hidden="true"></i> ${escapeHtml(locationLabel)}</span>
+    </button>
+  `;
+}

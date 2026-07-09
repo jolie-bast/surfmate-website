@@ -196,6 +196,15 @@
             <aside class="events-split-map" aria-label="Event map">
               <div id="events-map-status" class="events-status" role="status" aria-live="polite" hidden></div>
               <div id="events-map" class="events-map" role="region" aria-label="Event locations map"></div>
+              <div id="events-mobile-strip" class="events-mobile-strip" hidden>
+                <p id="events-mobile-strip-label" class="events-mobile-strip-label">Nearby events</p>
+                <div
+                  id="events-mobile-strip-scroll"
+                  class="events-mobile-strip-scroll"
+                  role="list"
+                  aria-label="Events in map view"
+                ></div>
+              </div>
             </aside>
           </div>
         </div>
@@ -212,6 +221,11 @@
         </div>
       </section>
     </main>
+
+    <a href="/events/submit/" class="events-share-fab">
+      <span class="events-share-fab-text">Share an event with the community?</span>
+      <i class="bi bi-arrow-right-short events-share-fab-icon" aria-hidden="true"></i>
+    </a>
 
     <div data-include="footer.html"></div>
 

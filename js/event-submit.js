@@ -311,6 +311,7 @@ function renderWizardStep() {
 function goToWizardStep(step, { focus = true } = {}) {
   currentWizardStep = Math.min(WIZARD_STEP_COUNT, Math.max(1, step));
   showFormError(null);
+  clearFieldErrors();
   renderWizardStep();
   if (focus) {
     requestAnimationFrame(() => focusWizardStepField(currentWizardStep));
@@ -326,18 +327,38 @@ function isValidEmail(value) {
 function validateWizardStep(step) {
   switch (step) {
     case 1: {
-      if (!isValidEmail(els.submitterEmail?.value)) {
-        return { ok: false, message: "Enter a valid email address." };
+      const email = els.submitterEmail?.value.trim() ?? "";
+      if (!email) {
+        return {
+          ok: false,
+          message: "Enter your email address so we can reach you.",
+          field: "submitterEmail",
+        };
+      }
+      if (!isValidEmail(email)) {
+        return {
+          ok: false,
+          message: "Enter a valid email address (e.g. you@example.com).",
+          field: "submitterEmail",
+        };
       }
       return { ok: true };
     }
     case 2: {
       const title = els.title?.value.trim() ?? "";
       if (!title) {
-        return { ok: false, message: "Enter an event name." };
+        return {
+          ok: false,
+          message: "Give your event a name.",
+          field: "eventTitle",
+        };
       }
       if (!selectedPlace) {
-        return { ok: false, message: "Pick a location from the search results." };
+        return {
+          ok: false,
+          message: "Search for a location and tap a result to confirm it.",
+          field: "eventLocation",
+        };
       }
       return { ok: true };
     }
@@ -345,7 +366,11 @@ function validateWizardStep(step) {
       const startDateIso = readDateIsoFromContainer(els.startDate);
       if (!startDateIso) {
         setDateSegmentInvalid(els.startDate, true);
-        return { ok: false, message: "Enter a valid start date (DD / MM / YYYY)." };
+        return {
+          ok: false,
+          message: "Enter a valid start date (DD / MM / YYYY).",
+          field: "schedule",
+        };
       }
 
       const endDateIso = readDateIsoFromContainer(els.endDate);
@@ -354,6 +379,7 @@ function validateWizardStep(step) {
         return {
           ok: false,
           message: "Enter a valid end date (DD / MM / YYYY), or leave it empty.",
+          field: "schedule",
         };
       }
 
@@ -362,7 +388,11 @@ function validateWizardStep(step) {
     }
     case 4: {
       if (!getSelectedEventTypes().length) {
-        return { ok: false, message: "Select at least one event type." };
+        return {
+          ok: false,
+          message: "Select at least one event type.",
+          field: "eventTypes",
+        };
       }
       return { ok: true };
     }
@@ -371,11 +401,28 @@ function validateWizardStep(step) {
   }
 }
 
+function applyWizardStepError(result) {
+  clearFieldErrors();
+  showFormError(result.message);
+
+  if (result.field) {
+    showFieldError(result.field, result.message);
+    markFieldInvalid(result.field, true);
+  }
+
+  focusWizardStepField(currentWizardStep);
+
+  const scrollTarget =
+    (result.field && FIELD_ERROR_ELEMENTS[result.field]?.()) ||
+    els.formError ||
+    els.wizardNav;
+  scrollTarget?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
 function handleWizardNext() {
   const result = validateWizardStep(currentWizardStep);
   if (!result.ok) {
-    showFormError(result.message);
-    focusWizardStepField(currentWizardStep);
+    applyWizardStepError(result);
     return;
   }
 
@@ -919,6 +966,7 @@ function resetEventForm() {
   clearDateSegments(els.startDate);
   clearDateSegments(els.endDate);
   showFormError(null);
+  clearFieldErrors();
   updateDatetimeVisibility();
   hide(els.schedulePreview);
   setText(els.descriptionCount, "0 / 600");
@@ -936,20 +984,15 @@ function showSubmitAnotherForm() {
   els.formSection?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-async function handleSubmit(event) {
-  event.preventDefault();
+async function handleFinalSubmit() {
   showFormError(null);
-
-  if (currentWizardStep !== WIZARD_STEP_COUNT) {
-    goToWizardStep(WIZARD_STEP_COUNT);
-    return;
-  }
+  clearFieldErrors();
 
   for (let step = 1; step <= 4; step += 1) {
     const result = validateWizardStep(step);
     if (!result.ok) {
-      showFormError(result.message);
       goToWizardStep(step);
+      applyWizardStepError(result);
       return;
     }
   }
@@ -1009,13 +1052,51 @@ async function handleSubmit(event) {
   }
 }
 
+function handleFormSubmit(event) {
+  event.preventDefault();
+
+  if (currentWizardStep < WIZARD_STEP_COUNT) {
+    handleWizardNext();
+    return;
+  }
+
+  handleFinalSubmit();
+}
+
 function bindEvents() {
   els.wizardBack?.addEventListener("click", handleWizardBack);
   els.wizardNext?.addEventListener("click", handleWizardNext);
+  els.submitBtn?.addEventListener("click", handleFinalSubmit);
   els.submitAnotherBtn?.addEventListener("click", showSubmitAnotherForm);
   els.clearPlaceBtn?.addEventListener("click", clearPlaceSelection);
-  els.form?.addEventListener("submit", handleSubmit);
+  els.form?.addEventListener("submit", handleFormSubmit);
   els.locationInput?.addEventListener("input", handleLocationInput);
+
+  els.submitterEmail?.addEventListener("input", () => {
+    showFieldError("submitterEmail", null);
+    markFieldInvalid("submitterEmail", false);
+    showFormError(null);
+  });
+
+  els.title?.addEventListener("input", () => {
+    showFieldError("eventTitle", null);
+    markFieldInvalid("eventTitle", false);
+    showFormError(null);
+  });
+
+  els.locationInput?.addEventListener("input", () => {
+    if (!selectedPlace) {
+      showFieldError("eventLocation", null);
+      markFieldInvalid("eventLocation", false);
+      showFormError(null);
+    }
+  });
+
+  els.eventTypes?.addEventListener("change", () => {
+    showFieldError("eventTypes", null);
+    markFieldInvalid("eventTypes", false);
+    showFormError(null);
+  });
 
   els.scheduleAllDay?.addEventListener("change", updateDatetimeVisibility);
   els.scheduleWithTime?.addEventListener("change", updateDatetimeVisibility);
@@ -1061,6 +1142,8 @@ function bindEvents() {
 }
 
 async function init() {
+  refreshWizardElements();
+
   if (!config?.url || !config?.anonKey) {
     hide(els.loading);
     showFormError("Supabase is not configured on this page.");
