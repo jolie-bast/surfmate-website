@@ -174,6 +174,17 @@ export function validateCommunityEventSubmissionInput(input) {
     return { ok: false, message: "Note must be at most 500 characters." };
   }
 
+  const submitterEmail = input.submitterEmail?.trim() ?? "";
+  if (!submitterEmail) {
+    return { ok: false, message: "Email is required so we can reach you about your submission." };
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(submitterEmail)) {
+    return { ok: false, message: "Enter a valid email address." };
+  }
+  if (submitterEmail.length > 254) {
+    return { ok: false, message: "Email must be at most 254 characters." };
+  }
+
   const description = input.description?.trim() ?? "";
   if (description.length > COMMUNITY_EVENT_DESCRIPTION_MAX_LENGTH) {
     return {

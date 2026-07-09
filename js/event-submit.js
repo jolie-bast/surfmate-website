@@ -11,29 +11,18 @@ import {
 const config = window.SURFMATE_SUPABASE;
 const DEBOUNCE_MS = 300;
 const MIN_QUERY_LENGTH = 2;
-const SUBMIT_PAGE_URL = `${window.location.origin}/events/submit/`;
 
 let supabase = null;
-let session = null;
 let selectedPlace = null;
 let placeSearchTimer = null;
-let googleSignInBusy = false;
-let googleButtonRendered = false;
 
 const els = {
   loading: document.getElementById("event-submit-loading"),
-  authGate: document.getElementById("event-submit-auth"),
   formSection: document.getElementById("event-submit-form-section"),
   success: document.getElementById("event-submit-success"),
-  authError: document.getElementById("auth-error"),
-  authMessage: document.getElementById("auth-message"),
-  signInForm: document.getElementById("sign-in-form"),
-  magicLinkForm: document.getElementById("magic-link-form"),
-  googleSigninContainer: document.getElementById("google-signin-container"),
-  signOutBtn: document.getElementById("sign-out-btn"),
-  signedInEmail: document.getElementById("signed-in-email"),
   form: document.getElementById("event-submit-form"),
   formError: document.getElementById("form-error"),
+  submitterEmail: document.getElementById("submitter-email"),
   title: document.getElementById("event-title"),
   locationInput: document.getElementById("event-location"),
   placeResults: document.getElementById("place-results"),
@@ -94,22 +83,10 @@ function showFormError(message) {
   els.formError?.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
-function showAuthError(message) {
-  if (!message) {
-    hide(els.authError);
-    return;
-  }
-  setText(els.authError, message);
-  show(els.authError);
-}
-
-function showAuthMessage(message) {
-  if (!message) {
-    hide(els.authMessage);
-    return;
-  }
-  setText(els.authMessage, message);
-  show(els.authMessage);
+function showForm() {
+  hide(els.loading);
+  show(els.formSection);
+  hide(els.success);
 }
 
 function getScheduleType() {
@@ -488,257 +465,50 @@ function clearPlaceSelection() {
   els.locationInput?.focus();
 }
 
-function switchAuthTab(tabName) {
-  document.querySelectorAll(".auth-tab").forEach((tab) => {
-    const isActive = tab.dataset.authTab === tabName;
-    tab.classList.toggle("is-active", isActive);
-    tab.setAttribute("aria-selected", isActive ? "true" : "false");
-  });
-
-  document.querySelectorAll(".auth-panel").forEach((panel) => {
-    const isActive = panel.dataset.authPanel === tabName;
-    panel.classList.toggle("is-active", isActive);
-    panel.hidden = !isActive;
-  });
-
-  showAuthError(null);
-  showAuthMessage(null);
-}
-
-function cleanAuthRedirectFromUrl() {
-  window.history.replaceState(null, "", window.location.pathname);
-}
-
-async function consumeAuthReturnUrl() {
-  const query = new URLSearchParams(window.location.search);
-  const queryError = query.get("error");
-  const queryErrorDescription = query.get("error_description");
-
-  if (queryError) {
-    showAuthError(queryErrorDescription || queryError);
-    cleanAuthRedirectFromUrl();
-    return;
-  }
-
-  const authCode = query.get("code");
-  if (authCode) {
-    const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(authCode);
-    cleanAuthRedirectFromUrl();
-    if (exchangeError) {
-      showAuthError(exchangeError.message);
-    }
-    return;
-  }
-
-  const hash = window.location.hash.startsWith("#")
-    ? window.location.hash.slice(1)
-    : "";
-  if (!hash) return;
-
-  const params = new URLSearchParams(hash);
-  const accessToken = params.get("access_token");
-  const refreshToken = params.get("refresh_token");
-  const error = params.get("error");
-  const errorDescription = params.get("error_description");
-
-  if (error) {
-    showAuthError(errorDescription || error);
-    cleanAuthRedirectFromUrl();
-    return;
-  }
-
-  if (!accessToken || !refreshToken) return;
-
-  const { error: sessionError } = await supabase.auth.setSession({
-    access_token: accessToken,
-    refresh_token: refreshToken,
-  });
-
-  cleanAuthRedirectFromUrl();
-
-  if (sessionError) {
-    showAuthError(sessionError.message);
-  }
-}
-
-function loadGoogleIdentityServices() {
-  if (window.google?.accounts?.id) {
-    return Promise.resolve();
-  }
-
-  return new Promise((resolve, reject) => {
-    const existing = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
-    if (existing) {
-      existing.addEventListener("load", () => resolve(), { once: true });
-      existing.addEventListener("error", () => reject(new Error("Failed to load Google Sign-In.")), {
-        once: true,
-      });
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = "https://accounts.google.com/gsi/client";
-    script.async = true;
-    script.defer = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Failed to load Google Sign-In."));
-    document.head.appendChild(script);
-  });
-}
-
-function getGoogleButtonWidth() {
-  const container = els.googleSigninContainer;
-  if (!container) return 320;
-  const width = container.getBoundingClientRect().width;
-  return Math.max(240, Math.min(400, Math.round(width || 320)));
-}
-
-function renderOfficialGoogleButton() {
-  const container = els.googleSigninContainer;
-  const clientId = config.googleWebClientId;
-
-  if (!container || !clientId || !window.google?.accounts?.id) {
-    return;
-  }
-
-  container.innerHTML = "";
-  google.accounts.id.initialize({
-    client_id: clientId,
-  });
-
-  google.accounts.id.renderButton(container, {
-    type: "standard",
-    theme: "outline",
-    size: "large",
-    text: "continue_with",
-    shape: "pill",
-    width: getGoogleButtonWidth(),
-    click_listener: () => {
-      void handleGoogleSignIn();
-    },
-  });
-
-  googleButtonRendered = true;
-}
-
-async function ensureOfficialGoogleButton() {
-  if (!config.googleWebClientId || !els.googleSigninContainer) return;
-
-  try {
-    await loadGoogleIdentityServices();
-    renderOfficialGoogleButton();
-  } catch (error) {
-    console.error("Google Sign-In button failed to load:", error);
-    setText(
-      els.googleSigninContainer,
-      "Google Sign-In is temporarily unavailable. Please use email instead.",
-    );
-  }
-}
-
-async function handleGoogleSignIn() {
-  if (googleSignInBusy) return;
-
-  showAuthError(null);
-  showAuthMessage(null);
-  googleSignInBusy = true;
-
-  const callbackUrl = new URL("/auth/callback.html", window.location.origin);
-  callbackUrl.searchParams.set("next", SUBMIT_PAGE_URL);
-
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: callbackUrl.href,
-    },
-  });
-
-  googleSignInBusy = false;
-
-  if (error) {
-    showAuthError(error.message);
-  }
-}
-
-function renderSignedInState(user) {
-  setText(els.signedInEmail, user?.email ?? "Signed in");
-  hide(els.loading);
-  hide(els.authGate);
-  show(els.formSection);
-  hide(els.success);
-}
-
-function renderSignedOutState() {
-  hide(els.loading);
-  show(els.authGate);
-  hide(els.formSection);
-  hide(els.success);
-  void ensureOfficialGoogleButton();
-}
-
-async function refreshSession() {
-  try {
-    const { data: { session: nextSession }, error } = await supabase.auth.getSession();
-    if (error) {
-      console.error("Session check failed:", error);
-    }
-    session = nextSession;
-
-    if (session?.user) {
-      renderSignedInState(session.user);
-    } else {
-      renderSignedOutState();
-    }
-  } catch (error) {
-    console.error("Session check failed:", error);
-    renderSignedOutState();
-  } finally {
-    hide(els.loading);
-  }
-}
-
-async function searchPlaces(query) {
-  const {
-    data: { session: currentSession },
-    error: sessionError,
-  } = await supabase.auth.getSession();
-
-  if (sessionError || !currentSession?.access_token) {
-    throw new Error("Sign in to search locations.");
-  }
-
-  session = currentSession;
-
-  const url = `${config.url.replace(/\/+$/, "")}/functions/v1/places-search?q=${encodeURIComponent(query)}&limit=8`;
+async function searchPlacesWithPhoton(query) {
+  const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=8&lang=en`;
   const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${currentSession.access_token}`,
-      apikey: config.anonKey,
-      Accept: "application/json",
-    },
+    headers: { Accept: "application/json" },
   });
+
+  if (!response.ok) {
+    throw new Error(`Place search failed (${response.status}).`);
+  }
 
   const payload = await response.json().catch(() => null);
 
-  if (!response.ok) {
-    const serverMessage =
-      payload && typeof payload.error === "string" ? payload.error : null;
+  return (payload?.features ?? [])
+    .map((feature) => {
+      const props = feature.properties ?? {};
+      const coordinates = feature.geometry?.coordinates ?? [];
+      const longitude = Number(coordinates[0]);
+      const latitude = Number(coordinates[1]);
+      const name = String(props.name ?? props.city ?? props.state ?? "Location").trim();
+      const placeName = [name, props.city, props.country]
+        .map((part) => String(part ?? "").trim())
+        .filter(Boolean)
+        .filter((part, index, parts) => parts.indexOf(part) === index)
+        .slice(0, 2)
+        .join(", ");
 
-    if (response.status === 401) {
-      throw new Error("Session expired — please sign out and sign in again.");
-    }
-    if (response.status === 503) {
-      throw new Error(
-        "Location search is not configured on the server yet. Please try again later.",
-      );
-    }
-    if (response.status === 502 && serverMessage) {
-      throw new Error(serverMessage);
-    }
-    throw new Error(serverMessage ?? `Place search failed (${response.status}).`);
-  }
+      return {
+        id: `${props.osm_type ?? "place"}-${props.osm_id ?? `${latitude},${longitude}`}`,
+        placeName: placeName || name,
+        subtitle:
+          [props.city, props.state, props.country]
+            .map((part) => String(part ?? "").trim())
+            .filter(Boolean)
+            .join(", ") || null,
+        countryCode: props.countrycode ? String(props.countrycode).toUpperCase() : null,
+        latitude,
+        longitude,
+      };
+    })
+    .filter((place) => Number.isFinite(place.latitude) && Number.isFinite(place.longitude));
+}
 
-  return payload?.results ?? [];
+async function searchPlaces(query) {
+  return searchPlacesWithPhoton(query);
 }
 
 function setPlaceResultsOpen(isOpen) {
@@ -845,69 +615,6 @@ function handleLocationInput() {
   }, DEBOUNCE_MS);
 }
 
-async function handleSignIn(event) {
-  event.preventDefault();
-  showAuthError(null);
-  showAuthMessage(null);
-
-  const formData = new FormData(els.signInForm);
-  const email = String(formData.get("email") ?? "").trim();
-  const password = String(formData.get("password") ?? "");
-
-  if (!email || !password) {
-    showAuthError("Enter your email and password.");
-    return;
-  }
-
-  const submitButton = els.signInForm.querySelector('button[type="submit"]');
-  submitButton.disabled = true;
-
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-
-  submitButton.disabled = false;
-
-  if (error) {
-    showAuthError(error.message);
-    return;
-  }
-
-  await refreshSession();
-}
-
-async function handleMagicLink(event) {
-  event.preventDefault();
-  showAuthError(null);
-  showAuthMessage(null);
-
-  const formData = new FormData(els.magicLinkForm);
-  const email = String(formData.get("email") ?? "").trim();
-
-  if (!email) {
-    showAuthError("Enter your email address.");
-    return;
-  }
-
-  const submitButton = els.magicLinkForm.querySelector('button[type="submit"]');
-  submitButton.disabled = true;
-
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: {
-      shouldCreateUser: false,
-      emailRedirectTo: SUBMIT_PAGE_URL,
-    },
-  });
-
-  submitButton.disabled = false;
-
-  if (error) {
-    showAuthError(error.message);
-    return;
-  }
-
-  showAuthMessage("Check your inbox — the link opens this page, signed in.");
-}
-
 function resetEventForm() {
   els.form?.reset();
   clearPlaceSelection();
@@ -925,26 +632,13 @@ function showSubmitAnotherForm() {
   resetEventForm();
   hide(els.success);
   show(els.formSection);
-  els.title?.focus();
+  els.submitterEmail?.focus();
   els.formSection?.scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
-async function handleSignOut() {
-  await supabase.auth.signOut();
-  session = null;
-  selectedPlace = null;
-  resetEventForm();
-  renderSignedOutState();
 }
 
 async function handleSubmit(event) {
   event.preventDefault();
   showFormError(null);
-
-  if (!session?.user) {
-    showFormError("Sign in to submit an event.");
-    return;
-  }
 
   if (!selectedPlace) {
     showFormError("Pick a location from the search results.");
@@ -970,6 +664,7 @@ async function handleSubmit(event) {
 
   const input = {
     title: els.title?.value ?? "",
+    submitterEmail: els.submitterEmail?.value ?? "",
     locationName: selectedPlace.locationName,
     countryCode: selectedPlace.countryCode ?? null,
     latitude: selectedPlace.latitude,
@@ -1001,6 +696,7 @@ async function handleSubmit(event) {
     p_starts_at: input.startsAt,
     p_ends_at: input.endsAt,
     p_event_types: input.eventTypes,
+    p_submitter_email: input.submitterEmail.trim(),
     p_submitter_note: input.submitterNote?.trim() || null,
     p_description: input.description?.trim() || null,
   });
@@ -1014,7 +710,6 @@ async function handleSubmit(event) {
   }
 
   hide(els.formSection);
-  hide(els.authGate);
   show(els.success);
 
   if (eventId) {
@@ -1023,19 +718,10 @@ async function handleSubmit(event) {
 }
 
 function bindEvents() {
-  els.signInForm?.addEventListener("submit", handleSignIn);
-  els.magicLinkForm?.addEventListener("submit", handleMagicLink);
-  els.signOutBtn?.addEventListener("click", handleSignOut);
   els.submitAnotherBtn?.addEventListener("click", showSubmitAnotherForm);
   els.clearPlaceBtn?.addEventListener("click", clearPlaceSelection);
   els.form?.addEventListener("submit", handleSubmit);
   els.locationInput?.addEventListener("input", handleLocationInput);
-
-  document.querySelectorAll(".auth-tab").forEach((tab) => {
-    tab.addEventListener("click", () => {
-      switchAuthTab(tab.dataset.authTab);
-    });
-  });
 
   els.scheduleAllDay?.addEventListener("change", updateDatetimeVisibility);
   els.scheduleWithTime?.addEventListener("change", updateDatetimeVisibility);
@@ -1064,13 +750,6 @@ function bindEvents() {
     }
   });
 
-  window.addEventListener("resize", () => {
-    if (!googleButtonRendered || !els.googleSigninContainer || els.authGate?.hidden) {
-      return;
-    }
-    renderOfficialGoogleButton();
-  });
-
   document.addEventListener("click", (event) => {
     if (!els.placeResults || !els.locationInput || selectedPlace) return;
     const target = event.target;
@@ -1090,35 +769,22 @@ function bindEvents() {
 async function init() {
   if (!config?.url || !config?.anonKey) {
     hide(els.loading);
-    showAuthError("Supabase is not configured on this page.");
-    show(els.authGate);
+    showFormError("Supabase is not configured on this page.");
+    show(els.formSection);
     return;
   }
 
-  supabase = createClient(config.url, config.anonKey, {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: false,
-      flowType: "pkce",
-    },
-  });
+  supabase = createClient(config.url, config.anonKey);
 
   renderEventTypeChips();
   updateDatetimeVisibility();
   bindEvents();
-
-  supabase.auth.onAuthStateChange(() => {
-    void refreshSession();
-  });
-
-  await consumeAuthReturnUrl();
-  await refreshSession();
+  showForm();
 }
 
 init().catch((error) => {
   console.error("Event submit init failed:", error);
   hide(els.loading);
-  showAuthError("Something went wrong loading this page. Please refresh and try again.");
-  show(els.authGate);
+  showFormError("Something went wrong loading this page. Please refresh and try again.");
+  show(els.formSection);
 });
