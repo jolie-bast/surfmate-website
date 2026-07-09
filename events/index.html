@@ -201,7 +201,22 @@
                   <span>Back</span>
                 </button>
                 <div id="events-map-status" class="events-status" role="status" aria-live="polite" hidden></div>
+                <button
+                  type="button"
+                  id="events-map-expand"
+                  class="events-map-expand"
+                  hidden
+                  aria-label="Open map fullscreen"
+                >
+                  <i class="bi bi-arrows-fullscreen" aria-hidden="true"></i>
+                </button>
               </div>
+              <div
+                id="events-map-filter-chips"
+                class="events-filter-chips events-map-filter-chips"
+                hidden
+                aria-label="Event type filters"
+              ></div>
               <div id="events-map" class="events-map" role="region" aria-label="Event locations map"></div>
               <div id="events-mobile-strip" class="events-mobile-strip" hidden>
                 <p id="events-mobile-strip-label" class="events-mobile-strip-label">Nearby events</p>

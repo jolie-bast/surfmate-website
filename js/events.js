@@ -47,6 +47,8 @@ const els = {
   mobileStripLabel: document.getElementById("events-mobile-strip-label"),
   mobileStripScroll: document.getElementById("events-mobile-strip-scroll"),
   mapBack: document.getElementById("events-map-back"),
+  mapExpand: document.getElementById("events-map-expand"),
+  mapFilterChips: document.getElementById("events-map-filter-chips"),
   toolbarSection: document.querySelector(".events-toolbar-section"),
 };
 
@@ -77,6 +79,7 @@ const state = {
   mobileMapMode: false,
   mapFullscreen: false,
   mapFullscreenScrollY: 0,
+  mapFullscreenAutoEnabled: true,
 };
 
 let map = null;
@@ -141,6 +144,17 @@ function canEnterMapFullscreen() {
   );
 }
 
+function shouldShowMapExpand() {
+  return canEnterMapFullscreen() && !state.mapFullscreenAutoEnabled;
+}
+
+function syncMapFullscreenControls() {
+  if (els.mapBack) els.mapBack.hidden = !state.mapFullscreen;
+  if (els.mapExpand) els.mapExpand.hidden = !shouldShowMapExpand();
+  if (els.filterChips) els.filterChips.hidden = state.mapFullscreen;
+  if (els.mapFilterChips) els.mapFilterChips.hidden = !state.mapFullscreen;
+}
+
 function enterMapFullscreen() {
   if (!canEnterMapFullscreen()) return;
 
@@ -149,21 +163,23 @@ function enterMapFullscreen() {
   document.body.classList.add("is-map-fullscreen");
   document.body.style.overflow = "hidden";
   syncTopChromeCssVar();
-
-  if (els.mapBack) els.mapBack.hidden = false;
+  syncMapFullscreenControls();
 
   refreshMapSize();
   renderMobileStrip();
 }
 
-function exitMapFullscreen() {
+function exitMapFullscreen({ disableAuto = false } = {}) {
   if (!state.mapFullscreen) return;
 
   state.mapFullscreen = false;
+  if (disableAuto) {
+    state.mapFullscreenAutoEnabled = false;
+  }
+
   document.body.classList.remove("is-map-fullscreen");
   document.body.style.overflow = "";
-
-  if (els.mapBack) els.mapBack.hidden = true;
+  syncMapFullscreenControls();
 
   refreshMapSize();
 
@@ -177,7 +193,7 @@ function exitMapFullscreen() {
 }
 
 function handleMapFullscreenScroll() {
-  if (!canEnterMapFullscreen()) return;
+  if (!canEnterMapFullscreen() || !state.mapFullscreenAutoEnabled) return;
 
   const topChrome = getTopChromeHeight();
   const mapRect = els.splitMap?.getBoundingClientRect();
@@ -285,10 +301,13 @@ function updateMobileLayoutMode() {
     if (state.viewMode === "calendar") {
       exitMapFullscreen();
     }
+
+    syncMapFullscreenControls();
     return;
   }
 
   exitMapFullscreen();
+  state.mapFullscreenAutoEnabled = true;
   unbindMapFullscreenScrollListener();
   state.selectedStripEventId = null;
   setMapBoundsFilterEnabled(false);
@@ -608,6 +627,8 @@ function showViewSection(mode) {
   if (mode === "calendar" && state.mapFullscreen) {
     exitMapFullscreen();
   }
+
+  syncMapFullscreenControls();
 
   if (els.viewToggle) {
     for (const button of els.viewToggle.querySelectorAll("[data-view]")) {
@@ -966,14 +987,33 @@ function initMap() {
   renderMap();
 }
 
-function renderFilterChips() {
-  if (!els.filterChips) return;
-
-  els.filterChips.innerHTML = SURF_EVENT_TYPES.map((type) => {
+function buildFilterChipsHtml() {
+  return SURF_EVENT_TYPES.map((type) => {
     const isActive = state.selectedTypes.has(type);
     const label = SURF_EVENT_TYPE_LABELS[type] ?? type;
     return `<button type="button" class="events-filter-chip${isActive ? " is-active" : ""}" data-type="${escapeHtml(type)}" aria-pressed="${isActive ? "true" : "false"}">${escapeHtml(label)}</button>`;
   }).join("");
+}
+
+function renderFilterChips() {
+  const html = buildFilterChipsHtml();
+  if (els.filterChips) els.filterChips.innerHTML = html;
+  if (els.mapFilterChips) els.mapFilterChips.innerHTML = html;
+}
+
+function handleFilterChipClick(event) {
+  const button = event.target.closest("[data-type]");
+  if (!button) return;
+
+  const type = button.dataset.type;
+  if (state.selectedTypes.has(type)) {
+    state.selectedTypes.delete(type);
+  } else {
+    state.selectedTypes.add(type);
+  }
+
+  renderFilterChips();
+  renderAll();
 }
 
 function renderAll() {
@@ -1073,20 +1113,11 @@ function bindEvents() {
   }
 
   if (els.filterChips) {
-    els.filterChips.addEventListener("click", (event) => {
-      const button = event.target.closest("[data-type]");
-      if (!button) return;
+    els.filterChips.addEventListener("click", handleFilterChipClick);
+  }
 
-      const type = button.dataset.type;
-      if (state.selectedTypes.has(type)) {
-        state.selectedTypes.delete(type);
-      } else {
-        state.selectedTypes.add(type);
-      }
-
-      renderFilterChips();
-      renderAll();
-    });
+  if (els.mapFilterChips) {
+    els.mapFilterChips.addEventListener("click", handleFilterChipClick);
   }
 
   window.addEventListener("popstate", () => {
@@ -1109,7 +1140,11 @@ function bindEvents() {
   bindMobileStripInteractions();
 
   if (els.mapBack) {
-    els.mapBack.addEventListener("click", () => exitMapFullscreen());
+    els.mapBack.addEventListener("click", () => exitMapFullscreen({ disableAuto: true }));
+  }
+
+  if (els.mapExpand) {
+    els.mapExpand.addEventListener("click", () => enterMapFullscreen());
   }
 
   window.addEventListener("resize", () => {
@@ -1230,6 +1265,7 @@ async function init() {
   renderFilterChips();
   bindEvents();
   updateMobileLayoutMode();
+  syncMapFullscreenControls();
 
   if (els.splitLayout && window.ResizeObserver) {
     const observer = new ResizeObserver(() => refreshMapSize());
