@@ -189,17 +189,19 @@
             </div>
 
             <aside class="events-split-map" aria-label="Event map">
-              <button
-                type="button"
-                id="events-map-back"
-                class="events-map-back"
-                hidden
-                aria-label="Back to events"
-              >
-                <i class="bi bi-arrow-left" aria-hidden="true"></i>
-                <span>Back</span>
-              </button>
-              <div id="events-map-status" class="events-status" role="status" aria-live="polite" hidden></div>
+              <div class="events-map-topbar">
+                <button
+                  type="button"
+                  id="events-map-back"
+                  class="events-map-back"
+                  hidden
+                  aria-label="Back to events"
+                >
+                  <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                  <span>Back</span>
+                </button>
+                <div id="events-map-status" class="events-status" role="status" aria-live="polite" hidden></div>
+              </div>
               <div id="events-map" class="events-map" role="region" aria-label="Event locations map"></div>
               <div id="events-mobile-strip" class="events-mobile-strip" hidden>
                 <p id="events-mobile-strip-label" class="events-mobile-strip-label">Nearby events</p>
