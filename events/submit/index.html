@@ -78,8 +78,12 @@
                         type="email"
                         autocomplete="email"
                         placeholder="you@example.com"
-                        required
+                        aria-describedby="submitter-email-hint submitter-email-error"
                       />
+                      <p id="submitter-email-hint" class="field-hint">
+                        So we can confirm your submission or ask a quick question if needed.
+                      </p>
+                      <p id="submitter-email-error" class="field-error" hidden role="alert"></p>
                     </div>
                   </section>
 
@@ -94,11 +98,11 @@
                         type="text"
                         maxlength="200"
                         placeholder="e.g. Baltic Surf Festival"
-                        required
                       />
+                      <p id="event-title-error" class="field-error" hidden role="alert"></p>
                     </div>
 
-                    <div class="form-field location-field">
+                  <div class="form-field location-field">
                       <label for="event-location">
                         Location <span class="required-mark" aria-hidden="true">*</span>
                       </label>
@@ -109,9 +113,8 @@
                             name="location"
                             type="text"
                             autocomplete="off"
-                            placeholder="Search city, venue, or beach…"
-                            required
-                            aria-describedby="place-hint place-status selected-place"
+                          placeholder="Search city, venue, or beach…"
+                          aria-describedby="place-hint place-status selected-place event-location-error"
                             aria-expanded="false"
                             aria-controls="place-results"
                             role="combobox"
@@ -123,6 +126,7 @@
                         Start typing, then tap a result to confirm.
                       </p>
                       <p id="place-status" class="field-status" aria-live="polite"></p>
+                      <p id="event-location-error" class="field-error" hidden role="alert"></p>
                       <div id="selected-place" class="selected-place" hidden>
                         <span class="selected-place-label">Selected</span>
                         <span id="selected-place-name" class="selected-place-name"></span>
@@ -276,6 +280,7 @@
                     </div>
 
                     <p id="schedule-preview" class="schedule-preview" hidden aria-live="polite"></p>
+                    <p id="schedule-error" class="field-error" hidden role="alert"></p>
                   </section>
 
                   <section class="wizard-step" data-step="4" hidden>
@@ -283,6 +288,7 @@
                       Pick one or more — tap to toggle.
                     </p>
                     <div id="event-types" class="event-type-chips" role="group" aria-label="Event types"></div>
+                    <p id="event-types-error" class="field-error" hidden role="alert"></p>
                   </section>
 
                   <section class="wizard-step" data-step="5" hidden>
@@ -325,10 +331,10 @@
                   <button type="button" id="wizard-back" class="btn-secondary" hidden>
                     Back
                   </button>
-                  <button type="button" id="wizard-next" class="btn-primary">
+                  <button type="button" id="wizard-next" class="btn-primary wizard-nav-action wizard-nav-action--next">
                     Continue
                   </button>
-                  <button type="submit" id="submit-event-btn" class="btn-primary" hidden>
+                  <button type="button" id="submit-event-btn" class="btn-primary wizard-nav-action wizard-nav-action--submit" hidden>
                     Submit for review
                   </button>
                 </div>

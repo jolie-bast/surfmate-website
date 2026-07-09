@@ -90,7 +90,25 @@ const els = {
   noteCount: document.getElementById("note-count"),
   submitBtn: document.getElementById("submit-event-btn"),
   submitAnotherBtn: document.getElementById("submit-another-btn"),
+  submitterEmailError: document.getElementById("submitter-email-error"),
+  eventTitleError: document.getElementById("event-title-error"),
+  eventLocationError: document.getElementById("event-location-error"),
+  eventTypesError: document.getElementById("event-types-error"),
+  scheduleError: document.getElementById("schedule-error"),
 };
+
+const FIELD_ERROR_ELEMENTS = {
+  submitterEmail: () => els.submitterEmailError,
+  eventTitle: () => els.eventTitleError,
+  eventLocation: () => els.eventLocationError,
+  eventTypes: () => els.eventTypesError,
+  schedule: () => els.scheduleError,
+};
+
+function refreshWizardElements() {
+  els.wizardStepPanels = document.querySelectorAll(".wizard-step");
+  els.wizardNav = document.querySelector(".wizard-nav");
+}
 
 function hide(el) {
   if (el) {
@@ -124,7 +142,40 @@ function showFormError(message) {
   }
   setText(els.formError, message);
   show(els.formError);
-  els.formError?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function clearFieldErrors() {
+  Object.values(FIELD_ERROR_ELEMENTS).forEach((getEl) => hide(getEl()));
+  els.submitterEmail?.classList.remove("is-invalid");
+  els.title?.classList.remove("is-invalid");
+  els.locationInput?.classList.remove("is-invalid");
+  els.eventTypes?.classList.remove("is-invalid");
+  setDateSegmentInvalid(els.startDate, false);
+  setDateSegmentInvalid(els.endDate, false);
+}
+
+function showFieldError(fieldKey, message) {
+  const getEl = FIELD_ERROR_ELEMENTS[fieldKey];
+  const errorEl = getEl?.();
+  if (!errorEl) return;
+
+  if (!message) {
+    hide(errorEl);
+    return;
+  }
+
+  setText(errorEl, message);
+  show(errorEl);
+}
+
+function markFieldInvalid(fieldKey, isInvalid = true) {
+  const fieldMap = {
+    submitterEmail: els.submitterEmail,
+    eventTitle: els.title,
+    eventLocation: els.locationInput,
+    eventTypes: els.eventTypes,
+  };
+  fieldMap[fieldKey]?.classList.toggle("is-invalid", isInvalid);
 }
 
 function showForm() {
@@ -243,6 +294,7 @@ function renderWizardStep() {
   }
 
   els.wizardNav?.classList.toggle("is-first-step", currentWizardStep === 1);
+  els.wizardNav?.classList.toggle("is-final-step", currentWizardStep === WIZARD_STEP_COUNT);
 
   if (currentWizardStep === WIZARD_STEP_COUNT) {
     hide(els.wizardNext);
