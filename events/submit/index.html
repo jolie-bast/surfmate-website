@@ -16,6 +16,12 @@
     />
     <title>Share an event – Surfmate</title>
     <link rel="canonical" href="https://surfmate.eu/events/submit" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
     <link rel="stylesheet" href="/css/main.css" />
     <link rel="stylesheet" href="/css/legal.css" />
@@ -25,15 +31,14 @@
   <body class="event-submit-page">
     <div data-include="header.html"></div>
 
-    <main class="main-content" style="padding-top: var(--header-height)">
+    <main class="main-content event-submit-main">
       <section class="content-section">
         <div class="container">
           <header class="content-header">
-            <h1>Share an event with the Community</h1>
+            <h1>Share an event</h1>
             <p>
-              Know a contest, festival, or meetup? Share the basics with us — no
-              account needed. We review every submission before it appears in the
-              app.
+              A few quick steps — no account needed. We review every submission
+              before it goes live in the app.
             </p>
           </header>
 
@@ -45,276 +50,288 @@
 
             <div id="event-submit-form-section" class="event-submit-card" hidden>
               <form id="event-submit-form" class="event-submit-form" novalidate>
-                <section class="form-section" aria-labelledby="section-basics">
-                  <h3 id="section-basics" class="form-section-title">The basics</h3>
+                <nav class="wizard-progress" aria-label="Submission steps">
+                  <ol id="wizard-steps-map" class="wizard-steps-map"></ol>
+                </nav>
 
-                  <div class="form-field">
-                    <label for="submitter-email">
-                      Your email <span class="required-mark" aria-hidden="true">*</span>
-                    </label>
-                    <input
-                      id="submitter-email"
-                      name="submitterEmail"
-                      type="email"
-                      autocomplete="email"
-                      placeholder="you@example.com"
-                      required
-                      aria-describedby="submitter-email-hint"
-                    />
-                    <p id="submitter-email-hint" class="field-hint">
-                      So we can confirm your submission or ask a quick question if needed.
-                    </p>
-                  </div>
+                <div class="wizard-step-header">
+                  <p class="wizard-step-kicker" id="wizard-step-kicker">Step 1 of 5</p>
+                  <h2 class="wizard-step-title" id="wizard-step-title">How can we reach you?</h2>
+                  <p class="wizard-step-lead" id="wizard-step-lead">
+                    We’ll only use this if we have a question about your event.
+                  </p>
+                </div>
 
-                  <div class="form-field">
-                    <label for="event-title">
-                      Event name <span class="required-mark" aria-hidden="true">*</span>
-                    </label>
-                    <input
-                      id="event-title"
-                      name="title"
-                      type="text"
-                      maxlength="200"
-                      placeholder="e.g. Baltic Surf Festival"
-                      required
-                    />
-                  </div>
-
-                  <div class="form-field location-field">
-                    <label for="event-location">
-                      Location <span class="required-mark" aria-hidden="true">*</span>
-                    </label>
-                    <div class="location-autocomplete">
-                      <div class="location-search-wrap">
-                        <input
-                          id="event-location"
-                          name="location"
-                          type="text"
-                          autocomplete="off"
-                          placeholder="Search city, venue, or beach…"
-                          required
-                          aria-describedby="place-hint place-status selected-place"
-                          aria-expanded="false"
-                          aria-controls="place-results"
-                          role="combobox"
-                        />
-                      </div>
-                      <ul id="place-results" class="place-results" role="listbox" hidden></ul>
-                    </div>
-                    <p id="place-hint" class="field-hint">
-                      Start typing, then choose a result from the list.
-                    </p>
-                    <p id="place-status" class="field-status" aria-live="polite"></p>
-                    <div id="selected-place" class="selected-place" hidden>
-                      <span class="selected-place-label">Selected:</span>
-                      <span id="selected-place-name" class="selected-place-name"></span>
-                      <button type="button" id="clear-place-btn" class="selected-place-clear">
-                        Change
-                      </button>
-                    </div>
-                  </div>
-                </section>
-
-                <section class="form-section" aria-labelledby="section-when">
-                  <h3 id="section-when" class="form-section-title">When</h3>
-
-                  <div class="form-field">
-                    <span class="field-label">How specific is the schedule?</span>
-                    <div class="schedule-toggle" role="radiogroup" aria-label="Schedule type">
-                      <label class="schedule-option">
-                        <input
-                          type="radio"
-                          name="scheduleMode"
-                          id="schedule-with-time"
-                          value="exact_datetime"
-                          checked
-                        />
-                        <span class="schedule-option-text">
-                          <strong>Dates &amp; times</strong>
-                          <small>Include start and end times</small>
-                        </span>
-                      </label>
-                      <label class="schedule-option">
-                        <input
-                          type="radio"
-                          name="scheduleMode"
-                          id="schedule-all-day"
-                          value="exact"
-                        />
-                        <span class="schedule-option-text">
-                          <strong>Dates only</strong>
-                          <small>All-day event — no times needed</small>
-                        </span>
-                      </label>
-                    </div>
-                  </div>
-
-                  <div class="date-grid">
+                <div class="wizard-step-panels">
+                  <section
+                    class="wizard-step is-active"
+                    data-step="1"
+                    aria-labelledby="wizard-step-title"
+                  >
                     <div class="form-field">
-                      <span class="field-label" id="start-date-label">
-                        Starts <span class="required-mark" aria-hidden="true">*</span>
-                      </span>
-                      <div
-                        id="start-date"
-                        class="date-segments"
-                        role="group"
-                        aria-labelledby="start-date-label"
-                        data-date-required="true"
-                      >
-                        <div class="date-segments-row">
+                      <label for="submitter-email">
+                        Your email <span class="required-mark" aria-hidden="true">*</span>
+                      </label>
+                      <input
+                        id="submitter-email"
+                        name="submitterEmail"
+                        type="email"
+                        autocomplete="email"
+                        placeholder="you@example.com"
+                        required
+                      />
+                    </div>
+                  </section>
+
+                  <section class="wizard-step" data-step="2" hidden>
+                    <div class="form-field">
+                      <label for="event-title">
+                        Event name <span class="required-mark" aria-hidden="true">*</span>
+                      </label>
+                      <input
+                        id="event-title"
+                        name="title"
+                        type="text"
+                        maxlength="200"
+                        placeholder="e.g. Baltic Surf Festival"
+                        required
+                      />
+                    </div>
+
+                    <div class="form-field location-field">
+                      <label for="event-location">
+                        Location <span class="required-mark" aria-hidden="true">*</span>
+                      </label>
+                      <div class="location-autocomplete">
+                        <div class="location-search-wrap">
                           <input
+                            id="event-location"
+                            name="location"
                             type="text"
-                            inputmode="numeric"
                             autocomplete="off"
-                            maxlength="2"
-                            placeholder="DD"
-                            class="date-segment"
-                            data-segment="day"
-                            aria-label="Day"
-                          />
-                          <span class="date-segment-sep" aria-hidden="true">/</span>
-                          <input
-                            type="text"
-                            inputmode="numeric"
-                            autocomplete="off"
-                            maxlength="2"
-                            placeholder="MM"
-                            class="date-segment"
-                            data-segment="month"
-                            aria-label="Month"
-                          />
-                          <span class="date-segment-sep" aria-hidden="true">/</span>
-                          <input
-                            type="text"
-                            inputmode="numeric"
-                            autocomplete="off"
-                            maxlength="4"
-                            placeholder="YYYY"
-                            class="date-segment date-segment-year"
-                            data-segment="year"
-                            aria-label="Year"
+                            placeholder="Search city, venue, or beach…"
+                            required
+                            aria-describedby="place-hint place-status selected-place"
+                            aria-expanded="false"
+                            aria-controls="place-results"
+                            role="combobox"
                           />
                         </div>
-                        <p class="field-hint">Day / month / year</p>
+                        <ul id="place-results" class="place-results" role="listbox" hidden></ul>
+                      </div>
+                      <p id="place-hint" class="field-hint">
+                        Start typing, then tap a result to confirm.
+                      </p>
+                      <p id="place-status" class="field-status" aria-live="polite"></p>
+                      <div id="selected-place" class="selected-place" hidden>
+                        <span class="selected-place-label">Selected</span>
+                        <span id="selected-place-name" class="selected-place-name"></span>
+                        <button type="button" id="clear-place-btn" class="selected-place-clear">
+                          Change
+                        </button>
                       </div>
                     </div>
+                  </section>
+
+                  <section class="wizard-step" data-step="3" hidden>
                     <div class="form-field">
-                      <span class="field-label" id="end-date-label">Ends</span>
-                      <div
-                        id="end-date"
-                        class="date-segments"
-                        role="group"
-                        aria-labelledby="end-date-label"
-                      >
-                        <div class="date-segments-row">
+                      <span class="field-label">Schedule</span>
+                      <div class="schedule-toggle" role="radiogroup" aria-label="Schedule type">
+                        <label class="schedule-option">
                           <input
-                            type="text"
-                            inputmode="numeric"
-                            autocomplete="off"
-                            maxlength="2"
-                            placeholder="DD"
-                            class="date-segment"
-                            data-segment="day"
-                            aria-label="Day"
+                            type="radio"
+                            name="scheduleMode"
+                            id="schedule-with-time"
+                            value="exact_datetime"
+                            checked
                           />
-                          <span class="date-segment-sep" aria-hidden="true">/</span>
+                          <span class="schedule-option-text">
+                            <strong>Dates &amp; times</strong>
+                            <small>Start and end times included</small>
+                          </span>
+                        </label>
+                        <label class="schedule-option">
                           <input
-                            type="text"
-                            inputmode="numeric"
-                            autocomplete="off"
-                            maxlength="2"
-                            placeholder="MM"
-                            class="date-segment"
-                            data-segment="month"
-                            aria-label="Month"
+                            type="radio"
+                            name="scheduleMode"
+                            id="schedule-all-day"
+                            value="exact"
                           />
-                          <span class="date-segment-sep" aria-hidden="true">/</span>
-                          <input
-                            type="text"
-                            inputmode="numeric"
-                            autocomplete="off"
-                            maxlength="4"
-                            placeholder="YYYY"
-                            class="date-segment date-segment-year"
-                            data-segment="year"
-                            aria-label="Year"
-                          />
+                          <span class="schedule-option-text">
+                            <strong>Dates only</strong>
+                            <small>All-day — no times needed</small>
+                          </span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div class="date-grid">
+                      <div class="form-field">
+                        <span class="field-label" id="start-date-label">
+                          Starts <span class="required-mark" aria-hidden="true">*</span>
+                        </span>
+                        <div
+                          id="start-date"
+                          class="date-segments"
+                          role="group"
+                          aria-labelledby="start-date-label"
+                          data-date-required="true"
+                        >
+                          <div class="date-segments-row">
+                            <input
+                              type="text"
+                              inputmode="numeric"
+                              autocomplete="off"
+                              maxlength="2"
+                              placeholder="DD"
+                              class="date-segment"
+                              data-segment="day"
+                              aria-label="Day"
+                            />
+                            <span class="date-segment-sep" aria-hidden="true">/</span>
+                            <input
+                              type="text"
+                              inputmode="numeric"
+                              autocomplete="off"
+                              maxlength="2"
+                              placeholder="MM"
+                              class="date-segment"
+                              data-segment="month"
+                              aria-label="Month"
+                            />
+                            <span class="date-segment-sep" aria-hidden="true">/</span>
+                            <input
+                              type="text"
+                              inputmode="numeric"
+                              autocomplete="off"
+                              maxlength="4"
+                              placeholder="YYYY"
+                              class="date-segment date-segment-year"
+                              data-segment="year"
+                              aria-label="Year"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-field">
+                        <span class="field-label" id="end-date-label">Ends</span>
+                        <div
+                          id="end-date"
+                          class="date-segments"
+                          role="group"
+                          aria-labelledby="end-date-label"
+                        >
+                          <div class="date-segments-row">
+                            <input
+                              type="text"
+                              inputmode="numeric"
+                              autocomplete="off"
+                              maxlength="2"
+                              placeholder="DD"
+                              class="date-segment"
+                              data-segment="day"
+                              aria-label="Day"
+                            />
+                            <span class="date-segment-sep" aria-hidden="true">/</span>
+                            <input
+                              type="text"
+                              inputmode="numeric"
+                              autocomplete="off"
+                              maxlength="2"
+                              placeholder="MM"
+                              class="date-segment"
+                              data-segment="month"
+                              aria-label="Month"
+                            />
+                            <span class="date-segment-sep" aria-hidden="true">/</span>
+                            <input
+                              type="text"
+                              inputmode="numeric"
+                              autocomplete="off"
+                              maxlength="4"
+                              placeholder="YYYY"
+                              class="date-segment date-segment-year"
+                              data-segment="year"
+                              aria-label="Year"
+                            />
+                          </div>
                         </div>
                         <p class="field-hint">Optional — leave empty for a single day.</p>
                       </div>
                     </div>
-                  </div>
 
-                  <div id="datetime-fields" class="datetime-fields">
-                    <div class="date-grid">
-                      <div class="form-field">
-                        <label for="start-time">Start time</label>
-                        <input id="start-time" name="startTime" type="time" step="60" />
-                      </div>
-                      <div class="form-field">
-                        <label for="end-time">
-                          End time <span class="optional-mark">(optional)</span>
-                        </label>
-                        <input id="end-time" name="endTime" type="time" step="60" />
+                    <div id="datetime-fields" class="datetime-fields">
+                      <div class="date-grid">
+                        <div class="form-field">
+                          <label for="start-time">Start time</label>
+                          <input id="start-time" name="startTime" type="time" step="60" />
+                        </div>
+                        <div class="form-field">
+                          <label for="end-time">
+                            End time <span class="optional-mark">(optional)</span>
+                          </label>
+                          <input id="end-time" name="endTime" type="time" step="60" />
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <p id="schedule-preview" class="schedule-preview" hidden aria-live="polite"></p>
-                </section>
+                    <p id="schedule-preview" class="schedule-preview" hidden aria-live="polite"></p>
+                  </section>
 
-                <section class="form-section" aria-labelledby="section-types">
-                  <h3 id="section-types" class="form-section-title">
-                    Event type <span class="required-mark" aria-hidden="true">*</span>
-                  </h3>
-                  <p class="field-hint section-hint">Pick one or more — tap to select.</p>
-                  <div id="event-types" class="event-type-chips" role="group" aria-label="Event types"></div>
-                </section>
-
-                <section class="form-section" aria-labelledby="section-about">
-                  <h3 id="section-about" class="form-section-title">About the event</h3>
-                  <div class="form-field">
-                    <label for="event-description">Short description</label>
-                    <textarea
-                      id="event-description"
-                      name="description"
-                      maxlength="600"
-                      placeholder="What's this event about? A few sentences is enough."
-                      aria-describedby="description-hint description-count"
-                    ></textarea>
-                    <p id="description-hint" class="field-hint">
-                      Optional. Shown in the app after we publish your event.
+                  <section class="wizard-step" data-step="4" hidden>
+                    <p class="field-hint section-hint">
+                      Pick one or more — tap to toggle.
                     </p>
-                    <p id="description-count" class="field-hint field-hint-right">0 / 600</p>
-                  </div>
-                </section>
+                    <div id="event-types" class="event-type-chips" role="group" aria-label="Event types"></div>
+                  </section>
 
-                <section class="form-section" aria-labelledby="section-note">
-                  <h3 id="section-note" class="form-section-title">Note for our team</h3>
-                  <div class="form-field">
-                    <label for="submitter-note" class="visually-hidden">Note for our team</label>
-                    <textarea
-                      id="submitter-note"
-                      name="note"
-                      maxlength="500"
-                      placeholder="e.g. Lineup TBA, link to tickets coming soon…"
-                      aria-describedby="note-hint note-count"
-                    ></textarea>
-                    <p id="note-hint" class="field-hint">
-                      Optional. Only visible to us during review — not shown in the app.
+                  <section class="wizard-step" data-step="5" hidden>
+                    <div id="wizard-review" class="wizard-review" aria-live="polite"></div>
+
+                    <div class="form-field">
+                      <label for="event-description">Short description</label>
+                      <textarea
+                        id="event-description"
+                        name="description"
+                        maxlength="600"
+                        placeholder="What's this event about? A few sentences is enough."
+                        aria-describedby="description-count"
+                      ></textarea>
+                      <p id="description-count" class="field-hint field-hint-right">0 / 600</p>
+                    </div>
+
+                    <div class="form-field">
+                      <label for="submitter-note">Note for our team</label>
+                      <textarea
+                        id="submitter-note"
+                        name="note"
+                        maxlength="500"
+                        placeholder="e.g. Lineup TBA, tickets link coming soon…"
+                        aria-describedby="note-count"
+                      ></textarea>
+                      <p class="field-hint">Optional — only visible to us during review.</p>
+                      <p id="note-count" class="field-hint field-hint-right">0 / 500</p>
+                    </div>
+
+                    <p class="submit-footnote">
+                      Your event won't appear in the app until our team approves it.
                     </p>
-                    <p id="note-count" class="field-hint field-hint-right">0 / 500</p>
-                  </div>
-                </section>
+                  </section>
+                </div>
 
                 <p id="form-error" class="form-error" hidden role="alert"></p>
 
-                <button type="submit" id="submit-event-btn" class="btn-primary btn-block">
-                  Submit for review
-                </button>
-                <p class="submit-footnote">
-                  Your event won't appear in the app until our team approves it.
-                </p>
+                <div class="wizard-nav">
+                  <button type="button" id="wizard-back" class="btn-secondary" hidden>
+                    Back
+                  </button>
+                  <button type="button" id="wizard-next" class="btn-primary">
+                    Continue
+                  </button>
+                  <button type="submit" id="submit-event-btn" class="btn-primary" hidden>
+                    Submit for review
+                  </button>
+                </div>
               </form>
             </div>
 

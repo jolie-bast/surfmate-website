@@ -11,15 +11,58 @@ import {
 const config = window.SURFMATE_SUPABASE;
 const DEBOUNCE_MS = 300;
 const MIN_QUERY_LENGTH = 2;
+const WIZARD_STEP_COUNT = 5;
+
+const WIZARD_STEPS = [
+  {
+    id: 1,
+    label: "Contact",
+    title: "How can we reach you?",
+    lead: "We’ll only use this if we have a question about your event.",
+  },
+  {
+    id: 2,
+    label: "Event",
+    title: "What’s the event?",
+    lead: "Name it and pin the location on the map.",
+  },
+  {
+    id: 3,
+    label: "When",
+    title: "When does it happen?",
+    lead: "Dates only, or include start and end times.",
+  },
+  {
+    id: 4,
+    label: "Type",
+    title: "What kind of event?",
+    lead: "Pick everything that fits — festival, contest, meetup, and more.",
+  },
+  {
+    id: 5,
+    label: "Send",
+    title: "Almost done",
+    lead: "Add optional details, check the summary, then submit.",
+  },
+];
 
 let supabase = null;
 let selectedPlace = null;
 let placeSearchTimer = null;
+let currentWizardStep = 1;
 
 const els = {
   loading: document.getElementById("event-submit-loading"),
   formSection: document.getElementById("event-submit-form-section"),
   success: document.getElementById("event-submit-success"),
+  wizardStepsMap: document.getElementById("wizard-steps-map"),
+  wizardStepKicker: document.getElementById("wizard-step-kicker"),
+  wizardStepTitle: document.getElementById("wizard-step-title"),
+  wizardStepLead: document.getElementById("wizard-step-lead"),
+  wizardReview: document.getElementById("wizard-review"),
+  wizardBack: document.getElementById("wizard-back"),
+  wizardNext: document.getElementById("wizard-next"),
+  wizardStepPanels: document.querySelectorAll(".wizard-step"),
   form: document.getElementById("event-submit-form"),
   formError: document.getElementById("form-error"),
   submitterEmail: document.getElementById("submitter-email"),
@@ -87,6 +130,205 @@ function showForm() {
   hide(els.loading);
   show(els.formSection);
   hide(els.success);
+  renderWizardProgressMap();
+  goToWizardStep(1, { focus: false });
+}
+
+function renderWizardProgressMap() {
+  if (!els.wizardStepsMap) return;
+
+  els.wizardStepsMap.innerHTML = WIZARD_STEPS.map((step) => {
+    const state =
+      step.id < currentWizardStep
+        ? "is-complete"
+        : step.id === currentWizardStep
+          ? "is-active"
+          : "";
+
+    const disabled = step.id >= currentWizardStep ? "disabled" : "";
+
+    return `
+      <li class="wizard-step-marker ${state}" data-step-marker="${step.id}">
+        <button
+          type="button"
+          class="wizard-step-marker-btn"
+          data-step-jump="${step.id}"
+          aria-label="Go to step ${step.id}: ${step.label}"
+          aria-current="${step.id === currentWizardStep ? "step" : "false"}"
+          ${disabled}
+        >
+          ${step.id < currentWizardStep ? "✓" : step.id}
+        </button>
+        <span class="wizard-step-marker-label">${step.label}</span>
+      </li>
+    `;
+  }).join("");
+
+  els.wizardStepsMap.querySelectorAll("[data-step-jump]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const step = Number(button.dataset.stepJump);
+      if (!Number.isFinite(step) || step >= currentWizardStep) return;
+      goToWizardStep(step);
+    });
+  });
+}
+
+function getWizardStepConfig(step = currentWizardStep) {
+  return WIZARD_STEPS[step - 1] ?? WIZARD_STEPS[0];
+}
+
+function focusWizardStepField(step = currentWizardStep) {
+  const focusTargets = {
+    1: els.submitterEmail,
+    2: els.title,
+    3: getDateSegments(els.startDate).day,
+    4: els.eventTypes?.querySelector("input"),
+    5: els.description,
+  };
+
+  const target = focusTargets[step];
+  target?.focus?.();
+}
+
+function renderWizardReview() {
+  if (!els.wizardReview) return;
+
+  const types = getSelectedEventTypes()
+    .map((type) => SURF_EVENT_TYPE_LABELS[type] ?? type)
+    .join(", ");
+
+  const scheduleText = els.schedulePreview?.hidden
+    ? "—"
+    : els.schedulePreview?.textContent?.trim() || "—";
+
+  els.wizardReview.innerHTML = `
+    <div class="wizard-review-row">
+      <span class="wizard-review-label">Event</span>
+      <span class="wizard-review-value">${escapeHtml(els.title?.value.trim() || "—")}</span>
+    </div>
+    <div class="wizard-review-row">
+      <span class="wizard-review-label">Location</span>
+      <span class="wizard-review-value">${escapeHtml(selectedPlace?.locationName || "—")}</span>
+    </div>
+    <div class="wizard-review-row">
+      <span class="wizard-review-label">When</span>
+      <span class="wizard-review-value">${escapeHtml(scheduleText)}</span>
+    </div>
+    <div class="wizard-review-row">
+      <span class="wizard-review-label">Type</span>
+      <span class="wizard-review-value">${escapeHtml(types || "—")}</span>
+    </div>
+  `;
+}
+
+function renderWizardStep() {
+  const configStep = getWizardStepConfig();
+
+  setText(els.wizardStepKicker, `Step ${currentWizardStep} of ${WIZARD_STEP_COUNT}`);
+  setText(els.wizardStepTitle, configStep.title);
+  setText(els.wizardStepLead, configStep.lead);
+
+  els.wizardStepPanels?.forEach((panel) => {
+    const step = Number(panel.dataset.step);
+    const isActive = step === currentWizardStep;
+    panel.classList.toggle("is-active", isActive);
+    panel.hidden = !isActive;
+  });
+
+  if (currentWizardStep === 1) {
+    hide(els.wizardBack);
+  } else {
+    show(els.wizardBack);
+  }
+
+  if (currentWizardStep === WIZARD_STEP_COUNT) {
+    hide(els.wizardNext);
+    show(els.submitBtn);
+    renderWizardReview();
+  } else {
+    show(els.wizardNext);
+    hide(els.submitBtn);
+  }
+
+  renderWizardProgressMap();
+}
+
+function goToWizardStep(step, { focus = true } = {}) {
+  currentWizardStep = Math.min(WIZARD_STEP_COUNT, Math.max(1, step));
+  showFormError(null);
+  renderWizardStep();
+  if (focus) {
+    requestAnimationFrame(() => focusWizardStepField(currentWizardStep));
+  }
+  els.formSection?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function isValidEmail(value) {
+  const email = String(value ?? "").trim();
+  return email.length > 0 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function validateWizardStep(step) {
+  switch (step) {
+    case 1: {
+      if (!isValidEmail(els.submitterEmail?.value)) {
+        return { ok: false, message: "Enter a valid email address." };
+      }
+      return { ok: true };
+    }
+    case 2: {
+      const title = els.title?.value.trim() ?? "";
+      if (!title) {
+        return { ok: false, message: "Enter an event name." };
+      }
+      if (!selectedPlace) {
+        return { ok: false, message: "Pick a location from the search results." };
+      }
+      return { ok: true };
+    }
+    case 3: {
+      const startDateIso = readDateIsoFromContainer(els.startDate);
+      if (!startDateIso) {
+        setDateSegmentInvalid(els.startDate, true);
+        return { ok: false, message: "Enter a valid start date (DD / MM / YYYY)." };
+      }
+
+      const endDateIso = readDateIsoFromContainer(els.endDate);
+      if (endDateIso === null) {
+        setDateSegmentInvalid(els.endDate, true);
+        return {
+          ok: false,
+          message: "Enter a valid end date (DD / MM / YYYY), or leave it empty.",
+        };
+      }
+
+      updateSchedulePreview();
+      return { ok: true };
+    }
+    case 4: {
+      if (!getSelectedEventTypes().length) {
+        return { ok: false, message: "Select at least one event type." };
+      }
+      return { ok: true };
+    }
+    default:
+      return { ok: true };
+  }
+}
+
+function handleWizardNext() {
+  const result = validateWizardStep(currentWizardStep);
+  if (!result.ok) {
+    showFormError(result.message);
+    focusWizardStepField(currentWizardStep);
+    return;
+  }
+
+  goToWizardStep(currentWizardStep + 1);
+}
+
+function handleWizardBack() {
+  goToWizardStep(currentWizardStep - 1);
 }
 
 function getScheduleType() {
@@ -626,6 +868,8 @@ function resetEventForm() {
   setText(els.descriptionCount, "0 / 600");
   setText(els.noteCount, "0 / 500");
   els.success?.removeAttribute("data-event-id");
+  currentWizardStep = 1;
+  renderWizardStep();
 }
 
 function showSubmitAnotherForm() {
@@ -640,26 +884,18 @@ async function handleSubmit(event) {
   event.preventDefault();
   showFormError(null);
 
-  if (!selectedPlace) {
-    showFormError("Pick a location from the search results.");
-    els.locationInput?.focus();
+  if (currentWizardStep !== WIZARD_STEP_COUNT) {
+    goToWizardStep(WIZARD_STEP_COUNT);
     return;
   }
 
-  const startDateIso = readDateIsoFromContainer(els.startDate);
-  if (!startDateIso) {
-    setDateSegmentInvalid(els.startDate, true);
-    showFormError("Enter a valid start date (DD / MM / YYYY).");
-    focusDateSegment(getDateSegments(els.startDate).day);
-    return;
-  }
-
-  const endDateIso = readDateIsoFromContainer(els.endDate);
-  if (endDateIso === null) {
-    setDateSegmentInvalid(els.endDate, true);
-    showFormError("Enter a valid end date (DD / MM / YYYY), or leave it empty.");
-    focusDateSegment(getDateSegments(els.endDate).day);
-    return;
+  for (let step = 1; step <= 4; step += 1) {
+    const result = validateWizardStep(step);
+    if (!result.ok) {
+      showFormError(result.message);
+      goToWizardStep(step);
+      return;
+    }
   }
 
   const input = {
@@ -718,6 +954,8 @@ async function handleSubmit(event) {
 }
 
 function bindEvents() {
+  els.wizardBack?.addEventListener("click", handleWizardBack);
+  els.wizardNext?.addEventListener("click", handleWizardNext);
   els.submitAnotherBtn?.addEventListener("click", showSubmitAnotherForm);
   els.clearPlaceBtn?.addEventListener("click", clearPlaceSelection);
   els.form?.addEventListener("submit", handleSubmit);
