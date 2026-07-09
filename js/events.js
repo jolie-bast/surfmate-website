@@ -46,6 +46,8 @@ const els = {
   mobileStrip: document.getElementById("events-mobile-strip"),
   mobileStripLabel: document.getElementById("events-mobile-strip-label"),
   mobileStripScroll: document.getElementById("events-mobile-strip-scroll"),
+  mapBack: document.getElementById("events-map-back"),
+  toolbarSection: document.querySelector(".events-toolbar-section"),
 };
 
 const EUROPE_CENTER = { lng: 10, lat: 52 };
@@ -73,6 +75,8 @@ const state = {
   mapBoundsFilterEnabled: false,
   selectedStripEventId: null,
   mobileMapMode: false,
+  mapFullscreen: false,
+  mapFullscreenScrollY: 0,
 };
 
 let map = null;
@@ -94,6 +98,126 @@ const stripInteraction = {
   scrolled: false,
 };
 let stripScrollResetTimer = null;
+let mapFullscreenScrollRafId = null;
+let mapFullscreenScrollListenerBound = false;
+let lastScrollY = 0;
+
+function getHeaderElement() {
+  return document.querySelector(".header");
+}
+
+function getDownloadBannerElement() {
+  return document.querySelector(".download-banner");
+}
+
+function getTopChromeHeight() {
+  const header = getHeaderElement();
+  const banner = getDownloadBannerElement();
+  let height = header?.offsetHeight ?? 0;
+
+  if (banner?.classList.contains("is-visible")) {
+    const bannerStyle = window.getComputedStyle(banner);
+    if (bannerStyle.display !== "none") {
+      height += banner.offsetHeight;
+    }
+  }
+
+  return height;
+}
+
+function syncTopChromeCssVar() {
+  document.documentElement.style.setProperty(
+    "--events-top-chrome",
+    `${getTopChromeHeight()}px`,
+  );
+}
+
+function canEnterMapFullscreen() {
+  return (
+    isMobileLayout() &&
+    state.viewMode === "list" &&
+    !state.mapFullscreen &&
+    !els.splitLayout?.classList.contains("is-calendar-view")
+  );
+}
+
+function enterMapFullscreen() {
+  if (!canEnterMapFullscreen()) return;
+
+  state.mapFullscreen = true;
+  state.mapFullscreenScrollY = window.scrollY;
+  document.body.classList.add("is-map-fullscreen");
+  document.body.style.overflow = "hidden";
+  syncTopChromeCssVar();
+
+  if (els.mapBack) els.mapBack.hidden = false;
+
+  refreshMapSize();
+  renderMobileStrip();
+}
+
+function exitMapFullscreen() {
+  if (!state.mapFullscreen) return;
+
+  state.mapFullscreen = false;
+  document.body.classList.remove("is-map-fullscreen");
+  document.body.style.overflow = "";
+
+  if (els.mapBack) els.mapBack.hidden = true;
+
+  refreshMapSize();
+
+  if (els.toolbarSection) {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    els.toolbarSection.scrollIntoView({
+      behavior: reduceMotion ? "auto" : "smooth",
+      block: "start",
+    });
+  }
+}
+
+function handleMapFullscreenScroll() {
+  if (!canEnterMapFullscreen()) return;
+
+  const topChrome = getTopChromeHeight();
+  const mapRect = els.splitMap?.getBoundingClientRect();
+  if (!mapRect) return;
+
+  const scrollingDown = window.scrollY > lastScrollY;
+  lastScrollY = window.scrollY;
+
+  if (scrollingDown && mapRect.top <= topChrome + 12) {
+    enterMapFullscreen();
+  }
+}
+
+function onMapFullscreenScroll() {
+  if (mapFullscreenScrollRafId !== null) return;
+
+  mapFullscreenScrollRafId = window.requestAnimationFrame(() => {
+    mapFullscreenScrollRafId = null;
+    handleMapFullscreenScroll();
+  });
+}
+
+function bindMapFullscreenScrollListener() {
+  if (mapFullscreenScrollListenerBound) return;
+
+  lastScrollY = window.scrollY;
+  window.addEventListener("scroll", onMapFullscreenScroll, { passive: true });
+  mapFullscreenScrollListenerBound = true;
+}
+
+function unbindMapFullscreenScrollListener() {
+  if (!mapFullscreenScrollListenerBound) return;
+
+  window.removeEventListener("scroll", onMapFullscreenScroll);
+  if (mapFullscreenScrollRafId !== null) {
+    window.cancelAnimationFrame(mapFullscreenScrollRafId);
+    mapFullscreenScrollRafId = null;
+  }
+  mapFullscreenScrollListenerBound = false;
+}
 
 function escapeHtml(value) {
   return String(value)
@@ -148,15 +272,24 @@ function updateMobileLayoutMode() {
   els.splitLayout?.classList.toggle("is-mobile-map", mobile);
   if (els.mobileStrip) els.mobileStrip.hidden = !mobile;
 
+  syncTopChromeCssVar();
+
   if (mobile) {
     if (mapVisibilityObserver) {
       mapVisibilityObserver.disconnect();
       mapVisibilityObserver = null;
     }
     setMapBoundsFilterEnabled(true);
+    bindMapFullscreenScrollListener();
+
+    if (state.viewMode === "calendar") {
+      exitMapFullscreen();
+    }
     return;
   }
 
+  exitMapFullscreen();
+  unbindMapFullscreenScrollListener();
   state.selectedStripEventId = null;
   setMapBoundsFilterEnabled(false);
   setupMapBoundsFilter();
@@ -471,6 +604,10 @@ function showViewSection(mode) {
   if (els.listSection) els.listSection.hidden = mode !== "list";
   if (els.calendarSection) els.calendarSection.hidden = mode !== "calendar";
   els.splitLayout?.classList.toggle("is-calendar-view", mode === "calendar");
+
+  if (mode === "calendar" && state.mapFullscreen) {
+    exitMapFullscreen();
+  }
 
   if (els.viewToggle) {
     for (const button of els.viewToggle.querySelectorAll("[data-view]")) {
@@ -971,6 +1108,21 @@ function bindEvents() {
 
   bindMobileStripInteractions();
 
+  if (els.mapBack) {
+    els.mapBack.addEventListener("click", () => exitMapFullscreen());
+  }
+
+  window.addEventListener("resize", () => {
+    syncTopChromeCssVar();
+    if (!isMobileLayout()) {
+      exitMapFullscreen();
+      unbindMapFullscreenScrollListener();
+    } else {
+      bindMapFullscreenScrollListener();
+    }
+    refreshMapSize();
+  });
+
   MOBILE_LAYOUT_MQ?.addEventListener("change", () => {
     updateMobileLayoutMode();
     renderAll();
@@ -1083,6 +1235,16 @@ async function init() {
     const observer = new ResizeObserver(() => refreshMapSize());
     observer.observe(els.splitLayout);
   }
+
+  if (window.ResizeObserver) {
+    const topChromeObserver = new ResizeObserver(() => syncTopChromeCssVar());
+    const header = getHeaderElement();
+    const banner = getDownloadBannerElement();
+    if (header) topChromeObserver.observe(header);
+    if (banner) topChromeObserver.observe(banner);
+  }
+
+  window.setTimeout(syncTopChromeCssVar, 1200);
 
   setLoading(true);
 
