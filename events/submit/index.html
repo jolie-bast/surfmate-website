@@ -332,14 +332,20 @@
 
                 <p id="form-error" class="form-error" hidden role="alert"></p>
 
-                <div class="wizard-nav">
-                  <button type="button" id="wizard-back" class="btn-secondary" hidden>
+                <div class="wizard-nav is-first-step" id="wizard-nav">
+                  <button type="button" id="wizard-back" class="btn-secondary wizard-nav-back" hidden tabindex="-1">
                     Back
                   </button>
                   <button type="button" id="wizard-next" class="btn-primary wizard-nav-action wizard-nav-action--next">
                     Continue
                   </button>
-                  <button type="button" id="submit-event-btn" class="btn-primary wizard-nav-action wizard-nav-action--submit" hidden>
+                  <button
+                    type="button"
+                    id="submit-event-btn"
+                    class="btn-primary wizard-nav-action wizard-nav-action--submit"
+                    hidden
+                    tabindex="-1"
+                  >
                     Submit for review
                   </button>
                 </div>

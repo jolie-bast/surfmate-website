@@ -61,7 +61,7 @@ const els = {
   wizardStepLead: document.getElementById("wizard-step-lead"),
   wizardReview: document.getElementById("wizard-review"),
   wizardBack: document.getElementById("wizard-back"),
-  wizardNav: document.querySelector(".wizard-nav"),
+  wizardNav: document.getElementById("wizard-nav"),
   wizardNext: document.getElementById("wizard-next"),
   wizardStepPanels: document.querySelectorAll(".wizard-step"),
   form: document.getElementById("event-submit-form"),
@@ -107,7 +107,37 @@ const FIELD_ERROR_ELEMENTS = {
 
 function refreshWizardElements() {
   els.wizardStepPanels = document.querySelectorAll(".wizard-step");
-  els.wizardNav = document.querySelector(".wizard-nav");
+  els.wizardNav = document.getElementById("wizard-nav");
+  els.wizardBack = document.getElementById("wizard-back");
+  els.wizardNext = document.getElementById("wizard-next");
+  els.submitBtn = document.getElementById("submit-event-btn");
+}
+
+function setWizardNavButton(button, isVisible) {
+  if (!button) return;
+
+  button.hidden = !isVisible;
+  button.style.display = isVisible ? "" : "none";
+  button.disabled = !isVisible;
+  button.tabIndex = isVisible ? 0 : -1;
+
+  if (isVisible) {
+    button.removeAttribute("aria-hidden");
+  } else {
+    button.setAttribute("aria-hidden", "true");
+  }
+}
+
+function syncWizardNavButtons() {
+  const isFirstStep = currentWizardStep === 1;
+  const isFinalStep = currentWizardStep === WIZARD_STEP_COUNT;
+
+  els.wizardNav?.classList.toggle("is-first-step", isFirstStep);
+  els.wizardNav?.classList.toggle("is-final-step", isFinalStep);
+
+  setWizardNavButton(els.wizardBack, !isFirstStep);
+  setWizardNavButton(els.wizardNext, !isFinalStep);
+  setWizardNavButton(els.submitBtn, isFinalStep);
 }
 
 function hide(el) {
@@ -287,23 +317,11 @@ function renderWizardStep() {
     panel.hidden = !isActive;
   });
 
-  if (currentWizardStep === 1) {
-    hide(els.wizardBack);
-  } else {
-    show(els.wizardBack);
-  }
-
-  els.wizardNav?.classList.toggle("is-first-step", currentWizardStep === 1);
-  els.wizardNav?.classList.toggle("is-final-step", currentWizardStep === WIZARD_STEP_COUNT);
-
   if (currentWizardStep === WIZARD_STEP_COUNT) {
-    hide(els.wizardNext);
-    show(els.submitBtn);
     renderWizardReview();
-  } else {
-    show(els.wizardNext);
-    hide(els.submitBtn);
   }
+
+  syncWizardNavButtons();
 
   renderWizardProgressMap();
 }
@@ -1148,6 +1166,7 @@ async function init() {
     hide(els.loading);
     showFormError("Supabase is not configured on this page.");
     show(els.formSection);
+    goToWizardStep(1, { focus: false });
     return;
   }
 
@@ -1164,4 +1183,5 @@ init().catch((error) => {
   hide(els.loading);
   showFormError("Something went wrong loading this page. Please refresh and try again.");
   show(els.formSection);
+  goToWizardStep(1, { focus: false });
 });

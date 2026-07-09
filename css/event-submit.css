@@ -291,17 +291,24 @@
   grid-template-columns: 1fr;
 }
 
+.event-submit-form .wizard-nav.is-first-step #wizard-back,
+.event-submit-form .wizard-nav.is-first-step .wizard-nav-back,
+.event-submit-form .wizard-nav:not(.is-final-step) #submit-event-btn,
+.event-submit-form .wizard-nav:not(.is-final-step) .wizard-nav-action--submit {
+  display: none !important;
+}
+
+.event-submit-form .wizard-nav.is-final-step #wizard-next,
+.event-submit-form .wizard-nav.is-final-step .wizard-nav-action--next {
+  display: none !important;
+}
+
 #wizard-back[hidden],
 #wizard-next[hidden],
-#submit-event-btn[hidden] {
-  display: none !important;
-}
-
-.wizard-nav:not(.is-final-step) .wizard-nav-action--submit {
-  display: none !important;
-}
-
-.wizard-nav.is-final-step .wizard-nav-action--next {
+#submit-event-btn[hidden],
+.event-submit-form .wizard-nav-back[hidden],
+.event-submit-form .wizard-nav-action--submit[hidden],
+.event-submit-form .wizard-nav-action--next[hidden] {
   display: none !important;
 }
 
