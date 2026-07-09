@@ -263,11 +263,21 @@
   margin-top: 0.25rem;
 }
 
+.wizard-nav.is-first-step {
+  grid-template-columns: 1fr;
+}
+
+#wizard-back[hidden] {
+  display: none !important;
+}
+
 .wizard-nav #wizard-next,
 .wizard-nav #submit-event-btn {
   grid-column: 2;
 }
 
+.wizard-nav.is-first-step #wizard-next,
+.wizard-nav.is-first-step #submit-event-btn,
 .wizard-nav #wizard-back[hidden] + #wizard-next,
 .wizard-nav #wizard-back[hidden] + #submit-event-btn {
   grid-column: 1 / -1;

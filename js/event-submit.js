@@ -61,6 +61,7 @@ const els = {
   wizardStepLead: document.getElementById("wizard-step-lead"),
   wizardReview: document.getElementById("wizard-review"),
   wizardBack: document.getElementById("wizard-back"),
+  wizardNav: document.querySelector(".wizard-nav"),
   wizardNext: document.getElementById("wizard-next"),
   wizardStepPanels: document.querySelectorAll(".wizard-step"),
   form: document.getElementById("event-submit-form"),
@@ -241,6 +242,8 @@ function renderWizardStep() {
     show(els.wizardBack);
   }
 
+  els.wizardNav?.classList.toggle("is-first-step", currentWizardStep === 1);
+
   if (currentWizardStep === WIZARD_STEP_COUNT) {
     hide(els.wizardNext);
     show(els.submitBtn);
@@ -328,6 +331,7 @@ function handleWizardNext() {
 }
 
 function handleWizardBack() {
+  if (currentWizardStep <= 1) return;
   goToWizardStep(currentWizardStep - 1);
 }
 
