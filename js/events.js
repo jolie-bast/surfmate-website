@@ -136,24 +136,40 @@ function getMobileMapStackHeight() {
   return height;
 }
 
+function getMobileViewportHeight() {
+  const viewport = window.visualViewport;
+  if (!viewport) return window.innerHeight;
+  return viewport.height + viewport.offsetTop;
+}
+
 function syncMobileMapHeight() {
   if (!shouldSyncMobileMapHeight()) {
     els.splitMap?.style.removeProperty("height");
     els.splitMap?.style.removeProperty("min-height");
+    els.splitMap?.style.removeProperty("width");
     if (!shouldSyncCalendarMapHeight()) {
       els.mapContainer?.style.removeProperty("height");
+      els.mapContainer?.style.removeProperty("width");
     }
     return;
   }
 
   const height = Math.max(
     280,
-    Math.round(window.innerHeight - getTopChromeHeight() - getMobileMapStackHeight()),
+    Math.round(getMobileViewportHeight() - getTopChromeHeight() - getMobileMapStackHeight()),
   );
 
   els.splitMap.style.removeProperty("min-height");
+  els.splitMap.style.removeProperty("width");
   els.splitMap.style.height = `${height}px`;
+
+  const width = Math.round(els.splitMap.clientWidth);
   els.mapContainer.style.height = `${height}px`;
+  if (width > 0) {
+    els.mapContainer.style.width = `${width}px`;
+  } else {
+    els.mapContainer.style.removeProperty("width");
+  }
 }
 
 function bindMobileMapHeightObserver() {
@@ -166,6 +182,7 @@ function bindMobileMapHeightObserver() {
   const targets = [
     document.querySelector(".events-hero"),
     document.querySelector(".events-toolbar-section"),
+    els.splitMap,
   ].filter(Boolean);
 
   if (!targets.length) return;
@@ -291,6 +308,7 @@ function enterMapFullscreen() {
   els.splitMap?.style.removeProperty("height");
   els.mapContainer?.style.removeProperty("height");
   els.mapContainer?.style.removeProperty("min-height");
+  els.mapContainer?.style.removeProperty("width");
   mountFullscreenFilterChips();
   syncTopChromeCssVar();
   syncMapFullscreenControls();
@@ -766,15 +784,17 @@ function refreshMapSize() {
   syncMobileMapHeight();
 
   requestAnimationFrame(() => {
-    map.invalidateSize();
-    if (state.viewMode === "calendar") {
-      fitMapToCalendarSelection();
-      return;
-    }
-    if (isMapBoundsFilterActive()) return;
+    requestAnimationFrame(() => {
+      map.invalidateSize({ pan: false });
+      if (state.viewMode === "calendar") {
+        fitMapToCalendarSelection();
+        return;
+      }
+      if (isMapBoundsFilterActive()) return;
 
-    const withCoords = getMapEvents().filter(eventHasMapCoordinates);
-    fitMapToEvents(withCoords);
+      const withCoords = getMapEvents().filter(eventHasMapCoordinates);
+      fitMapToEvents(withCoords);
+    });
   });
 }
 
@@ -1304,6 +1324,12 @@ function bindEvents() {
     }
     refreshMapSize();
     syncMapFullscreenControls();
+  });
+
+  window.visualViewport?.addEventListener("resize", () => {
+    syncTopChromeCssVar();
+    syncMobileMapHeight();
+    map?.invalidateSize({ pan: false });
   });
 
   MOBILE_LAYOUT_MQ?.addEventListener("change", () => {
