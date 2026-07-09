@@ -91,6 +91,18 @@ export function composeEventDateIso(day, month, year) {
   return { ok: true, empty: false, iso };
 }
 
+export function getLocalDateKey(date = new Date()) {
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
+/** True when YYYY-MM-DD is today or later in the user's local timezone. */
+export function isEventDateOnOrAfterToday(isoYmd) {
+  const value = String(isoYmd ?? "").trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  return value >= getLocalDateKey();
+}
+
 /** Persist calendar days at noon UTC (same as admin parseEventDateLocalValue). */
 export function parseEventDateLocalValue(value) {
   const trimmed = String(value || "").trim();
@@ -152,6 +164,15 @@ export function validateCommunityEventSubmissionInput(input) {
     return { ok: false, message: "Start date is invalid." };
   }
 
+  const startDateKey = startsAt.slice(0, 10);
+  if (input.scheduleType === "exact") {
+    if (!isEventDateOnOrAfterToday(startDateKey)) {
+      return { ok: false, message: "Start date must be today or in the future." };
+    }
+  } else if (startsAtMs < Date.now()) {
+    return { ok: false, message: "Start must be today or in the future." };
+  }
+
   const endsAt = input.endsAt?.trim() ?? "";
   if (endsAt) {
     const endsAtMs = Date.parse(endsAt);
@@ -159,7 +180,7 @@ export function validateCommunityEventSubmissionInput(input) {
       return { ok: false, message: "End date is invalid." };
     }
     if (endsAtMs < startsAtMs) {
-      return { ok: false, message: "End must be on or after the start." };
+      return { ok: false, message: "End can't be before start." };
     }
   }
 

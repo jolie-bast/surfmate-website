@@ -30,7 +30,6 @@ const els = {
   error: document.getElementById("events-error"),
   status: document.getElementById("events-status"),
   search: document.getElementById("events-search"),
-  upcomingToggle: document.getElementById("events-upcoming-toggle"),
   filterChips: document.getElementById("events-filter-chips"),
   viewToggle: document.getElementById("events-view-toggle"),
   splitLayout: document.getElementById("events-split-layout"),
@@ -63,7 +62,6 @@ const state = {
   viewMode: "list",
   searchQuery: "",
   selectedTypes: new Set(),
-  upcomingOnly: true,
   listVisibleCount: LIST_BATCH_SIZE,
   calendarDayVisibleCount: LIST_BATCH_SIZE,
   calendarYear: new Date().getFullYear(),
@@ -86,6 +84,16 @@ let mapVisibilityObserver = null;
 let searchDebounceTimer = null;
 let listLoadObserver = null;
 let calendarLoadObserver = null;
+
+const STRIP_DRAG_THRESHOLD_PX = 10;
+const stripInteraction = {
+  pointerId: null,
+  startX: 0,
+  startY: 0,
+  dragged: false,
+  scrolled: false,
+};
+let stripScrollResetTimer = null;
 
 function escapeHtml(value) {
   return String(value)
@@ -225,10 +233,8 @@ function renderEventCard(event) {
 function resetPageStateToDefaults() {
   state.searchQuery = "";
   state.selectedTypes = new Set();
-  state.upcomingOnly = true;
   state.viewMode = "list";
   if (els.search) els.search.value = "";
-  if (els.upcomingToggle) els.upcomingToggle.checked = true;
 }
 
 function applyUrlState() {
@@ -242,9 +248,6 @@ function applyUrlState() {
     state.searchQuery = urlState.searchQuery;
     if (els.search) els.search.value = urlState.searchQuery;
   }
-
-  state.upcomingOnly = urlState.upcomingOnly;
-  if (els.upcomingToggle) els.upcomingToggle.checked = urlState.upcomingOnly;
 
   state.viewMode = urlState.viewMode;
 }
@@ -350,7 +353,7 @@ function getBaseFilteredEvents() {
   const filtered = filterEvents(state.allEvents, {
     searchQuery: state.searchQuery,
     selectedTypes: state.selectedTypes,
-    upcomingOnly: state.upcomingOnly,
+    upcomingOnly: true,
   });
 
   return [...filtered].sort(compareSurfEventsBySchedule);
@@ -845,6 +848,82 @@ function renderAll() {
   else renderMap();
 }
 
+function bindMobileStripInteractions() {
+  if (!els.mobileStripScroll) return;
+
+  els.mobileStripScroll.addEventListener(
+    "pointerdown",
+    (event) => {
+      stripInteraction.pointerId = event.pointerId;
+      stripInteraction.startX = event.clientX;
+      stripInteraction.startY = event.clientY;
+      stripInteraction.dragged = false;
+      stripInteraction.scrolled = false;
+    },
+    { passive: true },
+  );
+
+  els.mobileStripScroll.addEventListener(
+    "pointermove",
+    (event) => {
+      if (event.pointerId !== stripInteraction.pointerId) return;
+
+      const deltaX = Math.abs(event.clientX - stripInteraction.startX);
+      const deltaY = Math.abs(event.clientY - stripInteraction.startY);
+      if (deltaX > STRIP_DRAG_THRESHOLD_PX || deltaY > STRIP_DRAG_THRESHOLD_PX) {
+        stripInteraction.dragged = true;
+      }
+    },
+    { passive: true },
+  );
+
+  const clearStripPointer = () => {
+    stripInteraction.pointerId = null;
+  };
+
+  els.mobileStripScroll.addEventListener("pointerup", clearStripPointer, { passive: true });
+  els.mobileStripScroll.addEventListener("pointercancel", () => {
+    stripInteraction.dragged = true;
+    clearStripPointer();
+  }, { passive: true });
+
+  els.mobileStripScroll.addEventListener(
+    "scroll",
+    () => {
+      stripInteraction.scrolled = true;
+      clearTimeout(stripScrollResetTimer);
+      stripScrollResetTimer = setTimeout(() => {
+        stripInteraction.scrolled = false;
+      }, 120);
+    },
+    { passive: true },
+  );
+
+  els.mobileStripScroll.addEventListener("click", (event) => {
+    if (event.target.closest("[data-strip-link]")) return;
+
+    if (stripInteraction.dragged || stripInteraction.scrolled) {
+      stripInteraction.dragged = false;
+      return;
+    }
+
+    const card = event.target.closest("[data-event-id]");
+    if (!card) return;
+
+    focusEventOnMap(card.dataset.eventId);
+  });
+
+  els.mobileStripScroll.addEventListener("keydown", (event) => {
+    const card = event.target.closest("[data-event-id]");
+    if (!card) return;
+
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      focusEventOnMap(card.dataset.eventId);
+    }
+  });
+}
+
 function bindEvents() {
   if (els.search) {
     els.search.addEventListener("input", () => {
@@ -853,13 +932,6 @@ function bindEvents() {
         state.searchQuery = els.search.value;
         renderAll();
       }, 300);
-    });
-  }
-
-  if (els.upcomingToggle) {
-    els.upcomingToggle.addEventListener("change", () => {
-      state.upcomingOnly = els.upcomingToggle.checked;
-      renderAll();
     });
   }
 
@@ -897,14 +969,7 @@ function bindEvents() {
     });
   }
 
-  els.mobileStripScroll?.addEventListener("click", (event) => {
-    if (event.target.closest("[data-strip-link]")) return;
-
-    const card = event.target.closest("[data-event-id]");
-    if (!card) return;
-
-    focusEventOnMap(card.dataset.eventId);
-  });
+  bindMobileStripInteractions();
 
   MOBILE_LAYOUT_MQ?.addEventListener("change", () => {
     updateMobileLayoutMode();

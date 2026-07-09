@@ -301,20 +301,6 @@
   color: var(--surfmate-white);
 }
 
-.events-upcoming-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: var(--spacing-md);
-  color: rgba(255, 255, 255, 0.72);
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-
-.events-upcoming-toggle input {
-  accent-color: var(--surfmate-blue);
-}
-
 .events-loading {
   display: flex;
   align-items: center;
@@ -728,10 +714,7 @@
 
 @media (max-width: 768px) {
   .events-share-fab {
-    max-width: min(16.5rem, calc(100vw - 1.5rem));
-    padding: 0.72rem 0.9rem;
-    font-size: 0.82rem;
-    z-index: 900;
+    display: none !important;
   }
 }
 
@@ -887,7 +870,7 @@
 
   .events-mobile-strip-label {
     margin: 0 0 0.55rem;
-    padding: 0 1rem;
+    padding: 0 0.65rem;
     color: rgba(255, 255, 255, 0.72);
     font-family: var(--font-family-ui);
     font-size: 0.78rem;
@@ -901,10 +884,19 @@
     display: flex;
     gap: 0.65rem;
     overflow-x: auto;
-    padding: 0 1rem 0.15rem;
+    padding: 0 0 0.15rem;
+    scroll-padding-inline: 0.65rem;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    pointer-events: auto;
+    touch-action: pan-x;
+  }
+
+  .events-mobile-strip-scroll::before,
+  .events-mobile-strip-scroll::after {
+    content: "";
+    flex: 0 0 0.65rem;
   }
 
   .events-mobile-strip-scroll::-webkit-scrollbar {
@@ -913,7 +905,7 @@
 
   .events-mobile-strip-empty {
     margin: 0;
-    padding: 0.35rem 1rem 0.15rem;
+    padding: 0.35rem 0.65rem 0.15rem;
     color: rgba(255, 255, 255, 0.62);
     font-family: var(--font-family-ui);
     font-size: 0.88rem;
@@ -935,11 +927,13 @@
     text-align: left;
     cursor: pointer;
     pointer-events: auto;
+    user-select: none;
+    -webkit-user-select: none;
     transition:
       border-color var(--transition-fast),
       transform var(--transition-fast),
       background var(--transition-fast);
-    touch-action: manipulation;
+    touch-action: pan-x;
   }
 
   .events-strip-card:hover,

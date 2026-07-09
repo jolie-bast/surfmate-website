@@ -482,7 +482,7 @@ export function parseEventTypesFromUrlValue(raw) {
 const EVENTS_PAGE_VIEW_MODES = new Set(["list", "calendar"]);
 
 /**
- * Read shareable filter state from ?type=contest,festival&q=…&upcoming=0&view=calendar
+ * Read shareable filter state from ?type=contest,festival&q=…&view=calendar
  * Also accepts ?types=… or ?filter=… as aliases for type.
  */
 export function readEventsPageUrlState(searchParams) {
@@ -496,22 +496,13 @@ export function readEventsPageUrlState(searchParams) {
 
   const searchQuery = String(params.get("q") ?? params.get("search") ?? "").trim();
 
-  let upcomingOnly = true;
-  const upcomingRaw = params.get("upcoming");
-  const pastRaw = params.get("past");
-  if (upcomingRaw != null) {
-    upcomingOnly = !["0", "false", "no"].includes(upcomingRaw.trim().toLowerCase());
-  } else if (pastRaw != null) {
-    upcomingOnly = !["1", "true", "yes"].includes(pastRaw.trim().toLowerCase());
-  }
-
   let viewMode = "list";
   const viewRaw = String(params.get("view") ?? "").trim().toLowerCase();
   if (EVENTS_PAGE_VIEW_MODES.has(viewRaw)) {
     viewMode = viewRaw;
   }
 
-  return { selectedTypes, searchQuery, upcomingOnly, viewMode };
+  return { selectedTypes, searchQuery, viewMode };
 }
 
 /** Build query string for the current events page filter state (defaults omitted). */
@@ -519,7 +510,6 @@ export function buildEventsPageSearchParams(filters) {
   const {
     searchQuery = "",
     selectedTypes = new Set(),
-    upcomingOnly = true,
     viewMode = "list",
   } = filters;
 
@@ -534,8 +524,6 @@ export function buildEventsPageSearchParams(filters) {
 
   const query = String(searchQuery ?? "").trim();
   if (query) params.set("q", query);
-
-  if (!upcomingOnly) params.set("upcoming", "0");
 
   if (viewMode === "calendar") params.set("view", "calendar");
 

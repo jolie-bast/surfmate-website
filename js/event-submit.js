@@ -4,6 +4,7 @@ import {
   SURF_EVENT_TYPE_LABELS,
   buildExactDatetimeIso,
   composeEventDateIso,
+  isEventDateOnOrAfterToday,
   parseEventDateLocalValue,
   validateCommunityEventSubmissionInput,
 } from "./community-event-shared.js";
@@ -182,6 +183,8 @@ function clearFieldErrors() {
   els.eventTypes?.classList.remove("is-invalid");
   setDateSegmentInvalid(els.startDate, false);
   setDateSegmentInvalid(els.endDate, false);
+  setTimeSegmentInvalid(els.startTime, false);
+  setTimeSegmentInvalid(els.endTime, false);
 }
 
 function showFieldError(fieldKey, message) {
@@ -206,6 +209,145 @@ function markFieldInvalid(fieldKey, isInvalid = true) {
     eventTypes: els.eventTypes,
   };
   fieldMap[fieldKey]?.classList.toggle("is-invalid", isInvalid);
+
+  if (fieldKey === "schedule") {
+    setDateSegmentInvalid(els.startDate, isInvalid);
+    setDateSegmentInvalid(els.endDate, isInvalid);
+    setTimeSegmentInvalid(els.startTime, isInvalid);
+    setTimeSegmentInvalid(els.endTime, isInvalid);
+  }
+}
+
+function validateScheduleInput() {
+  const startDateIso = readDateIsoFromContainer(els.startDate);
+  if (!startDateIso) {
+    setDateSegmentInvalid(els.startDate, true);
+    return {
+      ok: false,
+      message: "Enter a valid start date (DD / MM / YYYY).",
+      field: "schedule",
+    };
+  }
+
+  const endDateIso = readDateIsoFromContainer(els.endDate);
+  if (endDateIso === null) {
+    setDateSegmentInvalid(els.endDate, true);
+    return {
+      ok: false,
+      message: "Enter a valid end date (DD / MM / YYYY), or leave it empty.",
+      field: "schedule",
+    };
+  }
+
+  if (!isEventDateOnOrAfterToday(startDateIso)) {
+    setDateSegmentInvalid(els.startDate, true);
+    return {
+      ok: false,
+      message: "Start date must be today or in the future.",
+      field: "schedule",
+    };
+  }
+
+  if (endDateIso && endDateIso < startDateIso) {
+    setDateSegmentInvalid(els.endDate, true);
+    return {
+      ok: false,
+      message: "End can't be before start.",
+      field: "schedule",
+    };
+  }
+
+  const scheduleType = getScheduleType();
+  if (scheduleType === "exact_datetime") {
+    const startTime = readTimeFromContainer(els.startTime);
+    if (startTime === null) {
+      setTimeSegmentInvalid(els.startTime, true);
+      return {
+        ok: false,
+        message: "Enter a valid start time (HH : MM).",
+        field: "schedule",
+      };
+    }
+    if (!startTime) {
+      setTimeSegmentInvalid(els.startTime, true);
+      return {
+        ok: false,
+        message: "Enter a start time.",
+        field: "schedule",
+      };
+    }
+
+    const endTime = readTimeFromContainer(els.endTime);
+    if (endTime === null) {
+      setTimeSegmentInvalid(els.endTime, true);
+      return {
+        ok: false,
+        message: "Enter a valid end time (HH : MM), or leave it empty.",
+        field: "schedule",
+      };
+    }
+  }
+
+  const startsAtIso = buildStartsAtIso();
+  const startsAtMs = startsAtIso ? Date.parse(startsAtIso) : Number.NaN;
+
+  if (Number.isNaN(startsAtMs)) {
+    setDateSegmentInvalid(els.startDate, true);
+    return {
+      ok: false,
+      message: "Enter a valid start date (DD / MM / YYYY).",
+      field: "schedule",
+    };
+  }
+
+  if (scheduleType === "exact_datetime" && startsAtMs < Date.now()) {
+    setDateSegmentInvalid(els.startDate, true);
+    return {
+      ok: false,
+      message: "Start must be today or in the future.",
+      field: "schedule",
+    };
+  }
+
+  const endsAtIso = buildEndsAtIso();
+  if (endsAtIso) {
+    const endsAtMs = Date.parse(endsAtIso);
+    if (endsAtMs < startsAtMs) {
+      setDateSegmentInvalid(els.endDate, true);
+      return {
+        ok: false,
+        message: "End can't be before start.",
+        field: "schedule",
+      };
+    }
+  }
+
+  setDateSegmentInvalid(els.startDate, false);
+  setDateSegmentInvalid(els.endDate, false);
+  setTimeSegmentInvalid(els.startTime, false);
+  setTimeSegmentInvalid(els.endTime, false);
+  return { ok: true };
+}
+
+function showScheduleFieldFeedback() {
+  const { day, month, year } = getDateSegments(els.startDate);
+  const hasAnyStartValue = Boolean(day?.value || month?.value || year?.value);
+  if (!hasAnyStartValue) {
+    showFieldError("schedule", null);
+    markFieldInvalid("schedule", false);
+    return;
+  }
+
+  const result = validateScheduleInput();
+  if (result.ok) {
+    showFieldError("schedule", null);
+    markFieldInvalid("schedule", false);
+    showFormError(null);
+    return;
+  }
+
+  showFieldError("schedule", result.message);
+  markFieldInvalid("schedule", true);
 }
 
 function showForm() {
@@ -279,9 +421,7 @@ function renderWizardReview() {
     .map((type) => SURF_EVENT_TYPE_LABELS[type] ?? type)
     .join(", ");
 
-  const scheduleText = els.schedulePreview?.hidden
-    ? "—"
-    : els.schedulePreview?.textContent?.trim() || "—";
+  const scheduleText = formatSchedulePreviewSummary(buildSchedulePreviewModel()) || "—";
 
   els.wizardReview.innerHTML = `
     <div class="wizard-review-row">
@@ -381,24 +521,9 @@ function validateWizardStep(step) {
       return { ok: true };
     }
     case 3: {
-      const startDateIso = readDateIsoFromContainer(els.startDate);
-      if (!startDateIso) {
-        setDateSegmentInvalid(els.startDate, true);
-        return {
-          ok: false,
-          message: "Enter a valid start date (DD / MM / YYYY).",
-          field: "schedule",
-        };
-      }
-
-      const endDateIso = readDateIsoFromContainer(els.endDate);
-      if (endDateIso === null) {
-        setDateSegmentInvalid(els.endDate, true);
-        return {
-          ok: false,
-          message: "Enter a valid end date (DD / MM / YYYY), or leave it empty.",
-          field: "schedule",
-        };
+      const result = validateScheduleInput();
+      if (!result.ok) {
+        return result;
       }
 
       updateSchedulePreview();
@@ -630,10 +755,13 @@ function handleDateSegmentBlur(event) {
 
   if (required) {
     setDateSegmentInvalid(container, hasAnyValue && iso === null);
-    return;
+  } else {
+    setDateSegmentInvalid(container, hasAnyValue && iso === null);
   }
 
-  setDateSegmentInvalid(container, hasAnyValue && iso === null);
+  if (container === els.startDate || container === els.endDate) {
+    showScheduleFieldFeedback();
+  }
 }
 
 function bindDateSegments(container) {
@@ -644,6 +772,182 @@ function bindDateSegments(container) {
     input.addEventListener("keydown", handleDateSegmentKeydown);
     input.addEventListener("paste", handleDateSegmentPaste);
     input.addEventListener("blur", handleDateSegmentBlur);
+  }
+}
+
+function getTimeSegments(container) {
+  if (!container) {
+    return { hour: null, minute: null, row: null };
+  }
+
+  return {
+    hour: container.querySelector('[data-segment="hour"]'),
+    minute: container.querySelector('[data-segment="minute"]'),
+    row: container.querySelector(".time-segments-row"),
+  };
+}
+
+function composeTimeValue(hour, minute) {
+  const hourText = String(hour ?? "").trim();
+  const minuteText = String(minute ?? "").trim();
+
+  if (!hourText && !minuteText) {
+    return { empty: true, ok: false, value: "" };
+  }
+
+  if (!hourText || !minuteText) {
+    return { empty: false, ok: false, value: null };
+  }
+
+  if (!/^\d{1,2}$/.test(hourText) || !/^\d{1,2}$/.test(minuteText)) {
+    return { empty: false, ok: false, value: null };
+  }
+
+  const hours = Number(hourText);
+  const minutes = Number(minuteText);
+
+  if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
+    return { empty: false, ok: false, value: null };
+  }
+
+  return {
+    empty: false,
+    ok: true,
+    value: `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`,
+  };
+}
+
+function readTimeFromContainer(container) {
+  const { hour, minute } = getTimeSegments(container);
+  const result = composeTimeValue(hour?.value, minute?.value);
+
+  if (result.empty) return "";
+  if (!result.ok) return null;
+  return result.value;
+}
+
+function setTimeSegmentInvalid(container, isInvalid) {
+  const { row } = getTimeSegments(container);
+  row?.classList.toggle("is-invalid", isInvalid);
+}
+
+function clearTimeSegments(container) {
+  const { hour, minute } = getTimeSegments(container);
+  if (hour) hour.value = "";
+  if (minute) minute.value = "";
+  setTimeSegmentInvalid(container, false);
+}
+
+function setTimeSegmentsDisabled(container, disabled) {
+  const { hour, minute } = getTimeSegments(container);
+  for (const input of [hour, minute]) {
+    if (!input) continue;
+    input.disabled = disabled;
+  }
+}
+
+function focusTimeSegment(segment) {
+  segment?.focus();
+  segment?.select();
+}
+
+function handleTimeSegmentInput(event) {
+  const input = event.target;
+  if (!(input instanceof HTMLInputElement) || !input.dataset.segment) return;
+
+  const container = input.closest(".time-segments");
+  if (!container) return;
+
+  input.value = input.value.replace(/\D/g, "");
+  setTimeSegmentInvalid(container, false);
+
+  const { hour, minute } = getTimeSegments(container);
+  if (input.dataset.segment === "hour" && input.value.length >= 2) {
+    focusTimeSegment(minute);
+  }
+
+  updateSchedulePreview();
+}
+
+function handleTimeSegmentKeydown(event) {
+  const input = event.target;
+  if (!(input instanceof HTMLInputElement) || !input.dataset.segment) return;
+
+  const { hour, minute } = getTimeSegments(input.closest(".time-segments"));
+  const segment = input.dataset.segment;
+
+  if (event.key === "Backspace" && input.value === "" && segment === "minute") {
+    event.preventDefault();
+    focusTimeSegment(hour);
+  }
+
+  if (event.key === "ArrowLeft" && input.selectionStart === 0 && segment === "minute") {
+    event.preventDefault();
+    focusTimeSegment(hour);
+  }
+
+  if (
+    event.key === "ArrowRight" &&
+    input.selectionStart === input.value.length &&
+    segment === "hour"
+  ) {
+    event.preventDefault();
+    focusTimeSegment(minute);
+  }
+}
+
+function handleTimeSegmentPaste(event) {
+  const input = event.target;
+  if (!(input instanceof HTMLInputElement)) return;
+
+  const container = input.closest(".time-segments");
+  if (!container) return;
+
+  const pasted = event.clipboardData?.getData("text")?.trim() ?? "";
+  const match = pasted.match(/^(\d{1,2})(?::?(\d{1,2}))?$/);
+  if (!match) return;
+
+  event.preventDefault();
+  const { hour, minute } = getTimeSegments(container);
+  if (hour) hour.value = match[1].replace(/\D/g, "").slice(0, 2);
+  if (minute && match[2]) minute.value = match[2].replace(/\D/g, "").slice(0, 2);
+  setTimeSegmentInvalid(container, false);
+  focusTimeSegment(match[2] ? minute : hour);
+  updateSchedulePreview();
+  showScheduleFieldFeedback();
+}
+
+function handleTimeSegmentBlur(event) {
+  const input = event.target;
+  if (!(input instanceof HTMLInputElement) || !input.dataset.segment) return;
+
+  const container = input.closest(".time-segments");
+  if (!container) return;
+
+  const { hour, minute } = getTimeSegments(container);
+  if (hour?.value && hour.value.length === 1) {
+    hour.value = hour.value.padStart(2, "0");
+  }
+  if (minute?.value && minute.value.length === 1) {
+    minute.value = minute.value.padStart(2, "0");
+  }
+
+  const timeValue = readTimeFromContainer(container);
+  const { hour, minute } = getTimeSegments(container);
+  const hasAnyValue = Boolean(hour?.value || minute?.value);
+
+  setTimeSegmentInvalid(container, hasAnyValue && timeValue === null);
+  showScheduleFieldFeedback();
+}
+
+function bindTimeSegments(container) {
+  const { hour, minute } = getTimeSegments(container);
+  for (const input of [hour, minute]) {
+    if (!input) continue;
+    input.addEventListener("input", handleTimeSegmentInput);
+    input.addEventListener("keydown", handleTimeSegmentKeydown);
+    input.addEventListener("paste", handleTimeSegmentPaste);
+    input.addEventListener("blur", handleTimeSegmentBlur);
   }
 }
 
@@ -670,39 +974,150 @@ function formatDisplayTime(timeValue) {
   }).format(date);
 }
 
+function buildSchedulePreviewModel() {
+  const startDateIso = readDateIsoFromContainer(els.startDate);
+  if (!startDateIso) return null;
+
+  const endDateIso = readDateIsoFromContainer(els.endDate);
+  const withTime = getScheduleType() === "exact_datetime";
+  const startTime = withTime ? readTimeFromContainer(els.startTime) : "";
+  const endTime = withTime ? readTimeFromContainer(els.endTime) : "";
+  const startDateLabel = formatDisplayDate(startDateIso);
+  const endDateLabel = endDateIso ? formatDisplayDate(endDateIso) : null;
+  const hasEndDate = Boolean(endDateIso);
+  const sameCalendarDay = !hasEndDate || endDateIso === startDateIso;
+  const hasEndTime = Boolean(endTime);
+  const showEndBlock = hasEndDate && !sameCalendarDay;
+  const showEndTimeOnStartBlock = withTime && sameCalendarDay && hasEndTime;
+  const startTimeMissing = withTime && !startTime;
+
+  let meta = "";
+  if (withTime) {
+    if (startTimeMissing) {
+      meta = "Start time is required for dated events with times.";
+    } else if (!hasEndDate && !hasEndTime) {
+      meta = "Single-day event with start time.";
+    } else if (sameCalendarDay && hasEndTime) {
+      meta = "Single-day event with start and end time.";
+    } else if (showEndBlock) {
+      meta = "Multi-day event with times.";
+    }
+  } else if (!hasEndDate) {
+    meta = "Single-day, all-day event.";
+  } else if (sameCalendarDay) {
+    meta = "All-day event.";
+  } else {
+    meta = "Multi-day, all-day event.";
+  }
+
+  return {
+    withTime,
+    startDateLabel,
+    startTime,
+    startTimeLabel: startTime ? formatDisplayTime(startTime) : null,
+    startTimeMissing,
+    endDateLabel: showEndBlock ? endDateLabel : null,
+    endTime,
+    endTimeLabel: endTime ? formatDisplayTime(endTime) : null,
+    showEndBlock,
+    showEndTimeOnStartBlock,
+    endTimeOnEndBlock: showEndBlock && Boolean(endTime),
+    sameCalendarDay: !hasEndDate || sameCalendarDay,
+    allDay: !withTime,
+    meta,
+  };
+}
+
+function formatSchedulePreviewSummary(model) {
+  if (!model) return "";
+
+  const startPart = model.startTimeLabel
+    ? `${model.startDateLabel}, ${model.startTimeLabel}`
+    : model.startDateLabel;
+
+  if (!model.showEndBlock && !model.showEndTimeOnStartBlock) {
+    return startPart;
+  }
+
+  if (model.showEndTimeOnStartBlock && model.endTimeLabel) {
+    return `${startPart} → ${model.endTimeLabel}`;
+  }
+
+  const endPart =
+    model.endTimeOnEndBlock && model.endTimeLabel
+      ? `${model.endDateLabel}, ${model.endTimeLabel}`
+      : model.endDateLabel;
+
+  return `${startPart} → ${endPart}`;
+}
+
+function renderSchedulePreviewBlock(label, dateLabel, timeLabel, options = {}) {
+  const { note = "", timeMissing = false, timeMissingLabel = "Add time" } = options;
+
+  const timeHtml = timeLabel
+    ? `<span class="schedule-preview-block-time">${escapeHtml(timeLabel)}</span>`
+    : timeMissing
+      ? `<span class="schedule-preview-block-time is-missing">${escapeHtml(timeMissingLabel)}</span>`
+      : note
+        ? `<span class="schedule-preview-block-note">${escapeHtml(note)}</span>`
+        : "";
+
+  return `
+    <div class="schedule-preview-block">
+      <span class="schedule-preview-block-label">${escapeHtml(label)}</span>
+      <strong class="schedule-preview-block-date">${escapeHtml(dateLabel)}</strong>
+      ${timeHtml}
+    </div>
+  `;
+}
+
+function renderSchedulePreviewHtml(model) {
+  if (!model) return "";
+
+  const startNote = !model.withTime && model.sameCalendarDay ? "All day" : "";
+  const startBlock = renderSchedulePreviewBlock("Start", model.startDateLabel, model.startTimeLabel, {
+    note: startNote,
+    timeMissing: model.startTimeMissing,
+    timeMissingLabel: "Start time required",
+  });
+
+  if (!model.showEndBlock && !model.showEndTimeOnStartBlock) {
+    return `
+      <p class="schedule-preview-heading">Schedule preview</p>
+      <div class="schedule-preview-range is-single-block">
+        ${startBlock}
+      </div>
+      <p class="schedule-preview-meta${model.startTimeMissing ? " is-warning" : ""}">${escapeHtml(model.meta)}</p>
+    `;
+  }
+
+  const endBlock = model.showEndBlock
+    ? renderSchedulePreviewBlock("End", model.endDateLabel, model.endTimeOnEndBlock ? model.endTimeLabel : null, {
+        note: !model.endTimeOnEndBlock && model.withTime ? "End of day" : !model.withTime ? "All day" : "",
+      })
+    : renderSchedulePreviewBlock("End", model.startDateLabel, model.endTimeLabel, {
+        note: model.showEndTimeOnStartBlock ? "Same day" : "",
+      });
+
+  return `
+    <p class="schedule-preview-heading">Schedule preview</p>
+    <div class="schedule-preview-range">
+      ${startBlock}
+      <div class="schedule-preview-arrow" aria-hidden="true">→</div>
+      ${endBlock}
+    </div>
+    <p class="schedule-preview-meta${model.startTimeMissing ? " is-warning" : ""}">${escapeHtml(model.meta)}</p>
+  `;
+}
+
 function updateSchedulePreview() {
-  const startDate = readDateIsoFromContainer(els.startDate);
-  if (!startDate) {
+  const model = buildSchedulePreviewModel();
+  if (!model || !els.schedulePreview) {
     hide(els.schedulePreview);
     return;
   }
 
-  const endDate = readDateIsoFromContainer(els.endDate);
-  const withTime = getScheduleType() === "exact_datetime";
-  const startLabel = formatDisplayDate(startDate);
-  const endLabel = endDate ? formatDisplayDate(endDate) : null;
-
-  let preview = withTime ? "Starts " : "";
-  preview += startLabel;
-
-  if (withTime && els.startTime?.value) {
-    preview += ` at ${formatDisplayTime(els.startTime.value)}`;
-  }
-
-  if (endLabel && endLabel !== startLabel) {
-    preview += ` → ends ${endLabel}`;
-    if (withTime && els.endTime?.value) {
-      preview += ` at ${formatDisplayTime(els.endTime.value)}`;
-    }
-  } else if (withTime && els.endTime?.value) {
-    preview += `, until ${formatDisplayTime(els.endTime.value)}`;
-  } else if (!endLabel) {
-    preview += withTime ? " (single day)" : " (all day, single date)";
-  } else {
-    preview += withTime ? " (all day)" : " (all day)";
-  }
-
-  setText(els.schedulePreview, preview);
+  els.schedulePreview.innerHTML = renderSchedulePreviewHtml(model);
   show(els.schedulePreview);
 }
 
@@ -716,7 +1131,10 @@ function buildStartsAtIso() {
     return parseEventDateLocalValue(startDate);
   }
 
-  return buildExactDatetimeIso(startDate, els.startTime?.value || "00:00");
+  const startTime = readTimeFromContainer(els.startTime);
+  if (!startTime) return null;
+
+  return buildExactDatetimeIso(startDate, startTime);
 }
 
 function buildEndsAtIso() {
@@ -727,8 +1145,9 @@ function buildEndsAtIso() {
   if (endDate === null) return null;
 
   if (!endDate) {
-    if (scheduleType === "exact_datetime" && els.endTime?.value && startDate) {
-      return buildExactDatetimeIso(startDate, els.endTime.value);
+    const endTime = readTimeFromContainer(els.endTime);
+    if (scheduleType === "exact_datetime" && endTime && startDate) {
+      return buildExactDatetimeIso(startDate, endTime);
     }
     return null;
   }
@@ -737,7 +1156,8 @@ function buildEndsAtIso() {
     return parseEventDateLocalValue(endDate);
   }
 
-  return buildExactDatetimeIso(endDate, els.endTime?.value || "23:59");
+  const endTime = readTimeFromContainer(els.endTime);
+  return buildExactDatetimeIso(endDate, endTime || "23:59");
 }
 
 function getSelectedEventTypes() {
@@ -765,33 +1185,21 @@ function updateDatetimeVisibility() {
 
   if (withTime) {
     show(els.datetimeFields);
-    if (els.startTime) els.startTime.disabled = false;
-    if (els.endTime) els.endTime.disabled = false;
+    setTimeSegmentsDisabled(els.startTime, false);
+    setTimeSegmentsDisabled(els.endTime, false);
   } else {
     hide(els.datetimeFields);
-    if (els.startTime) {
-      els.startTime.value = "";
-      els.startTime.disabled = true;
-    }
-    if (els.endTime) {
-      els.endTime.value = "";
-      els.endTime.disabled = true;
-    }
+    clearTimeSegments(els.startTime);
+    clearTimeSegments(els.endTime);
+    setTimeSegmentsDisabled(els.startTime, true);
+    setTimeSegmentsDisabled(els.endTime, true);
   }
 
   updateSchedulePreview();
 }
 
 function updateEndDateMin() {
-  const startDate = readDateIsoFromContainer(els.startDate);
-  const endDate = readDateIsoFromContainer(els.endDate);
-
-  if (!startDate || endDate === null || !endDate) return;
-
-  if (endDate < startDate) {
-    clearDateSegments(els.endDate);
-    updateSchedulePreview();
-  }
+  updateSchedulePreview();
 }
 
 function renderSelectedPlace() {
@@ -1121,11 +1529,8 @@ function bindEvents() {
 
   bindDateSegments(els.startDate);
   bindDateSegments(els.endDate);
-
-  [els.startTime, els.endTime].forEach((input) => {
-    input?.addEventListener("change", updateSchedulePreview);
-    input?.addEventListener("input", updateSchedulePreview);
-  });
+  bindTimeSegments(els.startTime);
+  bindTimeSegments(els.endTime);
 
   els.note?.addEventListener("input", () => {
     const length = els.note.value.length;

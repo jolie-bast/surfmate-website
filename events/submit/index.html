@@ -272,19 +272,84 @@
                     <div id="datetime-fields" class="datetime-fields">
                       <div class="date-grid">
                         <div class="form-field">
-                          <label for="start-time">Start time</label>
-                          <input id="start-time" name="startTime" type="time" step="60" />
+                          <span class="field-label" id="start-time-label">
+                            Start time <span class="required-mark" aria-hidden="true">*</span>
+                          </span>
+                          <div
+                            id="start-time"
+                            class="time-segments"
+                            role="group"
+                            aria-labelledby="start-time-label"
+                            data-time-required="true"
+                          >
+                            <div class="time-segments-row">
+                              <input
+                                id="start-time-hour"
+                                type="text"
+                                inputmode="numeric"
+                                autocomplete="off"
+                                maxlength="2"
+                                placeholder="HH"
+                                class="time-segment"
+                                data-segment="hour"
+                                aria-label="Hour"
+                              />
+                              <span class="time-segment-sep" aria-hidden="true">:</span>
+                              <input
+                                id="start-time-minute"
+                                type="text"
+                                inputmode="numeric"
+                                autocomplete="off"
+                                maxlength="2"
+                                placeholder="MM"
+                                class="time-segment"
+                                data-segment="minute"
+                                aria-label="Minute"
+                              />
+                            </div>
+                          </div>
                         </div>
                         <div class="form-field">
-                          <label for="end-time">
+                          <span class="field-label" id="end-time-label">
                             End time <span class="optional-mark">(optional)</span>
-                          </label>
-                          <input id="end-time" name="endTime" type="time" step="60" />
+                          </span>
+                          <div
+                            id="end-time"
+                            class="time-segments"
+                            role="group"
+                            aria-labelledby="end-time-label"
+                          >
+                            <div class="time-segments-row">
+                              <input
+                                id="end-time-hour"
+                                type="text"
+                                inputmode="numeric"
+                                autocomplete="off"
+                                maxlength="2"
+                                placeholder="HH"
+                                class="time-segment"
+                                data-segment="hour"
+                                aria-label="Hour"
+                              />
+                              <span class="time-segment-sep" aria-hidden="true">:</span>
+                              <input
+                                id="end-time-minute"
+                                type="text"
+                                inputmode="numeric"
+                                autocomplete="off"
+                                maxlength="2"
+                                placeholder="MM"
+                                class="time-segment"
+                                data-segment="minute"
+                                aria-label="Minute"
+                              />
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
 
-                    <p id="schedule-preview" class="schedule-preview" hidden aria-live="polite"></p>
+                    <div id="schedule-preview" class="schedule-preview-card" hidden aria-live="polite"></div>
                     <p id="schedule-error" class="field-error" hidden role="alert"></p>
                   </section>
 

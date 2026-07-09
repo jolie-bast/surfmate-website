@@ -144,11 +144,11 @@ export function buildMobileStripCard(event, options = {}) {
   const liveClass = isLive ? " events-strip-card--live" : "";
 
   return `
-    <button
-      type="button"
+    <div
       class="events-strip-card${selectedClass}${liveClass}"
       data-event-id="${escapeHtml(event.id)}"
       role="listitem"
+      tabindex="0"
       aria-pressed="${isSelected ? "true" : "false"}"
       aria-label="${escapeHtml(event.title)}"
     >
@@ -159,6 +159,6 @@ export function buildMobileStripCard(event, options = {}) {
       <span class="events-strip-card-title">${escapeHtml(event.title)}</span>
       <span class="events-strip-card-meta"><i class="bi bi-calendar3" aria-hidden="true"></i> ${escapeHtml(dateLabel)}</span>
       <span class="events-strip-card-meta"><i class="bi bi-geo-alt" aria-hidden="true"></i> ${escapeHtml(locationLabel)}</span>
-    </button>
+    </div>
   `;
 }
