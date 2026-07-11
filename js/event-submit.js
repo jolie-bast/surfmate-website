@@ -987,7 +987,6 @@ function handleTimeSegmentBlur(event) {
   }
 
   const timeValue = readTimeFromContainer(container);
-  const { hour, minute } = getTimeSegments(container);
   const hasAnyValue = Boolean(hour?.value || minute?.value);
 
   setTimeSegmentInvalid(container, hasAnyValue && timeValue === null);
