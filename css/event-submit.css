@@ -562,10 +562,10 @@
 .date-segments-row {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   border: 1px solid #d1d5db;
   border-radius: var(--border-radius-md);
-  padding: 10px 12px;
+  padding: 12px 14px;
   background: #fff;
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
@@ -583,32 +583,39 @@
 .date-segment {
   border: none;
   background: transparent;
-  font-family: var(--font-family-ui);
-  font-size: 1rem;
+  font-family: "Inter", sans-serif;
+  font-size: 1.0625rem;
+  font-weight: 500;
   font-variant-numeric: tabular-nums;
-  color: var(--surfmate-dark);
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  color: #0f2a3d;
+  caret-color: #0f2a3d;
   text-align: center;
-  padding: 2px 0;
+  padding: 0;
+  min-height: 1.4em;
+  -webkit-text-fill-color: #0f2a3d;
 }
 
 .date-segment[data-segment="day"],
 .date-segment[data-segment="month"] {
-  flex: 0 0 4ch;
-  width: 4ch;
-  min-width: 4ch;
-  max-width: none;
+  flex: 0 0 2.75rem;
+  width: 2.75rem;
+  min-width: 2.75rem;
 }
 
 .date-segment[data-segment="year"] {
-  flex: 1 1 5ch;
-  width: 5ch;
-  min-width: 5ch;
-  max-width: 6ch;
+  flex: 1 1 4.5rem;
+  width: 4.5rem;
+  min-width: 4.5rem;
+  max-width: 5.5rem;
 }
 
 .date-segment::placeholder {
   color: #9ca3af;
+  font-weight: 400;
   letter-spacing: 0.02em;
+  opacity: 1;
 }
 
 .date-segment:focus {
@@ -617,7 +624,9 @@
 
 .date-segment-sep {
   color: #9ca3af;
-  font-size: 1rem;
+  font-family: "Inter", sans-serif;
+  font-size: 1.0625rem;
+  font-weight: 500;
   line-height: 1;
   user-select: none;
   flex-shrink: 0;
@@ -638,10 +647,10 @@
 .time-segments-row {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   border: 1px solid #d1d5db;
   border-radius: var(--border-radius-md);
-  padding: 10px 12px;
+  padding: 12px 14px;
   background: #fff;
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
@@ -659,24 +668,31 @@
 .time-segment {
   border: none;
   background: transparent;
-  font-family: var(--font-family-ui);
-  font-size: 1rem;
+  font-family: "Inter", sans-serif;
+  font-size: 1.0625rem;
+  font-weight: 500;
   font-variant-numeric: tabular-nums;
-  color: var(--surfmate-dark);
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  color: #0f2a3d;
+  caret-color: #0f2a3d;
   text-align: center;
-  padding: 2px 0;
+  padding: 0;
+  min-height: 1.4em;
+  -webkit-text-fill-color: #0f2a3d;
 }
 
 .time-segment[data-segment="hour"],
 .time-segment[data-segment="minute"] {
-  flex: 0 0 3ch;
-  width: 3ch;
-  min-width: 3ch;
-  max-width: none;
+  flex: 0 0 2.75rem;
+  width: 2.75rem;
+  min-width: 2.75rem;
 }
 
 .time-segment::placeholder {
   color: #9ca3af;
+  font-weight: 400;
+  opacity: 1;
 }
 
 .time-segment:focus {
@@ -690,7 +706,9 @@
 
 .time-segment-sep {
   color: #9ca3af;
-  font-size: 1rem;
+  font-family: "Inter", sans-serif;
+  font-size: 1.0625rem;
+  font-weight: 500;
   line-height: 1;
   user-select: none;
   flex-shrink: 0;
@@ -1203,6 +1221,32 @@
 
   .date-grid {
     grid-template-columns: 1fr;
+  }
+
+  .date-segments-row,
+  .time-segments-row {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .date-segment,
+  .time-segment {
+    font-size: 1.125rem;
+  }
+
+  .date-segment[data-segment="day"],
+  .date-segment[data-segment="month"],
+  .time-segment[data-segment="hour"],
+  .time-segment[data-segment="minute"] {
+    flex: 0 0 3rem;
+    width: 3rem;
+    min-width: 3rem;
+  }
+
+  .date-segment[data-segment="year"] {
+    flex: 1 1 5rem;
+    min-width: 5rem;
+    max-width: none;
   }
 
   .selected-place-clear {
