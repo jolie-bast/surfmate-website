@@ -231,7 +231,7 @@ function addMapMarker({ lng, lat, type, title, subtitle, url, tags }) {
 
   const icon = L.divIcon({
     className: `partners-map-marker partners-map-marker--${type} leaflet-div-icon`,
-    html: "",
+    html: '<span class="partners-map-marker-dot" aria-hidden="true"></span>',
     iconSize: [18, 18],
     iconAnchor: [9, 9],
     popupAnchor: [0, -12],

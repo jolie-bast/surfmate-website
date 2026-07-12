@@ -1465,3 +1465,44 @@
 .events-card--preview.is-placeholder .events-card-cover--empty {
   opacity: 0.85;
 }
+
+/* Partner branding hint (community submit only) */
+.event-submit-partner-cta {
+  max-width: min(680px, 100%);
+  margin: clamp(1.75rem, 4vw, 2.5rem) auto 0;
+}
+
+@media (min-width: 1024px) {
+  .event-submit-partner-cta {
+    max-width: 760px;
+  }
+}
+
+.event-submit-partner-cta-box {
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  border-radius: 18px;
+  background: #f8fafb;
+  border: 1px solid #e8edf0;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(15, 42, 61, 0.04);
+}
+
+.event-submit-partner-cta-text {
+  margin: 0;
+  color: #5b6b76;
+  font-size: 0.98rem;
+  line-height: 1.55;
+}
+
+.event-submit-partner-cta-link {
+  color: #0f7aad;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.event-submit-partner-cta-link:hover,
+.event-submit-partner-cta-link:focus-visible {
+  color: #0f2a3d;
+  text-decoration: underline;
+}

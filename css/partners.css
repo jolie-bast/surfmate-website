@@ -327,6 +327,17 @@
 }
 
 .partners-map-marker.leaflet-div-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.partners-map-marker-dot {
   display: block;
   box-sizing: border-box;
   width: 18px;
@@ -334,14 +345,14 @@
   border-radius: 50%;
   border: 2px solid #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
-  cursor: pointer;
+  pointer-events: none;
 }
 
-.partners-map-marker--local {
+.partners-map-marker--local .partners-map-marker-dot {
   background: #73c9eb;
 }
 
-.partners-map-marker--event {
+.partners-map-marker--event .partners-map-marker-dot {
   background: #fbbf24;
 }
 
