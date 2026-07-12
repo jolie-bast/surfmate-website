@@ -17,9 +17,25 @@ function hasWebsite(url) {
   return typeof url === "string" && url.trim().length > 0;
 }
 
-function isInvertFriendlyLogo(url) {
+function isPhotoLogo(url) {
   const path = String(url).split(/[?#]/)[0].toLowerCase();
-  return /\.(png|webp|svg)$/.test(path);
+  return /\.(jpe?g|gif)$/.test(path);
+}
+
+/** Only SVG brand marks get the inverted mono treatment — not photos or full-color PNG/JPG. */
+function isMonochromeLogo(url) {
+  const path = String(url).split(/[?#]/)[0].toLowerCase();
+  return /\.svg$/.test(path);
+}
+
+function buildEventLogoHtml(logoUrl) {
+  if (!logoUrl) return "";
+
+  const classes = ["events-card-logo"];
+  if (isPhotoLogo(logoUrl)) classes.push("is-logo-photo");
+  if (isMonochromeLogo(logoUrl)) classes.push("is-logo-mono");
+
+  return `<div class="${classes.join(" ")}"><img src="${escapeHtml(logoUrl)}" alt="" loading="lazy" decoding="async" /></div>`;
 }
 
 function buildTypeTagsHtml(eventTypes, selectedTypes = new Set()) {
@@ -34,12 +50,6 @@ function buildTypeTagsHtml(eventTypes, selectedTypes = new Set()) {
     .join("");
 
   return `<div class="events-card-tags">${chips}</div>`;
-}
-
-function buildEventLogoHtml(logoUrl) {
-  if (!logoUrl) return "";
-
-  return `<div class="events-card-logo${isInvertFriendlyLogo(logoUrl) ? " is-logo-mono" : ""}"><img src="${escapeHtml(logoUrl)}" alt="" loading="lazy" decoding="async" /></div>`;
 }
 
 export function buildEventCard(event, options = {}) {

@@ -90,11 +90,20 @@ a.events-card:hover {
 
 .events-card-logo img {
   display: block;
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%;
+  height: 100%;
+  max-width: none;
   object-fit: contain;
+  object-position: center;
+}
+
+.events-card-logo.is-logo-photo {
+  padding: 0;
+  overflow: hidden;
+}
+
+.events-card-logo.is-logo-photo img {
+  object-fit: cover;
 }
 
 .events-card-logo.is-logo-mono {
