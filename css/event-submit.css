@@ -1,5 +1,7 @@
 /* Event submission wizard — /events/submit */
 
+@import url("./events-cards.css");
+
 .event-submit-page {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
@@ -9,7 +11,7 @@
 }
 
 .event-submit-back-wrap {
-  max-width: 560px;
+  max-width: min(760px, 100%);
   margin: 0 auto var(--spacing-md);
   text-align: left;
 }
@@ -45,7 +47,7 @@
 }
 
 .event-submit-page .content-header p {
-  max-width: 520px;
+  max-width: 42rem;
   margin: 0 auto;
   text-align: center;
   color: #5b6b76;
@@ -53,9 +55,26 @@
   line-height: 1.55;
 }
 
+.event-submit-page .content-section .container {
+  max-width: min(920px, 100%);
+  padding-inline: clamp(16px, 3vw, 28px);
+}
+
 .event-submit-panel {
-  max-width: 560px;
+  max-width: min(680px, 100%);
+  width: 100%;
   margin: 0 auto;
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .event-submit-panel {
+    max-width: 760px;
+  }
+
+  .event-partner-submit-page .event-submit-panel {
+    max-width: 820px;
+  }
 }
 
 .event-submit-card {
@@ -64,6 +83,9 @@
   border-radius: 20px;
   padding: clamp(1.25rem, 3vw, 1.75rem);
   box-shadow: 0 18px 48px rgba(15, 42, 61, 0.08);
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .event-submit-card h2 {
@@ -110,21 +132,28 @@
 .event-submit-form {
   display: grid;
   gap: var(--spacing-lg);
+  min-width: 0;
+  max-width: 100%;
 }
 
 /* Wizard progress map */
 .wizard-progress {
   margin-bottom: var(--spacing-md);
+  min-width: 0;
+  max-width: 100%;
 }
 
 .wizard-steps-map {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 4px;
   position: relative;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .wizard-steps-map::before {
@@ -145,7 +174,9 @@
   flex-direction: column;
   align-items: center;
   gap: 0.45rem;
+  flex: 1 1 0;
   min-width: 0;
+  max-width: 100%;
 }
 
 .wizard-step-marker-btn {
@@ -228,11 +259,15 @@
 
 .wizard-step-panels {
   min-height: 220px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .wizard-step {
   display: grid;
   gap: var(--spacing-md);
+  min-width: 0;
+  max-width: 100%;
 }
 
 .wizard-step:not(.is-active) {
@@ -354,6 +389,8 @@
 .form-field {
   display: grid;
   gap: var(--spacing-xs);
+  min-width: 0;
+  max-width: 100%;
 }
 
 .form-field label,
@@ -555,17 +592,27 @@
 
 .date-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--spacing-md);
+  align-items: start;
+}
+
+.date-segments,
+.time-segments {
+  width: 100%;
 }
 
 .date-segments-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(3.75rem, 1fr) auto minmax(3.75rem, 1fr) auto minmax(5.5rem, 1.6fr);
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
   border: 1px solid #d1d5db;
   border-radius: var(--border-radius-md);
-  padding: 12px 14px;
+  padding: 14px 16px;
+  min-height: 52px;
   background: #fff;
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
@@ -584,31 +631,29 @@
   border: none;
   background: transparent;
   font-family: "Inter", sans-serif;
-  font-size: 1.0625rem;
+  font-size: 1.125rem;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.04em;
-  line-height: 1.4;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
   color: #0f2a3d;
   caret-color: #0f2a3d;
   text-align: center;
-  padding: 0;
-  min-height: 1.4em;
+  padding: 4px 2px;
+  min-width: 0;
+  width: 100%;
+  min-height: 1.5em;
+  box-sizing: border-box;
   -webkit-text-fill-color: #0f2a3d;
 }
 
 .date-segment[data-segment="day"],
-.date-segment[data-segment="month"] {
-  flex: 0 0 2.75rem;
-  width: 2.75rem;
-  min-width: 2.75rem;
-}
-
+.date-segment[data-segment="month"],
 .date-segment[data-segment="year"] {
-  flex: 1 1 4.5rem;
-  width: 4.5rem;
-  min-width: 4.5rem;
-  max-width: 5.5rem;
+  flex: unset;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
 }
 
 .date-segment::placeholder {
@@ -625,11 +670,11 @@
 .date-segment-sep {
   color: #9ca3af;
   font-family: "Inter", sans-serif;
-  font-size: 1.0625rem;
+  font-size: 1.125rem;
   font-weight: 500;
   line-height: 1;
   user-select: none;
-  flex-shrink: 0;
+  text-align: center;
 }
 
 .date-segments .field-hint {
@@ -645,12 +690,16 @@
 }
 
 .time-segments-row {
-  display: inline-flex;
+  display: grid;
+  grid-template-columns: minmax(4.5rem, 1fr) auto minmax(4.5rem, 1fr);
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
   border: 1px solid #d1d5db;
   border-radius: var(--border-radius-md);
-  padding: 12px 14px;
+  padding: 14px 16px;
+  min-height: 52px;
   background: #fff;
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
@@ -669,24 +718,28 @@
   border: none;
   background: transparent;
   font-family: "Inter", sans-serif;
-  font-size: 1.0625rem;
+  font-size: 1.125rem;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.04em;
-  line-height: 1.4;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
   color: #0f2a3d;
   caret-color: #0f2a3d;
   text-align: center;
-  padding: 0;
-  min-height: 1.4em;
+  padding: 4px 2px;
+  min-width: 0;
+  width: 100%;
+  min-height: 1.5em;
+  box-sizing: border-box;
   -webkit-text-fill-color: #0f2a3d;
 }
 
 .time-segment[data-segment="hour"],
 .time-segment[data-segment="minute"] {
-  flex: 0 0 2.75rem;
-  width: 2.75rem;
+  flex: unset;
+  width: 100%;
   min-width: 2.75rem;
+  max-width: none;
 }
 
 .time-segment::placeholder {
@@ -707,11 +760,11 @@
 .time-segment-sep {
   color: #9ca3af;
   font-family: "Inter", sans-serif;
-  font-size: 1.0625rem;
+  font-size: 1.125rem;
   font-weight: 500;
   line-height: 1;
   user-select: none;
-  flex-shrink: 0;
+  text-align: center;
 }
 
 .time-segments-row.is-invalid .time-segment {
@@ -825,6 +878,10 @@
 }
 
 @media (max-width: 520px) {
+  .date-grid {
+    grid-template-columns: 1fr;
+  }
+
   .schedule-preview-range:not(.is-single-block) {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -908,6 +965,8 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .event-type-chip {
@@ -1023,7 +1082,104 @@
   display: none !important;
 }
 
-.event-submit-form input.is-invalid,
+.event-partner-submit-page .wizard-steps-map::before {
+  left: 5%;
+  right: 5%;
+}
+
+.event-partner-submit-page .wizard-step-marker-label {
+  font-size: 0.62rem;
+}
+
+.event-partner-access-gate {
+  text-align: center;
+  padding: 2rem 1.5rem;
+}
+
+.event-partner-access-gate h2 {
+  margin: 0 0 0.75rem;
+  font-family: "Inter", sans-serif;
+  color: var(--surfmate-dark);
+}
+
+.event-partner-access-gate p {
+  margin: 0;
+  color: #6b7280;
+  max-width: 36rem;
+  margin-inline: auto;
+}
+
+.media-upload-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+}
+
+.media-upload-field {
+  display: grid;
+  gap: 10px;
+}
+
+.media-upload-field input[type="file"] {
+  font-family: "Inter", sans-serif;
+  font-size: 0.92rem;
+  color: #374151;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.media-upload-preview {
+  border: 1px solid #e5e7eb;
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  background: #f9fafb;
+  aspect-ratio: 16 / 9;
+}
+
+.media-upload-preview--logo {
+  aspect-ratio: 1;
+  max-width: 160px;
+  background: #fff;
+}
+
+.media-upload-preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.media-upload-preview--logo img {
+  object-fit: contain;
+  padding: 12px;
+}
+
+.media-upload-clear {
+  justify-self: start;
+  border: none;
+  background: none;
+  padding: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.media-upload-clear:hover,
+.media-upload-clear:focus-visible {
+  color: #0f2a3d;
+}
+
+@media (max-width: 768px) {
+  .media-upload-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-field input.is-invalid,
 .event-submit-form textarea.is-invalid,
 .event-type-chips.is-invalid .event-type-chip {
   border-color: #f87171;
@@ -1219,34 +1375,22 @@
     font-size: 0.75rem;
   }
 
-  .date-grid {
-    grid-template-columns: 1fr;
+  .date-segments-row {
+    grid-template-columns: minmax(4rem, 1fr) auto minmax(4rem, 1fr) auto minmax(6rem, 1.8fr);
+    padding: 16px;
+    min-height: 56px;
   }
 
-  .date-segments-row,
   .time-segments-row {
-    width: 100%;
-    box-sizing: border-box;
+    grid-template-columns: minmax(5rem, 1fr) auto minmax(5rem, 1fr);
+    padding: 16px;
+    min-height: 56px;
   }
 
   .date-segment,
   .time-segment {
-    font-size: 1.125rem;
-  }
-
-  .date-segment[data-segment="day"],
-  .date-segment[data-segment="month"],
-  .time-segment[data-segment="hour"],
-  .time-segment[data-segment="minute"] {
-    flex: 0 0 3rem;
-    width: 3rem;
-    min-width: 3rem;
-  }
-
-  .date-segment[data-segment="year"] {
-    flex: 1 1 5rem;
-    min-width: 5rem;
-    max-width: none;
+    font-size: 1.1875rem;
+    padding: 6px 4px;
   }
 
   .selected-place-clear {
@@ -1261,4 +1405,63 @@
   .wizard-nav #submit-event-btn {
     grid-column: 1;
   }
+}
+
+/* Live event card preview (matches /events calendar cards) */
+.event-submit-card-preview {
+  margin-top: clamp(1.5rem, 4vw, 2.25rem);
+  min-width: 0;
+}
+
+.event-submit-card-preview[hidden] {
+  display: none !important;
+}
+
+.event-submit-preview-heading {
+  margin: 0 0 0.35rem;
+  font-family: "Inter", sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #0f2a3d;
+  letter-spacing: -0.01em;
+}
+
+.event-submit-preview-lead {
+  margin: 0 0 1rem;
+  color: #6b7280;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.event-submit-preview-stage {
+  border-radius: 20px;
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: clamp(1rem, 3vw, 1.5rem);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.event-submit-preview-grid {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.event-submit-preview-grid .events-card {
+  width: 100%;
+  max-width: 300px;
+}
+
+.events-card--preview {
+  pointer-events: none;
+  cursor: default;
+}
+
+.events-card--preview.is-placeholder .events-card-title,
+.events-card--preview.is-placeholder .events-card-meta {
+  opacity: 0.55;
+}
+
+.events-card--preview.is-placeholder .events-card-cover--empty {
+  opacity: 0.85;
 }

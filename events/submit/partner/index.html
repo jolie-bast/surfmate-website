@@ -10,12 +10,12 @@
     <script src="/js/consent.js" defer></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
     <meta
       name="description"
-      content="Share a surf event with the Surfmate community — no account required."
+      content="Partner event submission for Surfmate — private link."
     />
-    <title>Share an event – Surfmate</title>
-    <link rel="canonical" href="https://surfmate.eu/events/submit" />
+    <title>Partner event submission – Surfmate</title>
     <link rel="preconnect" href="https://esm.sh" crossorigin />
 
     <link rel="stylesheet" href="/css/main.css" />
@@ -26,7 +26,7 @@
     />
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
   </head>
-  <body class="event-submit-page">
+  <body class="event-submit-page event-partner-submit-page">
     <div data-include="header.html"></div>
 
     <main class="main-content event-submit-main">
@@ -37,15 +37,23 @@
           </p>
 
           <header class="content-header">
-            <h1>Share an event</h1>
+            <h1>Partner event submission</h1>
             <p>
-              A few quick steps — no account needed. We review every submission
-              before it goes live in the app.
+              For Surfmate partners — add your event with logo, cover image, and link.
+              We review everything before it goes live.
             </p>
           </header>
 
           <div class="event-submit-panel">
-            <div id="event-submit-form-section" class="event-submit-card">
+            <div id="event-partner-access-gate" class="event-submit-card event-partner-access-gate" hidden>
+              <h2>Private link required</h2>
+              <p>
+                This page is only available with a partner access link. If you need one,
+                contact the Surfmate team.
+              </p>
+            </div>
+
+            <div id="event-submit-form-section" class="event-submit-card" hidden>
               <form id="event-submit-form" class="event-submit-form" novalidate>
                 <nav class="wizard-progress" aria-label="Submission steps">
                   <ol id="wizard-steps-map" class="wizard-steps-map">
@@ -152,6 +160,24 @@
 
                   <section class="wizard-step" data-step="2" hidden>
                     <div class="form-field">
+                      <label for="partner-name">
+                        Partner / organizer name <span class="required-mark" aria-hidden="true">*</span>
+                      </label>
+                      <input
+                        id="partner-name"
+                        name="partnerName"
+                        type="text"
+                        maxlength="120"
+                        placeholder="e.g. Baltic Surf Series"
+                        aria-describedby="partner-name-error"
+                      />
+                      <p class="field-hint">Shown as the partner name on your event in Surfmate.</p>
+                      <p id="partner-name-error" class="field-error" hidden role="alert"></p>
+                    </div>
+                  </section>
+
+                  <section class="wizard-step" data-step="3" hidden>
+                    <div class="form-field">
                       <label for="event-title">
                         Event name <span class="required-mark" aria-hidden="true">*</span>
                       </label>
@@ -200,7 +226,7 @@
                     </div>
                   </section>
 
-                  <section class="wizard-step" data-step="3" hidden>
+                  <section class="wizard-step" data-step="4" hidden>
                     <div class="form-field">
                       <span class="field-label">Schedule</span>
                       <div class="schedule-toggle" role="radiogroup" aria-label="Schedule type">
@@ -412,7 +438,7 @@
                     <p id="schedule-error" class="field-error" hidden role="alert"></p>
                   </section>
 
-                  <section class="wizard-step" data-step="4" hidden>
+                  <section class="wizard-step" data-step="5" hidden>
                     <p class="field-hint section-hint">
                       Pick one or more — tap to toggle.
                     </p>
@@ -420,8 +446,62 @@
                     <p id="event-types-error" class="field-error" hidden role="alert"></p>
                   </section>
 
-                  <section class="wizard-step" data-step="5" hidden>
+                  <section class="wizard-step" data-step="6" hidden>
                     <div id="wizard-review" class="wizard-review" aria-live="polite"></div>
+
+                    <div class="form-field">
+                      <label for="event-website-url">Event website</label>
+                      <input
+                        id="event-website-url"
+                        name="websiteUrl"
+                        type="url"
+                        inputmode="url"
+                        placeholder="https://…"
+                        aria-describedby="event-website-url-error"
+                      />
+                      <p class="field-hint">Tickets page, festival site, or registration link.</p>
+                      <p id="event-website-url-error" class="field-error" hidden role="alert"></p>
+                    </div>
+
+                    <div class="media-upload-grid">
+                      <div class="form-field">
+                        <label for="event-cover-input">Cover photo</label>
+                        <div class="media-upload-field">
+                          <input
+                            id="event-cover-input"
+                            name="coverImage"
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp,image/gif"
+                            aria-describedby="event-cover-hint event-cover-error"
+                          />
+                          <div id="event-cover-preview" class="media-upload-preview" hidden></div>
+                          <button type="button" id="clear-cover-btn" class="media-upload-clear" hidden>
+                            Remove cover
+                          </button>
+                        </div>
+                        <p id="event-cover-hint" class="field-hint">Hero image for the event card. JPG, PNG, WebP or GIF — max 5 MB.</p>
+                        <p id="event-cover-error" class="field-error" hidden role="alert"></p>
+                      </div>
+
+                      <div class="form-field">
+                        <label for="event-logo-input">Logo</label>
+                        <div class="media-upload-field">
+                          <input
+                            id="event-logo-input"
+                            name="logoImage"
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp,image/gif"
+                            aria-describedby="event-logo-hint event-logo-error"
+                          />
+                          <div id="event-logo-preview" class="media-upload-preview media-upload-preview--logo" hidden></div>
+                          <button type="button" id="clear-logo-btn" class="media-upload-clear" hidden>
+                            Remove logo
+                          </button>
+                        </div>
+                        <p id="event-logo-hint" class="field-hint">Organizer or series logo. JPG, PNG, WebP or GIF — max 5 MB.</p>
+                        <p id="event-logo-error" class="field-error" hidden role="alert"></p>
+                      </div>
+                    </div>
 
                     <div class="form-field">
                       <label for="event-description">Short description</label>
@@ -480,9 +560,10 @@
               id="event-submit-card-preview"
               class="event-submit-card-preview"
               aria-labelledby="event-submit-preview-heading"
+              hidden
             >
               <h2 id="event-submit-preview-heading" class="event-submit-preview-heading">
-                Preview
+                App preview
               </h2>
               <p class="event-submit-preview-lead">
                 This is how your event could look in the Surfmate calendar.
@@ -495,11 +576,11 @@
 
             <div id="event-submit-success" class="event-submit-card success-card" hidden>
               <div class="success-icon" aria-hidden="true">✓</div>
-              <h2>Thanks — we'll review your event soon.</h2>
+              <h2>Thanks — we'll review your partner event soon.</h2>
               <p>
-                Your suggestion is in our queue. If we have a question, we'll reach
-                out to the email you provided. Once approved, it will appear in the
-                Surfmate app calendar.
+                Your submission is in our queue. We'll reach out to the email you provided
+                if we have questions. Once approved, it will appear in the Surfmate App and on the web calender
+                with your partner branding.
               </p>
               <div class="success-actions">
                 <a href="/events/" class="btn-primary btn-block">Back to events</a>
@@ -519,6 +600,6 @@
     <script src="/js/includes.js"></script>
     <script src="/js/navigation.js"></script>
     <script src="/js/supabase-config.js"></script>
-    <script type="module" src="/js/event-submit.js"></script>
+    <script type="module" src="/js/event-partner-submit.js"></script>
   </body>
 </html>

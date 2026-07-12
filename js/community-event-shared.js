@@ -220,3 +220,26 @@ export function validateCommunityEventSubmissionInput(input) {
 
   return { ok: true };
 }
+
+export function validatePartnerEventSubmissionInput(input) {
+  const base = validateCommunityEventSubmissionInput(input);
+  if (!base.ok) return base;
+
+  const partnerName = input.partnerName?.trim() ?? "";
+  if (partnerName.length < 1 || partnerName.length > 120) {
+    return {
+      ok: false,
+      message: "Partner / organizer name must be between 1 and 120 characters.",
+    };
+  }
+
+  const websiteUrl = input.websiteUrl?.trim() ?? "";
+  if (websiteUrl && websiteUrl.length > 500) {
+    return { ok: false, message: "Website link is too long." };
+  }
+  if (websiteUrl && !/^https?:\/\//i.test(websiteUrl)) {
+    return { ok: false, message: "Website link must start with http:// or https://." };
+  }
+
+  return { ok: true };
+}

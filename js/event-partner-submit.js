@@ -5,14 +5,23 @@ import {
   composeEventDateIso,
   isEventDateOnOrAfterToday,
   parseEventDateLocalValue,
-  validateCommunityEventSubmissionInput,
+  validatePartnerEventSubmissionInput,
 } from "./community-event-shared.js";
 import { createEventSubmitCardPreview } from "./event-submit-card-preview.js";
 
 const config = window.SURFMATE_SUPABASE;
 const DEBOUNCE_MS = 300;
 const MIN_QUERY_LENGTH = 2;
-const WIZARD_STEP_COUNT = 5;
+const WIZARD_STEP_COUNT = 6;
+const MAX_MEDIA_BYTES = 5 * 1024 * 1024;
+const ALLOWED_MEDIA_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+]);
+
+const ACCESS_KEY = new URLSearchParams(window.location.search).get("k")?.trim() ?? "";
 
 const WIZARD_STEPS = [
   {
@@ -23,27 +32,33 @@ const WIZARD_STEPS = [
   },
   {
     id: 2,
+    label: "Partner",
+    title: "Who’s organizing?",
+    lead: "Your brand or series name — shown as the partner on the event.",
+  },
+  {
+    id: 3,
     label: "Event",
     title: "What’s the event?",
     lead: "Name it and pin the location on the map.",
   },
   {
-    id: 3,
+    id: 4,
     label: "When",
     title: "When does it happen?",
     lead: "Dates only, or include start and end times.",
   },
   {
-    id: 4,
+    id: 5,
     label: "Type",
     title: "What kind of event?",
     lead: "Pick everything that fits — festival, contest, meetup, and more.",
   },
   {
-    id: 5,
+    id: 6,
     label: "Send",
     title: "Almost done",
-    lead: "Add optional details, check the summary, then submit.",
+    lead: "Add your link, images, optional details — then submit for review.",
   },
 ];
 
@@ -53,7 +68,13 @@ let selectedPlace = null;
 let placeSearchTimer = null;
 let currentWizardStep = 1;
 
+let coverFile = null;
+let logoFile = null;
+let coverPreviewUrl = null;
+let logoPreviewUrl = null;
+
 const els = {
+  accessGate: document.getElementById("event-partner-access-gate"),
   loading: document.getElementById("event-submit-loading"),
   formSection: document.getElementById("event-submit-form-section"),
   success: document.getElementById("event-submit-success"),
@@ -69,6 +90,8 @@ const els = {
   form: document.getElementById("event-submit-form"),
   formError: document.getElementById("form-error"),
   submitterEmail: document.getElementById("submitter-email"),
+  partnerName: document.getElementById("partner-name"),
+  websiteUrl: document.getElementById("event-website-url"),
   title: document.getElementById("event-title"),
   locationInput: document.getElementById("event-location"),
   placeResults: document.getElementById("place-results"),
@@ -90,9 +113,19 @@ const els = {
   descriptionCount: document.getElementById("description-count"),
   note: document.getElementById("submitter-note"),
   noteCount: document.getElementById("note-count"),
+  coverInput: document.getElementById("event-cover-input"),
+  logoInput: document.getElementById("event-logo-input"),
+  coverPreview: document.getElementById("event-cover-preview"),
+  logoPreview: document.getElementById("event-logo-preview"),
+  clearCoverBtn: document.getElementById("clear-cover-btn"),
+  clearLogoBtn: document.getElementById("clear-logo-btn"),
   submitBtn: document.getElementById("submit-event-btn"),
   submitAnotherBtn: document.getElementById("submit-another-btn"),
   submitterEmailError: document.getElementById("submitter-email-error"),
+  partnerNameError: document.getElementById("partner-name-error"),
+  websiteUrlError: document.getElementById("event-website-url-error"),
+  coverError: document.getElementById("event-cover-error"),
+  logoError: document.getElementById("event-logo-error"),
   eventTitleError: document.getElementById("event-title-error"),
   eventLocationError: document.getElementById("event-location-error"),
   eventTypesError: document.getElementById("event-types-error"),
@@ -106,10 +139,14 @@ const eventCardPreview = createEventSubmitCardPreview(
 
 const FIELD_ERROR_ELEMENTS = {
   submitterEmail: () => els.submitterEmailError,
+  partnerName: () => els.partnerNameError,
+  websiteUrl: () => els.websiteUrlError,
   eventTitle: () => els.eventTitleError,
   eventLocation: () => els.eventLocationError,
   eventTypes: () => els.eventTypesError,
   schedule: () => els.scheduleError,
+  coverImage: () => els.coverError,
+  logoImage: () => els.logoError,
 };
 
 function getSupabase() {
@@ -235,9 +272,13 @@ function showFieldError(fieldKey, message) {
 function markFieldInvalid(fieldKey, isInvalid = true) {
   const fieldMap = {
     submitterEmail: els.submitterEmail,
+    partnerName: els.partnerName,
+    websiteUrl: els.websiteUrl,
     eventTitle: els.title,
     eventLocation: els.locationInput,
     eventTypes: els.eventTypes,
+    coverImage: els.coverInput,
+    logoImage: els.logoInput,
   };
   fieldMap[fieldKey]?.classList.toggle("is-invalid", isInvalid);
 
@@ -529,7 +570,9 @@ function updateEventCardPreview() {
     startsAt,
     endsAt,
     eventTypes: getSelectedEventTypes(),
-    isPartner: false,
+    coverImageUrl: coverPreviewUrl,
+    logoUrl: logoPreviewUrl,
+    isPartner: true,
   });
   syncEventCardPreviewVisibility();
 }
@@ -618,10 +661,11 @@ function getWizardStepConfig(step = currentWizardStep) {
 function focusWizardStepField(step = currentWizardStep) {
   const focusTargets = {
     1: els.submitterEmail,
-    2: els.title,
-    3: getDateSegments(els.startDate).day,
-    4: els.eventTypes?.querySelector("input"),
-    5: els.description,
+    2: els.partnerName,
+    3: els.title,
+    4: getDateSegments(els.startDate).day,
+    5: els.eventTypes?.querySelector("input"),
+    6: els.websiteUrl,
   };
 
   const target = focusTargets[step];
@@ -639,6 +683,10 @@ function renderWizardReview() {
 
   els.wizardReview.innerHTML = `
     <div class="wizard-review-row">
+      <span class="wizard-review-label">Partner</span>
+      <span class="wizard-review-value">${escapeHtml(els.partnerName?.value.trim() || "—")}</span>
+    </div>
+    <div class="wizard-review-row">
       <span class="wizard-review-label">Event</span>
       <span class="wizard-review-value">${escapeHtml(els.title?.value.trim() || "—")}</span>
     </div>
@@ -653,6 +701,18 @@ function renderWizardReview() {
     <div class="wizard-review-row">
       <span class="wizard-review-label">Type</span>
       <span class="wizard-review-value">${escapeHtml(types || "—")}</span>
+    </div>
+    <div class="wizard-review-row">
+      <span class="wizard-review-label">Website</span>
+      <span class="wizard-review-value">${escapeHtml(els.websiteUrl?.value.trim() || "—")}</span>
+    </div>
+    <div class="wizard-review-row">
+      <span class="wizard-review-label">Cover</span>
+      <span class="wizard-review-value">${coverFile ? escapeHtml(coverFile.name) : "—"}</span>
+    </div>
+    <div class="wizard-review-row">
+      <span class="wizard-review-label">Logo</span>
+      <span class="wizard-review-value">${logoFile ? escapeHtml(logoFile.name) : "—"}</span>
     </div>
   `;
 }
@@ -717,6 +777,24 @@ function validateWizardStep(step) {
       return { ok: true };
     }
     case 2: {
+      const partnerName = els.partnerName?.value.trim() ?? "";
+      if (!partnerName) {
+        return {
+          ok: false,
+          message: "Enter your partner or organizer name.",
+          field: "partnerName",
+        };
+      }
+      if (partnerName.length > 120) {
+        return {
+          ok: false,
+          message: "Partner name must be at most 120 characters.",
+          field: "partnerName",
+        };
+      }
+      return { ok: true };
+    }
+    case 3: {
       const title = els.title?.value.trim() ?? "";
       if (!title) {
         return {
@@ -734,7 +812,7 @@ function validateWizardStep(step) {
       }
       return { ok: true };
     }
-    case 3: {
+    case 4: {
       const result = validateScheduleInput();
       if (!result.ok) {
         return result;
@@ -743,7 +821,7 @@ function validateWizardStep(step) {
       updateSchedulePreview();
       return { ok: true };
     }
-    case 4: {
+    case 5: {
       if (!getSelectedEventTypes().length) {
         return {
           ok: false,
@@ -751,6 +829,28 @@ function validateWizardStep(step) {
           field: "eventTypes",
         };
       }
+      return { ok: true };
+    }
+    case 6: {
+      const websiteUrl = els.websiteUrl?.value.trim() ?? "";
+      if (websiteUrl && !/^https?:\/\//i.test(websiteUrl)) {
+        return {
+          ok: false,
+          message: "Website link must start with http:// or https://.",
+          field: "websiteUrl",
+        };
+      }
+      if (websiteUrl.length > 500) {
+        return {
+          ok: false,
+          message: "Website link is too long.",
+          field: "websiteUrl",
+        };
+      }
+      const coverResult = validateMediaFile(coverFile, "cover");
+      if (!coverResult.ok) return coverResult;
+      const logoResult = validateMediaFile(logoFile, "logo");
+      if (!logoResult.ok) return logoResult;
       return { ok: true };
     }
     default:
@@ -1678,6 +1778,142 @@ function escapeHtml(value) {
     .replaceAll('"', "&quot;");
 }
 
+function validateMediaFile(file, kind) {
+  if (!file) return { ok: true };
+
+  if (!ALLOWED_MEDIA_TYPES.has(file.type)) {
+    return {
+      ok: false,
+      message: `${kind === "cover" ? "Cover" : "Logo"} must be JPG, PNG, WebP, or GIF.`,
+      field: kind === "cover" ? "coverImage" : "logoImage",
+    };
+  }
+
+  if (file.size > MAX_MEDIA_BYTES) {
+    return {
+      ok: false,
+      message: `${kind === "cover" ? "Cover" : "Logo"} must be 5 MB or smaller.`,
+      field: kind === "cover" ? "coverImage" : "logoImage",
+    };
+  }
+
+  return { ok: true };
+}
+
+function revokePreviewUrl(url) {
+  if (url) URL.revokeObjectURL(url);
+}
+
+function renderMediaPreview(kind) {
+  const isCover = kind === "cover";
+  const file = isCover ? coverFile : logoFile;
+  const previewEl = isCover ? els.coverPreview : els.logoPreview;
+  const clearBtn = isCover ? els.clearCoverBtn : els.clearLogoBtn;
+
+  if (!previewEl) return;
+
+  if (isCover) {
+    revokePreviewUrl(coverPreviewUrl);
+    coverPreviewUrl = null;
+  } else {
+    revokePreviewUrl(logoPreviewUrl);
+    logoPreviewUrl = null;
+  }
+
+  if (!file) {
+    previewEl.hidden = true;
+    previewEl.innerHTML = "";
+    hide(clearBtn);
+    updateEventCardPreview();
+    return;
+  }
+
+  const objectUrl = URL.createObjectURL(file);
+  if (isCover) coverPreviewUrl = objectUrl;
+  else logoPreviewUrl = objectUrl;
+
+  previewEl.innerHTML = `<img src="${objectUrl}" alt="" />`;
+  previewEl.hidden = false;
+  show(clearBtn);
+  updateEventCardPreview();
+}
+
+function clearMediaSelection(kind) {
+  if (kind === "cover") {
+    coverFile = null;
+    if (els.coverInput) els.coverInput.value = "";
+    showFieldError("coverImage", null);
+    markFieldInvalid("coverImage", false);
+  } else {
+    logoFile = null;
+    if (els.logoInput) els.logoInput.value = "";
+    showFieldError("logoImage", null);
+    markFieldInvalid("logoImage", false);
+  }
+  renderMediaPreview(kind);
+}
+
+function handleMediaInput(event, kind) {
+  const input = event.target;
+  if (!(input instanceof HTMLInputElement)) return;
+
+  const file = input.files?.[0] ?? null;
+  const result = validateMediaFile(file, kind);
+  if (!result.ok) {
+    input.value = "";
+    if (kind === "cover") coverFile = null;
+    else logoFile = null;
+    renderMediaPreview(kind);
+    showFieldError(result.field, result.message);
+    markFieldInvalid(result.field, true);
+    showFormError(result.message);
+    return;
+  }
+
+  if (kind === "cover") coverFile = file;
+  else logoFile = file;
+
+  showFieldError(kind === "cover" ? "coverImage" : "logoImage", null);
+  markFieldInvalid(kind === "cover" ? "coverImage" : "logoImage", false);
+  showFormError(null);
+  renderMediaPreview(kind);
+}
+
+async function uploadPartnerMedia(file, kind) {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("kind", kind);
+
+  const response = await fetch(`${config.url.replace(/\/+$/, "")}/functions/v1/partner-event-media`, {
+    method: "POST",
+    headers: {
+      apikey: config.anonKey,
+      Authorization: `Bearer ${config.anonKey}`,
+      "x-partner-access-key": ACCESS_KEY,
+    },
+    body: formData,
+  });
+
+  const payload = await response.json().catch(() => null);
+  if (!response.ok) {
+    throw new Error(payload?.error || `Upload failed (${response.status}).`);
+  }
+
+  if (!payload?.url) {
+    throw new Error("Upload did not return a URL.");
+  }
+
+  return payload.url;
+}
+
+function showAccessGate() {
+  hide(els.formSection);
+  hide(els.success);
+  hide(els.loading);
+  show(els.accessGate);
+  syncEventCardPreviewVisibility();
+}
+
 function handleLocationInput() {
   if (selectedPlace) return;
 
@@ -1715,6 +1951,8 @@ function handleLocationInput() {
 function resetEventForm() {
   els.form?.reset();
   clearPlaceSelection();
+  clearMediaSelection("cover");
+  clearMediaSelection("logo");
   clearDateSegments(els.startDate);
   clearDateSegments(els.endDate);
   showFormError(null);
@@ -1739,7 +1977,7 @@ function showSubmitAnotherForm() {
 
 function formatSubmitRpcError(message) {
   const text = String(message ?? "").trim();
-  console.error("[submit_community_event]", text);
+  console.error("[submit_partner_event]", text);
 
   if (text.includes("events_partner_fields_check")) {
     return "Submit failed: database constraint events_partner_fields_check is still on the old version. Re-run the partner-fields hotfix SQL in Supabase (see migration 20260712180000_fix_partner_fields_check_pending.sql), then try again.";
@@ -1754,7 +1992,12 @@ async function handleFinalSubmit() {
   showFormError(null);
   clearFieldErrors();
 
-  for (let step = 1; step <= 4; step += 1) {
+  if (!ACCESS_KEY) {
+    showFormError("Invalid partner link — check the URL you were given.");
+    return;
+  }
+
+  for (let step = 1; step <= 5; step += 1) {
     const result = validateWizardStep(step);
     if (!result.ok) {
       goToWizardStep(step);
@@ -1763,8 +2006,17 @@ async function handleFinalSubmit() {
     }
   }
 
+  const stepSix = validateWizardStep(6);
+  if (!stepSix.ok) {
+    goToWizardStep(6);
+    applyWizardStepError(stepSix);
+    return;
+  }
+
   const input = {
     title: els.title?.value ?? "",
+    partnerName: els.partnerName?.value ?? "",
+    websiteUrl: els.websiteUrl?.value ?? "",
     submitterEmail: els.submitterEmail?.value ?? "",
     locationName: selectedPlace.locationName,
     countryCode: selectedPlace.countryCode ?? null,
@@ -1778,7 +2030,7 @@ async function handleFinalSubmit() {
     submitterNote: els.note?.value ?? null,
   };
 
-  const validation = validateCommunityEventSubmissionInput(input);
+  const validation = validatePartnerEventSubmissionInput(input);
   if (!validation.ok) {
     showFormError(validation.message);
     return;
@@ -1797,35 +2049,61 @@ async function handleFinalSubmit() {
     return;
   }
 
-  const { data: eventId, error } = await client.rpc("submit_community_event", {
-    p_title: input.title.trim(),
-    p_location_name: input.locationName.trim(),
-    p_country_code: input.countryCode,
-    p_latitude: input.latitude,
-    p_longitude: input.longitude,
-    p_schedule_type: input.scheduleType,
-    p_starts_at: input.startsAt,
-    p_ends_at: input.endsAt || null,
-    p_event_types: input.eventTypes,
-    p_submitter_email: input.submitterEmail.trim(),
-    p_submitter_note: input.submitterNote?.trim() || null,
-    p_description: input.description?.trim() || null,
-  });
+  try {
+    let coverImageUrl = null;
+    let logoUrl = null;
 
-  els.submitBtn.disabled = false;
-  els.submitBtn.textContent = "Submit for review";
+    if (coverFile) {
+      els.submitBtn.textContent = "Uploading cover…";
+      coverImageUrl = await uploadPartnerMedia(coverFile, "cover");
+    }
 
-  if (error) {
-    showFormError(formatSubmitRpcError(error.message));
-    return;
-  }
+    if (logoFile) {
+      els.submitBtn.textContent = "Uploading logo…";
+      logoUrl = await uploadPartnerMedia(logoFile, "logo");
+    }
 
-  hide(els.formSection);
-  show(els.success);
-  syncEventCardPreviewVisibility();
+    els.submitBtn.textContent = "Submitting…";
 
-  if (eventId) {
-    els.success?.setAttribute("data-event-id", String(eventId));
+    const { data: eventId, error } = await client.rpc("submit_partner_event", {
+      p_access_key: ACCESS_KEY,
+      p_partner_name: input.partnerName.trim(),
+      p_title: input.title.trim(),
+      p_location_name: input.locationName.trim(),
+      p_country_code: input.countryCode,
+      p_latitude: input.latitude,
+      p_longitude: input.longitude,
+      p_schedule_type: input.scheduleType,
+      p_starts_at: input.startsAt,
+      p_ends_at: input.endsAt || null,
+      p_event_types: input.eventTypes,
+      p_submitter_email: input.submitterEmail.trim(),
+      p_website_url: input.websiteUrl?.trim() || null,
+      p_cover_image_url: coverImageUrl,
+      p_logo_url: logoUrl,
+      p_submitter_note: input.submitterNote?.trim() || null,
+      p_description: input.description?.trim() || null,
+    });
+
+    els.submitBtn.disabled = false;
+    els.submitBtn.textContent = "Submit for review";
+
+    if (error) {
+      showFormError(formatSubmitRpcError(error.message));
+      return;
+    }
+
+    hide(els.formSection);
+    show(els.success);
+    syncEventCardPreviewVisibility();
+
+    if (eventId) {
+      els.success?.setAttribute("data-event-id", String(eventId));
+    }
+  } catch (error) {
+    els.submitBtn.disabled = false;
+    els.submitBtn.textContent = "Submit for review";
+    showFormError(error instanceof Error ? error.message : "Submission failed.");
   }
 }
 
@@ -1855,6 +2133,23 @@ function bindEvents() {
     markFieldInvalid("submitterEmail", false);
     showFormError(null);
   });
+
+  els.partnerName?.addEventListener("input", () => {
+    showFieldError("partnerName", null);
+    markFieldInvalid("partnerName", false);
+    showFormError(null);
+  });
+
+  els.websiteUrl?.addEventListener("input", () => {
+    showFieldError("websiteUrl", null);
+    markFieldInvalid("websiteUrl", false);
+    showFormError(null);
+  });
+
+  els.coverInput?.addEventListener("change", (event) => handleMediaInput(event, "cover"));
+  els.logoInput?.addEventListener("change", (event) => handleMediaInput(event, "logo"));
+  els.clearCoverBtn?.addEventListener("click", () => clearMediaSelection("cover"));
+  els.clearLogoBtn?.addEventListener("click", () => clearMediaSelection("logo"));
 
   els.title?.addEventListener("input", () => {
     showFieldError("eventTitle", null);
@@ -1919,6 +2214,12 @@ function bindEvents() {
 }
 
 function init() {
+  if (!ACCESS_KEY) {
+    showAccessGate();
+    return;
+  }
+
+  hide(els.accessGate);
   refreshWizardElements();
 
   renderEventTypeChips();
