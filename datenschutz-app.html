@@ -502,9 +502,10 @@
             <p>
               When you sign up or sign in to the App, our servers receive your device’s IP address
               as part of the normal connection to Supabase (our backend provider). We use this IP
-              address only to infer an <strong>approximate country</strong> (ISO country code) via
-              a third-party geolocation lookup. We do <strong>not</strong> store your full IP
-              address in our database.
+              address only to infer an <strong>approximate country</strong> (ISO country code) and,
+              where available, an <strong>approximate region or state</strong> (e.g. Bavaria,
+              California) via a third-party geolocation lookup. We do <strong>not</strong> store
+              your full IP address in our database.
             </p>
             <p>
               We store the following in the table <code>user_auth_geo</code>, linked to your user
@@ -516,21 +517,29 @@
                 successful login/signup (retained for analytics).
               </li>
               <li>
+                <strong>Signup region</strong> — approximate region or state (e.g. Bavaria,
+                California) inferred from the same IP lookup, when available.
+              </li>
+              <li>
                 <strong>Last seen country</strong> — country inferred from your IP at your most
                 recent login (updated when you open the App with an active session).
+              </li>
+              <li>
+                <strong>Last seen region</strong> — approximate region or state from the same most
+                recent lookup, when available.
               </li>
               <li>Timestamps of when these values were recorded.</li>
             </ul>
             <p>
               <strong>Purpose:</strong> aggregated product analytics (e.g. understanding where our
               users are located), fraud/abuse prevention, and improving the service. Access to
-              individual country values is restricted to authorised administrators; end users do
-              not see other users’ inferred countries.
+              individual country and region values is restricted to authorised administrators; end
+              users do not see other users’ inferred locations.
             </p>
             <p>
-              <strong>Accuracy:</strong> IP-based country detection is approximate. VPNs, mobile
-              networks, and travel can cause the inferred country to differ from where you actually
-              live or surf.
+              <strong>Accuracy:</strong> IP-based location detection is approximate. VPNs, mobile
+              networks, and travel can cause the inferred country or region to differ from where you
+              actually live or surf. Region data may not be available for every IP lookup.
             </p>
             <p>
               <strong>Legal bases:</strong> providing and securing the service you use (Art.
@@ -539,13 +548,13 @@
               Privacy Policy.
             </p>
             <p>
-              <strong>Retention:</strong> country codes are kept for as long as your account
-              exists, unless deleted earlier as part of account erasure (see
+              <strong>Retention:</strong> country and region values are kept for as long as your
+              account exists, unless deleted earlier as part of account erasure (see
               <a href="./data-deletion.html">Data deletion request</a> page).
             </p>
             <p>
               <strong>Processors:</strong> Supabase (hosting/auth), and ipapi.co (transient IP →
-              country lookup in our edge function; IP is sent to ipapi.co only for the lookup
+              country/region lookup in our edge function; IP is sent to ipapi.co only for the lookup
               request and is not stored by us after processing).
             </p>
 
@@ -553,7 +562,7 @@
             <p>
               If you set a home break via Google Places search in your profile, we store the place
               label and, when available, an ISO country code derived from that place. This is
-              <strong>user-provided</strong> and separate from IP-based country in §3.14. It may
+              <strong>user-provided</strong> and separate from IP-based location in §3.14. It may
               be used for aggregated admin analytics alongside other profile-based geography
               signals.
             </p>
@@ -584,7 +593,7 @@
                 IT security, proportionate troubleshooting, abuse prevention,
                 moderation and enforcement of community rules (including block
                 and report workflows), improving App stability, and aggregated
-                understanding of our user base (including approximate country
+                understanding of our user base (including approximate country and region
                 from IP — section 3.14), where your interests do not override
                 ours.
               </li>
@@ -671,8 +680,8 @@
               >.
             </p>
             <p>
-              For approximate country inference at signup and login (section 3.14), we use
-              <strong>ipapi.co</strong> (Kloudend, Inc.) for a transient IP-to-country lookup in
+              For approximate country and region inference at signup and login (section 3.14), we use
+              <strong>ipapi.co</strong> (Kloudend, Inc.) for a transient IP-to-country/region lookup in
               our edge function. Your IP is sent to ipapi.co only for that request; we do not
               store the full IP address in our database after processing. Further information:
               <a
@@ -775,8 +784,8 @@
               practicable), or no longer need the data for that purpose.
             </p>
             <p>
-              <strong>IP-based country (section 3.14):</strong> Signup and last-seen country
-              codes in <code>user_auth_geo</code> are kept for as long as your account exists and
+              <strong>IP-based location (section 3.14):</strong> Signup and last-seen country and
+              region values in <code>user_auth_geo</code> are kept for as long as your account exists and
               are deleted when your account is erased.
             </p>
             <p>

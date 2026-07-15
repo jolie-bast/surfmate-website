@@ -429,18 +429,21 @@
               >
             </p>
 
-            <h2>6. Surfmate-App: ungefähres Herkunftsland aus IP-Adresse</h2>
+            <h2>6. Surfmate-App: ungefähres Herkunftsland und Region aus IP-Adresse</h2>
             <p>
               Wenn Sie die Surfmate-App nutzen und sich anmelden, verarbeitet unser Backend
               (Supabase) Ihre <strong>IP-Adresse</strong> im Rahmen der technisch erforderlichen
               Verbindung. Wir leiten daraus ein <strong>ungefähres Herkunftsland</strong>
-              (ISO-Ländercode) ab und speichern <strong>nicht</strong> Ihre vollständige IP-Adresse
-              dauerhaft in unserer Datenbank.
+              (ISO-Ländercode) und, sofern verfügbar, eine <strong>ungefähre Region</strong> (z. B.
+              Bayern, Kalifornien) ab und speichern <strong>nicht</strong> Ihre vollständige
+              IP-Adresse dauerhaft in unserer Datenbank.
             </p>
             <p>Gespeichert werden u. a.:</p>
             <ul>
               <li>Ländercode bei der ersten Anmeldung/Registrierung,</li>
+              <li>Region/Bundesland bei der ersten Anmeldung (sofern verfügbar),</li>
               <li>Ländercode bei der letzten Anmeldung,</li>
+              <li>Region/Bundesland bei der letzten Anmeldung (sofern verfügbar),</li>
               <li>Zeitstempel der Erfassung.</li>
             </ul>
             <p>
@@ -455,7 +458,7 @@
             </p>
             <p>
               <strong>Auftragsverarbeiter:</strong> Supabase (Hosting/Auth); ipapi.co (kurzzeitige
-              IP-zu-Land-Abfrage in einer Edge Function — die IP wird nur für die Abfrage
+              IP-zu-Land-/Regions-Abfrage in einer Edge Function — die IP wird nur für die Abfrage
               übermittelt).
             </p>
             <p>
