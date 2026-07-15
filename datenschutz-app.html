@@ -55,7 +55,7 @@
           </header>
 
           <div class="content-body">
-            <p><strong>Last updated:</strong> 22 June 2026</p>
+            <p><strong>Last updated:</strong> 15 July 2026</p>
 
             <p>
               <strong>Scope.</strong> This privacy policy applies to the
@@ -283,11 +283,11 @@
 
             <h3>3.6 Device and technical data</h3>
             <p>
-              When you use the App, technical information may be generated, such
-              as device type, operating system, app version, language settings,
-              timestamps and—where technically necessary—log data when
-              communicating with our servers (via Supabase; see section 5).
-              This supports providing, securing, and stabilising the App.
+              When you use the App, we process technical data necessary to operate the service,
+              including connection metadata and log data when communicating with our servers. This
+              includes your <strong>IP address</strong> during requests (see §3.14 for how we use
+              it). We may also process device type, app version, language settings, and push tokens
+              where applicable.
             </p>
 
             <h3>3.7 Push notifications</h3>
@@ -498,6 +498,69 @@
               >.
             </p>
 
+            <h3>3.14 Approximate location from IP address (signup and login)</h3>
+            <p>
+              When you sign up or sign in to the App, our servers receive your device’s IP address
+              as part of the normal connection to Supabase (our backend provider). We use this IP
+              address only to infer an <strong>approximate country</strong> (ISO country code) via
+              a third-party geolocation lookup. We do <strong>not</strong> store your full IP
+              address in our database.
+            </p>
+            <p>
+              We store the following in the table <code>user_auth_geo</code>, linked to your user
+              account:
+            </p>
+            <ul>
+              <li>
+                <strong>Signup country</strong> — country inferred from your IP at the first
+                successful login/signup (retained for analytics).
+              </li>
+              <li>
+                <strong>Last seen country</strong> — country inferred from your IP at your most
+                recent login (updated when you open the App with an active session).
+              </li>
+              <li>Timestamps of when these values were recorded.</li>
+            </ul>
+            <p>
+              <strong>Purpose:</strong> aggregated product analytics (e.g. understanding where our
+              users are located), fraud/abuse prevention, and improving the service. Access to
+              individual country values is restricted to authorised administrators; end users do
+              not see other users’ inferred countries.
+            </p>
+            <p>
+              <strong>Accuracy:</strong> IP-based country detection is approximate. VPNs, mobile
+              networks, and travel can cause the inferred country to differ from where you actually
+              live or surf.
+            </p>
+            <p>
+              <strong>Legal bases:</strong> providing and securing the service you use (Art.
+              6(1)(b) GDPR); legitimate interest in understanding our user base and preventing abuse
+              (Art. 6(1)(f) GDPR). Where required by law, we rely on your acceptance of this
+              Privacy Policy.
+            </p>
+            <p>
+              <strong>Retention:</strong> country codes are kept for as long as your account
+              exists, unless deleted earlier as part of account erasure (see
+              <a href="./data-deletion.html">Data deletion request</a> page).
+            </p>
+            <p>
+              <strong>Processors:</strong> Supabase (hosting/auth), and ipapi.co (transient IP →
+              country lookup in our edge function; IP is sent to ipapi.co only for the lookup
+              request and is not stored by us after processing).
+            </p>
+
+            <h3>3.15 Home break and voluntary country (profile)</h3>
+            <p>
+              If you set a home break via Google Places search in your profile, we store the place
+              label and, when available, an ISO country code derived from that place. This is
+              <strong>user-provided</strong> and separate from IP-based country in §3.14. It may
+              be used for aggregated admin analytics alongside other profile-based geography
+              signals.
+            </p>
+            <p>
+              Legal basis: providing profile features you choose to use (Art. 6(1)(b) GDPR).
+            </p>
+
             <h2>4. Purposes and legal bases</h2>
             <p>
               We process personal data under the EU General Data Protection
@@ -520,8 +583,10 @@
                 <strong>Legitimate interests</strong> (Art. 6(1)(f) GDPR):
                 IT security, proportionate troubleshooting, abuse prevention,
                 moderation and enforcement of community rules (including block
-                and report workflows), and improving App stability, where your
-                interests do not override ours.
+                and report workflows), improving App stability, and aggregated
+                understanding of our user base (including approximate country
+                from IP — section 3.14), where your interests do not override
+                ours.
               </li>
               <li>
                 <strong>Consent</strong> (Art. 6(1)(a) GDPR): where required, for
@@ -603,6 +668,18 @@
                 target="_blank"
                 rel="noopener"
                 >https://www.mailerlite.com/privacy-policy</a
+              >.
+            </p>
+            <p>
+              For approximate country inference at signup and login (section 3.14), we use
+              <strong>ipapi.co</strong> (Kloudend, Inc.) for a transient IP-to-country lookup in
+              our edge function. Your IP is sent to ipapi.co only for that request; we do not
+              store the full IP address in our database after processing. Further information:
+              <a
+                href="https://ipapi.co/privacy/"
+                target="_blank"
+                rel="noopener"
+                >https://ipapi.co/privacy/</a
               >.
             </p>
             <p>
@@ -696,6 +773,16 @@
               newsletter list until you unsubscribe, delete your account (after
               which we remove or anonymise the address on the list where
               practicable), or no longer need the data for that purpose.
+            </p>
+            <p>
+              <strong>IP-based country (section 3.14):</strong> Signup and last-seen country
+              codes in <code>user_auth_geo</code> are kept for as long as your account exists and
+              are deleted when your account is erased.
+            </p>
+            <p>
+              <strong>Home break country (section 3.15):</strong> If you set a home break, the
+              associated place label and country code (if available) are kept until you remove them
+              or delete your account.
             </p>
             <p>
               You can contact us at any time for more detail on deletion
