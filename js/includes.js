@@ -441,6 +441,13 @@ function scrollToHash(hash, { behavior = "auto", attempts = 0 } = {}) {
       behavior,
     });
 
+    if (typeof window.syncStoryJourney === "function") {
+      requestAnimationFrame(() => {
+        window.syncStoryJourney();
+        requestAnimationFrame(() => window.syncStoryJourney());
+      });
+    }
+
     return;
   }
 
@@ -478,6 +485,9 @@ function initAfterAllIncludes() {
   }
   if (typeof window.initStoryJourney === "function") {
     window.initStoryJourney();
+  }
+  if (typeof window.syncStoryJourney === "function") {
+    requestAnimationFrame(() => window.syncStoryJourney());
   }
 
   scrollToCurrentHash({ behavior: "auto" });

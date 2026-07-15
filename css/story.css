@@ -102,7 +102,7 @@
   isolation: isolate;
 }
 
-/* Scenes — stacked, only active one visible */
+/* Scenes — stacked, only active one visible (JS enhances after load) */
 .story-scene {
   position: absolute;
   inset: 0;
@@ -116,6 +116,18 @@
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
+}
+
+/* Fallback before JS: first scene visible so the section never stays blank black */
+.story-journey:not([data-story-enhanced]) .story-scene--dream {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.story-journey:not([data-story-enhanced]) .story-scene--dream .story-line[data-story-line="dream-1"] {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .story-scene-bg {

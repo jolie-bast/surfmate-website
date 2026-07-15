@@ -55,11 +55,11 @@ function getStoryScrollProgress() {
   const track = root?.querySelector(".story-scroll-track");
   if (!track) return 0;
 
-  const rect = track.getBoundingClientRect();
   const scrollable = track.offsetHeight - window.innerHeight;
   if (scrollable <= 0) return 0;
 
-  return Math.min(1, Math.max(0, -rect.top / scrollable));
+  const pinStartY = root.getBoundingClientRect().top + window.scrollY;
+  return Math.min(1, Math.max(0, (window.scrollY - pinStartY) / scrollable));
 }
 
 function isHomeDownloadBannerEligible() {
@@ -135,6 +135,9 @@ class StoryJourney {
     this.waveTime = 0;
     this.waveFrame = null;
     this.ticking = false;
+    this.pinStartY = 0;
+    this.scrollableDistance = 1;
+    this.intersectionObserver = null;
 
     this.reducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
@@ -142,13 +145,48 @@ class StoryJourney {
 
     if (this.reducedMotion || !this.track) return;
 
+    this.root.dataset.storyEnhanced = "true";
+
     this.onScroll = this.onScroll.bind(this);
     this.animateWave = this.animateWave.bind(this);
+    this.measureLayout = this.measureLayout.bind(this);
 
     window.addEventListener("scroll", this.onScroll, { passive: true });
-    window.addEventListener("resize", this.onScroll, { passive: true });
+    window.addEventListener("resize", this.measureLayout, { passive: true });
+    window.addEventListener("pageshow", this.onScroll);
+    window.addEventListener("load", this.measureLayout);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", this.measureLayout);
+      window.visualViewport.addEventListener("scroll", this.onScroll);
+    }
+    if ("onscrollend" in window) {
+      window.addEventListener("scrollend", this.onScroll, { passive: true });
+    }
+
+    this.intersectionObserver = new IntersectionObserver(
+      () => this.onScroll(),
+      { threshold: [0, 0.05, 0.15, 0.35, 0.55, 0.75, 0.95, 1] },
+    );
+    this.intersectionObserver.observe(this.track);
+
+    this.measureLayout();
     this.onScroll();
     this.startWaveAnimation();
+
+    requestAnimationFrame(() => {
+      this.measureLayout();
+      this.update();
+    });
+  }
+
+  measureLayout() {
+    if (!this.root || !this.track) return;
+
+    this.pinStartY = this.root.getBoundingClientRect().top + window.scrollY;
+    this.scrollableDistance = Math.max(
+      1,
+      this.track.offsetHeight - window.innerHeight,
+    );
   }
 
   clamp(value) {
@@ -156,10 +194,7 @@ class StoryJourney {
   }
 
   getScrollProgress() {
-    const rect = this.track.getBoundingClientRect();
-    const scrollable = this.track.offsetHeight - window.innerHeight;
-    if (scrollable <= 0) return 0;
-    return this.clamp(-rect.top / scrollable);
+    return this.clamp((window.scrollY - this.pinStartY) / this.scrollableDistance);
   }
 
   mapRange(p, start, end) {
@@ -182,14 +217,14 @@ class StoryJourney {
   }
 
   animateDream(scene, p) {
-    const ocean = this.mapRange(p, 0.12, 0.55);
-    const wave = this.mapRange(p, 0.5, 0.85);
+    const ocean = this.mapRange(p, 0.04, 0.5);
+    const wave = this.mapRange(p, 0.42, 0.82);
 
     scene.style.setProperty("--ocean", ocean);
     scene.style.setProperty("--wave", wave);
 
     this.setVisible(scene.querySelector('[data-story-line="dream-1"]'), p >= 0);
-    this.setVisible(scene.querySelector('[data-story-line="dream-2"]'), p > 0.35);
+    this.setVisible(scene.querySelector('[data-story-line="dream-2"]'), p > 0.28);
   }
 
   animateFirstSurf(scene, p) {
@@ -266,8 +301,8 @@ class StoryJourney {
     const stageRect = this.stage?.getBoundingClientRect();
     const isStoryEngaged =
       stageRect &&
-      stageRect.top <= 0 &&
-      stageRect.bottom > window.innerHeight * 0.2;
+      stageRect.top <= window.innerHeight * 0.05 &&
+      stageRect.bottom > window.innerHeight * 0.15;
 
     this.root.classList.toggle("is-active", Boolean(isStoryEngaged));
 
@@ -356,6 +391,11 @@ class StoryJourney {
   startWaveAnimation() {
     if (this.wavePath) this.animateWave();
   }
+
+  sync() {
+    this.measureLayout();
+    this.update();
+  }
 }
 
 function configureStoryCtas() {
@@ -376,16 +416,30 @@ function configureStoryCtas() {
   });
 }
 
+let storyJourneyInstance = null;
+
 function initStoryJourney() {
   const root = document.querySelector("[data-story-journey]");
   if (!root || root.dataset.storyInitialized === "true") return;
+
+  const track = root.querySelector(".story-scroll-track");
+  if (!track) return;
 
   root.dataset.storyInitialized = "true";
   configureStoryCtas();
   restoreHomeDownloadBannerFromSession();
   initHomeDownloadBannerScrollBehavior();
   initHomeDownloadBannerFallbackObserver(root);
-  new StoryJourney(root);
+  storyJourneyInstance = new StoryJourney(root);
+
+  requestAnimationFrame(() => {
+    storyJourneyInstance?.sync();
+  });
+}
+
+function syncStoryJourney() {
+  storyJourneyInstance?.sync();
 }
 
 window.initStoryJourney = initStoryJourney;
+window.syncStoryJourney = syncStoryJourney;
