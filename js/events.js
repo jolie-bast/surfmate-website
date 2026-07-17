@@ -786,14 +786,6 @@ function refreshMapSize() {
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       map.invalidateSize({ pan: false });
-      if (state.viewMode === "calendar") {
-        fitMapToCalendarSelection();
-        return;
-      }
-      if (isMapBoundsFilterActive()) return;
-
-      const withCoords = getMapEvents().filter(eventHasMapCoordinates);
-      fitMapToEvents(withCoords);
     });
   });
 }
@@ -943,7 +935,7 @@ function renderCalendar(resetDayPagination = true) {
     els.calendarDayList.innerHTML = "";
     renderMobileStrip();
     setStatus(`${monthEvents.length} event${monthEvents.length === 1 ? "" : "s"} this month`);
-    if (state.viewMode === "calendar") {
+    if (state.viewMode === "calendar" && resetDayPagination) {
       renderMap();
     }
     return;
@@ -980,7 +972,11 @@ function renderCalendar(resetDayPagination = true) {
 
   if (state.viewMode === "calendar") {
     syncCalendarMapHeight();
-    renderMap();
+    if (resetDayPagination) {
+      renderMap();
+    } else {
+      map?.invalidateSize({ pan: false });
+    }
   }
 }
 
