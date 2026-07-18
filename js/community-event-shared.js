@@ -118,13 +118,129 @@ export function parseEventDateLocalValue(value) {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T12:00:00.000Z`;
 }
 
-/** Build ISO timestamp from date + time inputs in the user's local timezone. */
-export function buildExactDatetimeIso(dateValue, timeValue) {
+export const DEFAULT_EVENT_TIMEZONE = "Europe/Berlin";
+
+export const EVENT_TIMEZONE_OPTIONS = [
+  { value: "Europe/Berlin", label: "Europe/Berlin (CET/CEST)" },
+  { value: "Europe/Lisbon", label: "Europe/Lisbon (WET/WEST)" },
+  { value: "Europe/London", label: "Europe/London (GMT/BST)" },
+  { value: "Europe/Paris", label: "Europe/Paris (CET/CEST)" },
+  { value: "Europe/Madrid", label: "Europe/Madrid (CET/CEST)" },
+  { value: "Atlantic/Canary", label: "Atlantic/Canary (WET/WEST)" },
+  { value: "Atlantic/Azores", label: "Atlantic/Azores" },
+  { value: "Africa/Casablanca", label: "Africa/Casablanca" },
+  { value: "Indian/Mauritius", label: "Indian/Mauritius" },
+  { value: "Asia/Jakarta", label: "Asia/Jakarta (WIB)" },
+  { value: "Asia/Makassar", label: "Asia/Makassar (WITA)" },
+  { value: "Asia/Tokyo", label: "Asia/Tokyo (JST)" },
+  { value: "Australia/Sydney", label: "Australia/Sydney" },
+  { value: "Pacific/Auckland", label: "Pacific/Auckland" },
+  { value: "Pacific/Honolulu", label: "Pacific/Honolulu" },
+  { value: "America/Los_Angeles", label: "America/Los Angeles" },
+  { value: "America/Denver", label: "America/Denver" },
+  { value: "America/New_York", label: "America/New York" },
+  { value: "America/Sao_Paulo", label: "America/Sao Paulo" },
+  { value: "America/Costa_Rica", label: "America/Costa Rica" },
+  { value: "Pacific/Tahiti", label: "Pacific/Tahiti" },
+  { value: "UTC", label: "UTC" },
+];
+
+export function resolveEventTimezone(value) {
+  const trimmed = String(value ?? "").trim();
+  if (!trimmed) return DEFAULT_EVENT_TIMEZONE;
+  try {
+    Intl.DateTimeFormat("en-US", { timeZone: trimmed });
+    return trimmed;
+  } catch {
+    return DEFAULT_EVENT_TIMEZONE;
+  }
+}
+
+function readZonedParts(date, timeZone) {
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    hourCycle: "h23",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+  const parts = formatter.formatToParts(date);
+  const values = {};
+  for (const part of parts) {
+    if (part.type !== "literal") values[part.type] = part.value;
+  }
+  const hourRaw = Number(values.hour ?? "0");
+  return {
+    year: Number(values.year),
+    month: Number(values.month),
+    day: Number(values.day),
+    hour: hourRaw === 24 ? 0 : hourRaw,
+    minute: Number(values.minute ?? "0"),
+    second: Number(values.second ?? "0"),
+  };
+}
+
+function getTimeZoneOffsetMs(utcMs, timeZone) {
+  const parts = readZonedParts(new Date(utcMs), timeZone);
+  const asUtc = Date.UTC(
+    parts.year,
+    parts.month - 1,
+    parts.day,
+    parts.hour,
+    parts.minute,
+    parts.second,
+  );
+  return asUtc - utcMs;
+}
+
+/** Convert wall-clock date+time in an IANA timezone to a UTC ISO string. */
+export function zonedWallTimeToUtcIso(year, month, day, hour, minute, timeZone) {
+  const zone = resolveEventTimezone(timeZone);
+  const utcGuess = Date.UTC(year, month - 1, day, hour, minute, 0, 0);
+  const offset = getTimeZoneOffsetMs(utcGuess, zone);
+  let utcMs = utcGuess - offset;
+  const offsetAfter = getTimeZoneOffsetMs(utcMs, zone);
+  if (offsetAfter !== offset) utcMs = utcGuess - offsetAfter;
+  return new Date(utcMs).toISOString();
+}
+
+export function formatDateInTimeZone(date, timeZone) {
+  return readZonedParts(date, resolveEventTimezone(timeZone));
+}
+
+export function isSameCalendarDayInTimeZone(a, b, timeZone) {
+  const zone = resolveEventTimezone(timeZone);
+  const left = formatDateInTimeZone(a, zone);
+  const right = formatDateInTimeZone(b, zone);
+  return left.year === right.year && left.month === right.month && left.day === right.day;
+}
+
+export function buildTimezoneSelectOptionsHtml(selected = DEFAULT_EVENT_TIMEZONE) {
+  const current = resolveEventTimezone(selected);
+  return EVENT_TIMEZONE_OPTIONS.map((option) => {
+    const selectedAttr = option.value === current ? " selected" : "";
+    return `<option value="${option.value}"${selectedAttr}>${option.label}</option>`;
+  }).join("");
+}
+
+/** Build ISO timestamp from date + time wall-clock values in the given timezone. */
+export function buildExactDatetimeIso(dateValue, timeValue, timeZone = DEFAULT_EVENT_TIMEZONE) {
   if (!dateValue) return null;
   const time = timeValue || "00:00";
-  const local = new Date(`${dateValue}T${time}`);
-  if (Number.isNaN(local.getTime())) return null;
-  return local.toISOString();
+  const match = String(`${dateValue}T${time}`).match(
+    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/,
+  );
+  if (!match) return null;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const hours = Number(match[4]);
+  const minutes = Number(match[5]);
+  if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) return null;
+  return zonedWallTimeToUtcIso(year, month, day, hours, minutes, timeZone);
 }
 
 export function validateCommunityEventSubmissionInput(input) {

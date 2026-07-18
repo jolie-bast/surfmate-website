@@ -2,6 +2,7 @@ import { SURF_EVENT_TYPE_LABELS } from "./community-event-shared.js";
 import {
   formatEventLocationLabel,
   formatSurfEventSchedule,
+  formatSurfEventTimeRange,
   isSurfEventLiveNow,
 } from "./events-shared.js";
 
@@ -61,7 +62,15 @@ export function buildEventCard(event, options = {}) {
     event.endsAt,
     event.eventYear,
     event.eventMonth,
+    event.timezone,
   );
+  const timeLabel = formatSurfEventTimeRange(
+    event.scheduleType,
+    event.startsAt,
+    event.endsAt,
+    event.timezone,
+  );
+  const scheduleLabel = timeLabel ? `${dateLabel} · ${timeLabel}` : dateLabel;
   const locationLabel = formatEventLocationLabel(event.locationName, event.countryCode);
   const isLive = isSurfEventLiveNow(
     event.scheduleType,
@@ -69,6 +78,7 @@ export function buildEventCard(event, options = {}) {
     event.endsAt,
     event.eventYear,
     event.eventMonth,
+    event.timezone,
   );
 
   const omitEmptyCover = Boolean(options.omitEmptyCover);
@@ -100,7 +110,7 @@ export function buildEventCard(event, options = {}) {
     <div class="events-card-body">
       <div class="events-card-badges">${partnerBadge}${liveBadge}</div>
       <h3 class="events-card-title">${escapeHtml(event.title)}</h3>
-      <p class="events-card-meta"><i class="bi bi-calendar3" aria-hidden="true"></i> ${escapeHtml(dateLabel)}</p>
+      <p class="events-card-meta"><i class="bi bi-calendar3" aria-hidden="true"></i> ${escapeHtml(scheduleLabel)}</p>
       <p class="events-card-meta"><i class="bi bi-geo-alt" aria-hidden="true"></i> ${escapeHtml(locationLabel)}</p>
       ${buildTypeTagsHtml(event.eventTypes, selectedTypes)}
       ${liveHeatsLink}
@@ -125,7 +135,15 @@ export function buildMobileStripCard(event, options = {}) {
     event.endsAt,
     event.eventYear,
     event.eventMonth,
+    event.timezone,
   );
+  const timeLabel = formatSurfEventTimeRange(
+    event.scheduleType,
+    event.startsAt,
+    event.endsAt,
+    event.timezone,
+  );
+  const scheduleLabel = timeLabel ? `${dateLabel} · ${timeLabel}` : dateLabel;
   const locationLabel = formatEventLocationLabel(event.locationName, event.countryCode);
   const isLive = isSurfEventLiveNow(
     event.scheduleType,
@@ -133,6 +151,7 @@ export function buildMobileStripCard(event, options = {}) {
     event.endsAt,
     event.eventYear,
     event.eventMonth,
+    event.timezone,
   );
 
   const typeLabel = event.eventTypes?.[0]
@@ -172,7 +191,7 @@ export function buildMobileStripCard(event, options = {}) {
         ${websiteLink}
       </span>
       <span class="events-strip-card-title">${escapeHtml(event.title)}</span>
-      <span class="events-strip-card-meta"><i class="bi bi-calendar3" aria-hidden="true"></i> ${escapeHtml(dateLabel)}</span>
+      <span class="events-strip-card-meta"><i class="bi bi-calendar3" aria-hidden="true"></i> ${escapeHtml(scheduleLabel)}</span>
       <span class="events-strip-card-meta"><i class="bi bi-geo-alt" aria-hidden="true"></i> ${escapeHtml(locationLabel)}</span>
     </div>
   `;

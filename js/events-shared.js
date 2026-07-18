@@ -3,9 +3,16 @@
  * Mirrors @surfmate/shared surf-events (keep in sync with the monorepo).
  */
 
-import { SURF_EVENT_TYPES, SURF_EVENT_TYPE_LABELS } from "./community-event-shared.js";
+import {
+  SURF_EVENT_TYPES,
+  SURF_EVENT_TYPE_LABELS,
+  DEFAULT_EVENT_TIMEZONE,
+  formatDateInTimeZone,
+  isSameCalendarDayInTimeZone,
+  resolveEventTimezone,
+} from "./community-event-shared.js";
 
-export { SURF_EVENT_TYPES, SURF_EVENT_TYPE_LABELS };
+export { SURF_EVENT_TYPES, SURF_EVENT_TYPE_LABELS, DEFAULT_EVENT_TIMEZONE };
 
 const SHORT_MONTHS = [
   "Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -27,18 +34,24 @@ function isExactDateScheduleType(scheduleType) {
   return scheduleType === "exact" || scheduleType === "exact_datetime";
 }
 
-function formatEventDateOnly(date) {
+function formatEventDateOnlyUtc(date) {
   const day = date.getUTCDate();
   const month = SHORT_MONTHS[date.getUTCMonth()] ?? "?";
   const year = date.getUTCFullYear();
   return `${day} ${month} ${year}`;
 }
 
-function isSameCalendarDay(a, b) {
+function formatEventDateOnlyInTimeZone(date, timeZone) {
+  const parts = formatDateInTimeZone(date, timeZone);
+  const month = SHORT_MONTHS[parts.month - 1] ?? "?";
+  return `${parts.day} ${month} ${parts.year}`;
+}
+
+function isSameCalendarDayUtc(a, b) {
   return (
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
+    a.getUTCFullYear() === b.getUTCFullYear() &&
+    a.getUTCMonth() === b.getUTCMonth() &&
+    a.getUTCDate() === b.getUTCDate()
   );
 }
 
@@ -51,21 +64,51 @@ export function formatSurfEventMonthYear(month, year) {
   return `${monthLabel} ${year}`;
 }
 
-export function formatSurfEventDateRange(startsAt, endsAt) {
+export function formatSurfEventDateRange(startsAt, endsAt, timeZone = null) {
   try {
     const start = new Date(startsAt);
     if (Number.isNaN(start.getTime())) return startsAt;
 
-    const startLabel = formatEventDateOnly(start);
+    const formatDate = timeZone
+      ? (date) => formatEventDateOnlyInTimeZone(date, timeZone)
+      : formatEventDateOnlyUtc;
+    const sameDay = timeZone
+      ? (a, b) => isSameCalendarDayInTimeZone(a, b, timeZone)
+      : isSameCalendarDayUtc;
+
+    const startLabel = formatDate(start);
     if (!endsAt) return startLabel;
 
     const end = new Date(endsAt);
     if (Number.isNaN(end.getTime())) return startLabel;
-    if (isSameCalendarDay(start, end)) return startLabel;
+    if (sameDay(start, end)) return startLabel;
 
-    return `${startLabel} – ${formatEventDateOnly(end)}`;
+    return `${startLabel} – ${formatDate(end)}`;
   } catch {
     return startsAt;
+  }
+}
+
+export function formatSurfEventTimeRange(scheduleType, startsAt, endsAt, timeZone = null) {
+  if (scheduleType !== "exact_datetime" || !startsAt) return null;
+  try {
+    const start = new Date(startsAt);
+    if (Number.isNaN(start.getTime())) return null;
+    const zone = resolveEventTimezone(timeZone);
+    const pad = (n) => String(n).padStart(2, "0");
+    const startParts = formatDateInTimeZone(start, zone);
+    const startTime = `${pad(startParts.hour)}:${pad(startParts.minute)}`;
+    if (!endsAt) return startTime;
+    const end = new Date(endsAt);
+    if (Number.isNaN(end.getTime())) return startTime;
+    const endParts = formatDateInTimeZone(end, zone);
+    const endTime = `${pad(endParts.hour)}:${pad(endParts.minute)}`;
+    if (startTime === endTime && isSameCalendarDayInTimeZone(start, end, zone)) {
+      return startTime;
+    }
+    return `${startTime} – ${endTime}`;
+  } catch {
+    return null;
   }
 }
 
@@ -75,6 +118,7 @@ export function formatSurfEventSchedule(
   endsAt,
   eventYear,
   eventMonth = null,
+  timeZone = null,
 ) {
   if (scheduleType === "year" && eventYear != null) {
     return String(eventYear);
@@ -88,6 +132,10 @@ export function formatSurfEventSchedule(
     return "Date TBD";
   }
 
+  if (scheduleType === "exact_datetime") {
+    return formatSurfEventDateRange(startsAt, endsAt, resolveEventTimezone(timeZone));
+  }
+
   return formatSurfEventDateRange(startsAt, endsAt);
 }
 
@@ -97,6 +145,7 @@ export function isSurfEventLiveNow(
   endsAt,
   eventYear = null,
   eventMonth = null,
+  timeZone = null,
 ) {
   if (scheduleType === "month_year" && eventYear != null && eventMonth != null) {
     const now = new Date();
@@ -111,7 +160,10 @@ export function isSurfEventLiveNow(
     const startMs = start.getTime();
 
     if (!endsAt) {
-      return nowMs >= startMs && isSameCalendarDay(new Date(), start);
+      return (
+        nowMs >= startMs &&
+        isSameCalendarDayInTimeZone(new Date(), start, resolveEventTimezone(timeZone))
+      );
     }
 
     const end = new Date(endsAt);
@@ -299,13 +351,35 @@ export function getSurfEventExactCalendarDayKeys(event) {
   const start = new Date(event.startsAt);
   if (Number.isNaN(start.getTime())) return [];
 
-  const startDay = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+  if (event.scheduleType === "exact_datetime") {
+    const zone = resolveEventTimezone(event.timezone);
+    const startParts = formatDateInTimeZone(start, zone);
+    let endParts = startParts;
+    if (event.endsAt) {
+      const end = new Date(event.endsAt);
+      if (!Number.isNaN(end.getTime())) {
+        endParts = formatDateInTimeZone(end, zone);
+      }
+    }
+    const startKeyMs = Date.UTC(startParts.year, startParts.month - 1, startParts.day);
+    const endKeyMs = Date.UTC(endParts.year, endParts.month - 1, endParts.day);
+    const rangeStart = Math.min(startKeyMs, endKeyMs);
+    const rangeEnd = Math.max(startKeyMs, endKeyMs);
+    const keys = [];
+    for (let cursor = rangeStart; cursor <= rangeEnd; cursor += 24 * 60 * 60 * 1000) {
+      const day = new Date(cursor);
+      keys.push(formatCalendarDayKey(day.getUTCFullYear(), day.getUTCMonth() + 1, day.getUTCDate()));
+    }
+    return keys;
+  }
+
+  const startDay = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate()));
   let endDay = startDay;
 
   if (event.endsAt) {
     const end = new Date(event.endsAt);
     if (!Number.isNaN(end.getTime())) {
-      endDay = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+      endDay = new Date(Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate()));
     }
   }
 
@@ -315,8 +389,8 @@ export function getSurfEventExactCalendarDayKeys(event) {
   const keys = [];
   const cursor = new Date(rangeStart);
   while (cursor.getTime() <= rangeEnd.getTime()) {
-    keys.push(formatCalendarDayKey(cursor.getFullYear(), cursor.getMonth() + 1, cursor.getDate()));
-    cursor.setDate(cursor.getDate() + 1);
+    keys.push(formatCalendarDayKey(cursor.getUTCFullYear(), cursor.getUTCMonth() + 1, cursor.getUTCDate()));
+    cursor.setUTCDate(cursor.getUTCDate() + 1);
   }
 
   return keys;
@@ -538,6 +612,7 @@ export function mapEventRow(row) {
     scheduleType: row.schedule_type ?? "exact",
     startsAt: row.starts_at ?? null,
     endsAt: row.ends_at ?? null,
+    timezone: resolveEventTimezone(row.timezone),
     eventYear: row.event_year ?? null,
     eventMonth: row.event_month ?? null,
     locationName: row.location_name ?? "",

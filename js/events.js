@@ -987,6 +987,7 @@ function buildPopupHtml(event) {
     event.endsAt,
     event.eventYear,
     event.eventMonth,
+    event.timezone,
   );
   const locationLabel = formatEventLocationLabel(event.locationName, event.countryCode);
   const link = hasWebsite(event.websiteUrl)
@@ -1054,6 +1055,7 @@ function addMapMarker(event) {
     event.endsAt,
     event.eventYear,
     event.eventMonth,
+    event.timezone,
   );
 
   const metrics = getEventMapMarkerMetrics();

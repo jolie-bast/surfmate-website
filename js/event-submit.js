@@ -1,10 +1,13 @@
 import {
   SURF_EVENT_TYPES,
   SURF_EVENT_TYPE_LABELS,
+  DEFAULT_EVENT_TIMEZONE,
   buildExactDatetimeIso,
+  buildTimezoneSelectOptionsHtml,
   composeEventDateIso,
   isEventDateOnOrAfterToday,
   parseEventDateLocalValue,
+  resolveEventTimezone,
   validateCommunityEventSubmissionInput,
 } from "./community-event-shared.js";
 import { createEventSubmitCardPreview } from "./event-submit-card-preview.js";
@@ -80,6 +83,7 @@ const els = {
   scheduleAllDay: document.getElementById("schedule-all-day"),
   scheduleWithTime: document.getElementById("schedule-with-time"),
   datetimeFields: document.getElementById("datetime-fields"),
+  eventTimezone: document.getElementById("event-timezone"),
   schedulePreview: document.getElementById("schedule-preview"),
   startDate: document.getElementById("start-date"),
   endDate: document.getElementById("end-date"),
@@ -795,6 +799,20 @@ function getScheduleType() {
   return els.scheduleWithTime?.checked ? "exact_datetime" : "exact";
 }
 
+
+function getSelectedTimezone() {
+  return resolveEventTimezone(els.eventTimezone?.value || DEFAULT_EVENT_TIMEZONE);
+}
+
+function initTimezoneSelect() {
+  if (!els.eventTimezone) return;
+  if (!els.eventTimezone.options.length) {
+    els.eventTimezone.innerHTML = buildTimezoneSelectOptionsHtml(DEFAULT_EVENT_TIMEZONE);
+  }
+  els.eventTimezone.value = DEFAULT_EVENT_TIMEZONE;
+}
+
+
 function getDateSegments(container) {
   if (!container) {
     return { day: null, month: null, year: null, row: null };
@@ -1329,7 +1347,8 @@ function buildSchedulePreviewModel() {
     endTimeOnEndBlock: showEndBlock && Boolean(endTime),
     sameCalendarDay: !hasEndDate || sameCalendarDay,
     allDay: !withTime,
-    meta,
+    timezoneLabel: withTime ? getSelectedTimezone() : null,
+    meta: withTime && meta ? `${meta} (${getSelectedTimezone()})` : meta,
   };
 }
 
@@ -1450,7 +1469,7 @@ function buildStartsAtIso(options = {}) {
   const startTime = readTimeFromContainer(els.startTime);
   if (!startTime) return null;
 
-  return buildExactDatetimeIso(startDate, startTime);
+  return buildExactDatetimeIso(startDate, startTime, getSelectedTimezone());
 }
 
 function buildEndsAtIso(options = {}) {
@@ -1467,7 +1486,7 @@ function buildEndsAtIso(options = {}) {
     }
     const endTime = readTimeFromContainer(els.endTime);
     if (scheduleType === "exact_datetime" && endTime && startDate) {
-      return buildExactDatetimeIso(startDate, endTime);
+      return buildExactDatetimeIso(startDate, endTime, getSelectedTimezone());
     }
     return null;
   }
@@ -1480,7 +1499,7 @@ function buildEndsAtIso(options = {}) {
     prepareOptionalEndTimeContainer(els.endTime);
   }
   const endTime = readTimeFromContainer(els.endTime);
-  return buildExactDatetimeIso(endDate, endTime || "23:59");
+  return buildExactDatetimeIso(endDate, endTime || "23:59", getSelectedTimezone());
 }
 
 function getSelectedEventTypes() {
@@ -1810,6 +1829,7 @@ async function handleFinalSubmit() {
     p_submitter_email: input.submitterEmail.trim(),
     p_submitter_note: input.submitterNote?.trim() || null,
     p_description: input.description?.trim() || null,
+    p_timezone: getSelectedTimezone(),
   });
 
   els.submitBtn.disabled = false;
@@ -1881,6 +1901,10 @@ function bindEvents() {
   els.scheduleAllDay?.addEventListener("change", updateDatetimeVisibility);
   els.scheduleWithTime?.addEventListener("change", updateDatetimeVisibility);
 
+  els.eventTimezone?.addEventListener("change", () => {
+    updateSchedulePreview();
+  });
+
   bindDateSegments(els.startDate);
   bindDateSegments(els.endDate);
   bindTimeSegments(els.startTime);
@@ -1922,6 +1946,7 @@ function init() {
   refreshWizardElements();
 
   renderEventTypeChips();
+  initTimezoneSelect();
   updateDatetimeVisibility();
   bindEvents();
   showForm();
