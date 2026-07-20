@@ -173,6 +173,9 @@ async function initHomeUpcomingEvents() {
     if (els.empty) els.empty.hidden = true;
   } finally {
     setLoading(false);
+    if (typeof window.syncStoryJourney === "function") {
+      requestAnimationFrame(() => window.syncStoryJourney());
+    }
   }
 }
 

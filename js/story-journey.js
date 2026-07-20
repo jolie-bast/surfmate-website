@@ -58,8 +58,7 @@ function getStoryScrollProgress() {
   const scrollable = track.offsetHeight - window.innerHeight;
   if (scrollable <= 0) return 0;
 
-  const pinStartY = root.getBoundingClientRect().top + window.scrollY;
-  return Math.min(1, Math.max(0, (window.scrollY - pinStartY) / scrollable));
+  return Math.min(1, Math.max(0, -track.getBoundingClientRect().top / scrollable));
 }
 
 function isHomeDownloadBannerEligible() {
@@ -106,20 +105,21 @@ function initHomeDownloadBannerFallbackObserver(storyRoot) {
   const banner = getHomeDownloadBanner();
   if (!banner || banner.classList.contains("is-visible")) return;
 
-  const lastScene = storyRoot?.querySelector(".story-scene--yours");
-  if (!lastScene) return;
+  const track = storyRoot?.querySelector(".story-scroll-track");
+  if (!track) return;
 
   const observer = new IntersectionObserver(
     (entries) => {
-      if (entries.some((entry) => entry.isIntersecting && entry.intersectionRatio >= 0.45)) {
-        showHomeDownloadBanner();
-        observer.disconnect();
-      }
+      const entry = entries[0];
+      if (!entry?.isIntersecting) return;
+      if (getStoryScrollProgress() < STORY_COMPLETE_SCROLL_PROGRESS) return;
+      showHomeDownloadBanner();
+      observer.disconnect();
     },
-    { threshold: [0.45, 0.65] },
+    { threshold: [0, 0.05], rootMargin: "0px 0px -35% 0px" },
   );
 
-  observer.observe(lastScene);
+  observer.observe(track);
 }
 
 class StoryJourney {
@@ -135,7 +135,6 @@ class StoryJourney {
     this.waveTime = 0;
     this.waveFrame = null;
     this.ticking = false;
-    this.pinStartY = 0;
     this.scrollableDistance = 1;
     this.intersectionObserver = null;
 
@@ -151,12 +150,17 @@ class StoryJourney {
     this.animateWave = this.animateWave.bind(this);
     this.measureLayout = this.measureLayout.bind(this);
 
+    this.onResize = () => {
+      this.measureLayout();
+      this.onScroll();
+    };
+
     window.addEventListener("scroll", this.onScroll, { passive: true });
-    window.addEventListener("resize", this.measureLayout, { passive: true });
+    window.addEventListener("resize", this.onResize, { passive: true });
     window.addEventListener("pageshow", this.onScroll);
-    window.addEventListener("load", this.measureLayout);
+    window.addEventListener("load", this.onResize);
     if (window.visualViewport) {
-      window.visualViewport.addEventListener("resize", this.measureLayout);
+      window.visualViewport.addEventListener("resize", this.onResize);
       window.visualViewport.addEventListener("scroll", this.onScroll);
     }
     if ("onscrollend" in window) {
@@ -182,7 +186,6 @@ class StoryJourney {
   measureLayout() {
     if (!this.root || !this.track) return;
 
-    this.pinStartY = this.root.getBoundingClientRect().top + window.scrollY;
     this.scrollableDistance = Math.max(
       1,
       this.track.offsetHeight - window.innerHeight,
@@ -194,7 +197,12 @@ class StoryJourney {
   }
 
   getScrollProgress() {
-    return this.clamp((window.scrollY - this.pinStartY) / this.scrollableDistance);
+    if (!this.track) return 0;
+
+    const scrollable =
+      this.scrollableDistance ||
+      Math.max(1, this.track.offsetHeight - window.innerHeight);
+    return this.clamp(-this.track.getBoundingClientRect().top / scrollable);
   }
 
   mapRange(p, start, end) {
@@ -217,14 +225,14 @@ class StoryJourney {
   }
 
   animateDream(scene, p) {
-    const ocean = this.mapRange(p, 0.04, 0.5);
-    const wave = this.mapRange(p, 0.42, 0.82);
+    const ocean = this.mapRange(p, 0.02, 0.42);
+    const wave = this.mapRange(p, 0.32, 0.75);
 
     scene.style.setProperty("--ocean", ocean);
     scene.style.setProperty("--wave", wave);
 
     this.setVisible(scene.querySelector('[data-story-line="dream-1"]'), p >= 0);
-    this.setVisible(scene.querySelector('[data-story-line="dream-2"]'), p > 0.28);
+    this.setVisible(scene.querySelector('[data-story-line="dream-2"]'), p > 0.12);
   }
 
   animateFirstSurf(scene, p) {
@@ -232,6 +240,8 @@ class StoryJourney {
     this.setVisible(scene.querySelector('[data-story-line="first-1"]'), p > 0.22);
 
     const tattoo = scene.querySelector(".story-tattoo");
+    if (!tattoo) return;
+
     if (p > 0.45) {
       tattoo.classList.add("is-visible");
       tattoo.classList.toggle("is-drawn", p > 0.55);
@@ -348,8 +358,11 @@ class StoryJourney {
     if (this.ticking) return;
     this.ticking = true;
     requestAnimationFrame(() => {
-      this.update();
-      this.ticking = false;
+      try {
+        this.update();
+      } finally {
+        this.ticking = false;
+      }
     });
   }
 
