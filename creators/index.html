@@ -80,12 +80,48 @@
         </div>
       </section>
 
-      <section class="creators-section" aria-labelledby="creators-what-title">
+      <section class="creators-section" aria-labelledby="creators-founder-title">
         <div class="creators-wrap">
-          <h2 id="creators-what-title" class="creators-section-title">What is Surfmate?</h2>
-          <p class="creators-section-lead">
-            Surfmate is the social platform for surfers. Log your sessions, discover surf events, find surfers around you, and build your surf community — all in one place.
-          </p>
+          <article class="creators-founder">
+            <div class="creators-founder-media">
+              <img
+                src="/assets/founder-shooting/surfmate-jolie-surf-portrait.avif"
+                alt="Jolie Bast"
+                class="creators-founder-photo"
+                width="800"
+                height="1000"
+              />
+              <a
+                href="https://giuliamuskatphoto.wixsite.com/photography"
+                class="creators-photo-credit"
+                target="_blank"
+                rel="noopener noreferrer"
+                >@ Giulia Muskat</a
+              >
+            </div>
+            <div class="creators-founder-copy">
+              <p class="creators-kicker">Founder &amp; Creator</p>
+              <h2 id="creators-founder-title" class="creators-section-title">Jolie Bast</h2>
+              <p class="creators-founder-role">I built Surfmate because I didn't want surfers to feel alone in the lineup — or after the session.</p>
+              <p>
+                The vision is simple: nobody should have to surf alone if they don't want to. Surfmate exists so you can log your journey, find people nearby, show up at events, and stay connected to a real surf community.
+              </p>
+              <p>
+                Creators help make that happen. Not as ads. As surfers who actually live it — and invite others in.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="creators-section creators-section--alt" aria-labelledby="creators-what-title">
+        <div class="creators-wrap creators-wrap--narrow">
+          <header class="creators-header">
+            <h2 id="creators-what-title" class="creators-section-title">What is Surfmate?</h2>
+            <p class="creators-section-lead">
+              Surfmate is the social platform for surfers. Log your sessions, discover surf events, find surfers around you, and build your surf community — all in one place.
+            </p>
+          </header>
           <ul class="creators-feature-grid">
             <li>
               <span aria-hidden="true">🌊</span>
@@ -107,36 +143,87 @@
         </div>
       </section>
 
-      <section class="creators-section creators-section--alt" aria-labelledby="creators-role-title">
-        <div class="creators-wrap">
-          <h2 id="creators-role-title" class="creators-section-title">What does a Surfmate Creator do?</h2>
-          <p class="creators-section-lead">
-            You don't need to become a full-time influencer. We simply want you to use Surfmate as part of your normal surf life and share your experience with your community.
-          </p>
-          <ol class="creators-role-list">
-            <li>
-              <h3>Use Surfmate</h3>
-              <p>Download the app and start logging your sessions.</p>
-            </li>
-            <li>
-              <h3>Share your experience</h3>
-              <p>Show your community how you actually use Surfmate.</p>
-            </li>
-            <li>
-              <h3>Bring surfers together</h3>
-              <p>Share your personal Creator Link with surfers who might love Surfmate too.</p>
-            </li>
-            <li>
-              <h3>Get rewarded</h3>
-              <p>Earn a performance bonus for every new surfer you bring to Surfmate who logs their first session.</p>
-            </li>
-          </ol>
+      <section class="creators-section" aria-labelledby="creators-role-title">
+        <div class="creators-wrap creators-wrap--narrow">
+          <header class="creators-header">
+            <h2 id="creators-role-title" class="creators-section-title">What does a Surfmate Creator do?</h2>
+            <p class="creators-section-lead">
+              You don't need to become a full-time influencer. We simply want you to use Surfmate as part of your normal surf life and share your experience with your community.
+            </p>
+          </header>
+
+          <div class="creators-wizard" data-creators-wizard>
+            <ol class="creators-wizard-map" aria-label="Creator steps">
+              <li>
+                <button type="button" class="creators-wizard-dot is-active" data-wizard-goto="1" aria-current="step">
+                  1
+                  <span class="creators-wizard-dot-label">Use</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="creators-wizard-dot" data-wizard-goto="2">
+                  2
+                  <span class="creators-wizard-dot-label">Share</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="creators-wizard-dot" data-wizard-goto="3">
+                  3
+                  <span class="creators-wizard-dot-label">Invite</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="creators-wizard-dot" data-wizard-goto="4">
+                  4
+                  <span class="creators-wizard-dot-label">Earn</span>
+                </button>
+              </li>
+            </ol>
+
+            <div class="creators-wizard-card">
+              <p class="creators-wizard-kicker" data-wizard-kicker>Step 1 of 4</p>
+
+              <section class="creators-wizard-panel is-active" data-wizard-step="1">
+                <h3>Use Surfmate</h3>
+                <p>Download the app and start logging your sessions.</p>
+              </section>
+              <section class="creators-wizard-panel" data-wizard-step="2" hidden>
+                <h3>Share your experience</h3>
+                <p>Show your community how you actually use Surfmate.</p>
+              </section>
+              <section class="creators-wizard-panel" data-wizard-step="3" hidden>
+                <h3>Bring surfers together</h3>
+                <p>Share your personal Creator Link with surfers who might love Surfmate too.</p>
+              </section>
+              <section class="creators-wizard-panel" data-wizard-step="4" hidden>
+                <h3>Get rewarded</h3>
+                <p>Earn a performance bonus for every new surfer you bring to Surfmate who logs their first session.</p>
+              </section>
+
+              <div class="creators-wizard-nav">
+                <button type="button" class="creators-wizard-back" data-wizard-back hidden>
+                  Back
+                </button>
+                <button type="button" class="creators-button creators-wizard-next" data-wizard-next>
+                  Next
+                </button>
+                <a class="creators-button creators-wizard-apply" href="#apply" data-wizard-apply hidden>
+                  Apply to become a Creator
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section class="creators-section" aria-labelledby="creators-journey-title">
-        <div class="creators-wrap">
-          <h2 id="creators-journey-title" class="creators-section-title">Your Creator Journey</h2>
+      <section class="creators-section creators-section--alt" aria-labelledby="creators-journey-title">
+        <div class="creators-wrap creators-wrap--narrow">
+          <header class="creators-header">
+            <h2 id="creators-journey-title" class="creators-section-title">Your Creator Journey</h2>
+            <p class="creators-section-lead">
+              A simple path: use the app, share it naturally, invite surfers, and get rewarded when they start logging sessions.
+            </p>
+          </header>
           <ol class="creators-steps">
             <li>
               <p class="creators-step-label">Step 01</p>
@@ -167,9 +254,15 @@
         </div>
       </section>
 
-      <section class="creators-section creators-section--alt" aria-labelledby="creators-share-title">
-        <div class="creators-wrap">
-          <h2 id="creators-share-title" class="creators-section-title">What can you share?</h2>
+      <section class="creators-section" aria-labelledby="creators-share-title">
+        <div class="creators-wrap creators-wrap--narrow">
+          <header class="creators-header">
+            <p class="creators-kicker">Content</p>
+            <h2 id="creators-share-title" class="creators-section-title">What can you share?</h2>
+            <p class="creators-section-lead">
+              Examples, not a script. Show Surfmate the way it already shows up in your surf life.
+            </p>
+          </header>
           <ul class="creators-share-grid">
             <li>
               <h3>Your actual session</h3>
@@ -191,6 +284,12 @@
               <h3>Your recommendation</h3>
               <p>“If you're a surfer, you should check out Surfmate.”</p>
             </li>
+            <li class="creators-share-highlight">
+              <h3>Your community</h3>
+              <p>
+                Bring your own community to Surfmate. Become part of connecting surfers worldwide.
+              </p>
+            </li>
           </ul>
           <p class="creators-natural">
             Keep it natural. We don't want ads or influencer speak — just your real surf life.
@@ -199,17 +298,90 @@
       </section>
 
       <section class="creators-apply" id="apply" aria-labelledby="creators-apply-title">
-        <div class="creators-wrap creators-apply-inner">
+        <div class="creators-wrap creators-wrap--narrow creators-apply-inner">
           <h2 id="creators-apply-title" class="creators-section-title">Ready to join?</h2>
           <p class="creators-section-lead">
             If you already use Surfmate and want to share it with your surf community, we'd love to hear from you.
           </p>
-          <a
-            class="creators-button"
-            href="mailto:jolie@surfmate.eu?subject=Apply%20to%20become%20a%20Surfmate%20Creator"
-          >
-            Apply to become a Creator
-          </a>
+          <form class="creators-apply-form" data-creators-apply novalidate>
+            <div class="creators-form-field">
+              <label for="creator-name">Name</label>
+              <input
+                id="creator-name"
+                name="name"
+                type="text"
+                required
+                autocomplete="name"
+                placeholder="Your name"
+              />
+            </div>
+
+            <div class="creators-form-field">
+              <label for="creator-email">Email</label>
+              <input
+                id="creator-email"
+                name="email"
+                type="email"
+                required
+                autocomplete="email"
+                placeholder="you@email.com"
+              />
+            </div>
+
+            <fieldset class="creators-platforms">
+              <legend>Where do you want to create?</legend>
+              <p class="creators-form-hint">
+                Pick Instagram, TikTok, or both. At least one is required.
+              </p>
+              <div class="creators-platform-picks">
+                <label class="creators-platform-pick">
+                  <input type="checkbox" name="platform" value="instagram" />
+                  <span>Instagram</span>
+                </label>
+                <label class="creators-platform-pick">
+                  <input type="checkbox" name="platform" value="tiktok" />
+                  <span>TikTok</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <div class="creators-form-field" data-platform-field="instagram" hidden>
+              <label for="creator-instagram">Instagram username</label>
+              <input
+                id="creator-instagram"
+                name="instagram"
+                type="text"
+                autocomplete="username"
+                placeholder="@yourname"
+              />
+            </div>
+
+            <div class="creators-form-field" data-platform-field="tiktok" hidden>
+              <label for="creator-tiktok">TikTok username</label>
+              <input
+                id="creator-tiktok"
+                name="tiktok"
+                type="text"
+                autocomplete="username"
+                placeholder="@yourname"
+              />
+            </div>
+
+            <div class="creators-form-field">
+              <label for="creator-surfmate">Surfmate username</label>
+              <input
+                id="creator-surfmate"
+                name="surfmate"
+                type="text"
+                required
+                autocomplete="username"
+                placeholder="Your Surfmate username"
+              />
+            </div>
+
+            <p class="creators-form-error" data-apply-error hidden role="alert"></p>
+            <button type="submit" class="creators-button">Apply to become a Creator</button>
+          </form>
         </div>
       </section>
     </main>
@@ -218,5 +390,6 @@
 
     <script src="/js/includes.js"></script>
     <script src="/js/navigation.js"></script>
+    <script src="/js/creators.js" defer></script>
   </body>
 </html>
