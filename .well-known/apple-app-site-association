@@ -1,0 +1,12 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["8UZSBWQ73N.com.joliebast.surfmate"],
+        "components": [
+          { "/": "/c/*", "comment": "Creator referral links" }
+        ]
+      }
+    ]
+  }
+}

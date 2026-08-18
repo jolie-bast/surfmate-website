@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.joliebast.surfmateapp",
+      "sha256_cert_fingerprints": [
+        "33:F7:31:29:72:34:3F:44:63:E8:1B:EF:3A:FA:E8:65:46:50:6E:08:F9:C8:D9:D0:49:EA:44:DB:68:47:70:F8"
+      ]
+    }
+  }
+]
