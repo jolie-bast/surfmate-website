@@ -50,13 +50,17 @@
     });
   });
 
-  back.addEventListener("click", function () {
-    goTo(current - 1);
-  });
+  if (back) {
+    back.addEventListener("click", function () {
+      goTo(current - 1);
+    });
+  }
 
-  next.addEventListener("click", function () {
-    goTo(current + 1);
-  });
+  if (next) {
+    next.addEventListener("click", function () {
+      goTo(current + 1);
+    });
+  }
 
   goTo(1);
 })();
@@ -83,10 +87,12 @@
   }
 
   function syncPlatformFields() {
-    var selected = selectedPlatforms();
-    form.querySelectorAll("[data-platform-field]").forEach(function (field) {
-      var platform = field.getAttribute("data-platform-field");
-      var isSelected = selected.indexOf(platform) !== -1;
+    form.querySelectorAll(".creators-platform-pick").forEach(function (pick) {
+      var checkbox = pick.querySelector('input[name="platform"]');
+      var field = pick.querySelector("[data-platform-field]");
+      var isSelected = Boolean(checkbox && checkbox.checked);
+      pick.classList.toggle("is-open", isSelected);
+      if (!field) return;
       field.hidden = !isSelected;
       var input = field.querySelector("input");
       if (input && !isSelected) {
@@ -105,6 +111,10 @@
     input.addEventListener("change", function () {
       syncPlatformFields();
       showError("");
+      if (!input.checked) return;
+      var field = form.querySelector('[data-platform-field="' + input.value + '"]');
+      var username = field && field.querySelector("input");
+      if (username) username.focus();
     });
   });
 
