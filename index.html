@@ -4,8 +4,13 @@
     <link rel="stylesheet" href="./css/consent.css" />
     <script>
       (function () {
+        var SKIP_KEY = "surfmate_skip_store_redirect";
         var params = new URLSearchParams(window.location.search);
         if (params.has("web")) return;
+
+        try {
+          if (sessionStorage.getItem(SKIP_KEY) === "1") return;
+        } catch (error) {}
 
         try {
           if (document.referrer) {
@@ -24,15 +29,15 @@
         var isIOS =
           /iPhone|iPad|iPod/i.test(ua) ||
           (platform === "MacIntel" && maxTouchPoints > 1);
+        var isAndroid = /Android/i.test(ua);
 
-        if (isIOS) {
-          window.location.replace(APP_STORE_URL);
-          return;
-        }
+        if (!isIOS && !isAndroid) return;
 
-        if (/Android/i.test(ua)) {
-          window.location.replace(PLAY_STORE_URL);
-        }
+        try {
+          sessionStorage.setItem(SKIP_KEY, "1");
+        } catch (error) {}
+
+        window.location.href = isIOS ? APP_STORE_URL : PLAY_STORE_URL;
       })();
     </script>
     <script
