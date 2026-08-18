@@ -6,12 +6,19 @@
     "https://apps.apple.com/de/app/surfmate-surf-log-connect/id6760191082";
   var PLAY_STORE_URL =
     "https://play.google.com/store/apps/details?id=com.joliebast.surfmateapp&pcampaignid=web_share";
+  var APP_SCHEME = "surfmate://";
+  var SUBLINE =
+    "Join the surf community. Log sessions, find spots, and meet surfers nearby.";
+  var LOGO_SRC = "/assets/logo-surfmate-schriftzug.svg";
 
   var els = {
     title: document.getElementById("creator-referral-title"),
     copy: document.getElementById("creator-referral-copy"),
+    avatar: document.getElementById("creator-referral-avatar"),
+    avatarImg: document.getElementById("creator-referral-avatar-img"),
     cta: document.getElementById("creator-referral-cta"),
     primary: document.getElementById("creator-referral-primary"),
+    secondary: document.getElementById("creator-referral-secondary"),
     badges: document.getElementById("creator-referral-badges"),
     note: document.getElementById("creator-referral-note"),
   };
@@ -50,136 +57,205 @@
     return "desktop";
   }
 
-  function getSlugFromLocation() {
+  function getRawSlugFromLocation() {
     var url = new URL(window.location.href);
     var querySlug = url.searchParams.get("slug");
-
-    if (querySlug) {
-      return sanitizeSlug(querySlug);
-    }
+    if (querySlug) return querySlug;
 
     var segments = window.location.pathname.split("/").filter(Boolean);
     var cIndex = segments.indexOf("c");
     if (cIndex === -1) return "";
-    return sanitizeSlug(segments[cIndex + 1] || "");
+    return segments[cIndex + 1] || "";
   }
 
-  function sanitizeSlug(value) {
-    return String(value || "")
+  function parseCreatorSlug(value) {
+    var slug = String(value || "")
       .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9_-]/g, "");
+      .toLowerCase();
+    if (!/^[a-z0-9-]{2,30}$/.test(slug)) return "";
+    return slug;
+  }
+
+  function unwrapRpcData(data) {
+    if (Array.isArray(data)) return data[0] || null;
+    return data || null;
   }
 
   function storeSlug(slug) {
     try {
       window.localStorage.setItem("surfmate_creator_slug", slug);
-    } catch (error) {
-      // Ignore storage failures in private browsing or hardened browsers.
+    } catch (error) {}
+
+    try {
+      document.cookie =
+        "surfmate_creator=" +
+        encodeURIComponent(slug) +
+        "; max-age=86400; path=/; secure; samesite=lax";
+    } catch (error) {}
+  }
+
+  function setHidden(element, hidden) {
+    if (!element) return;
+    element.hidden = hidden;
+  }
+
+  function showLogoFallback() {
+    if (!els.avatarImg || !els.avatar) return;
+    els.avatarImg.src = LOGO_SRC;
+    els.avatarImg.alt = "Surfmate";
+    els.avatar.classList.add("is-logo");
+    setHidden(els.avatar, false);
+  }
+
+  function showAvatar(url) {
+    if (!els.avatarImg || !els.avatar) {
+      return;
     }
-  }
 
-  function extractDisplayName(data, slug) {
-    if (!data || typeof data !== "object") {
-      return formatSlug(slug);
+    if (!url) {
+      showLogoFallback();
+      return;
     }
 
-    return (
-      data.display_name ||
-      data.creator_display_name ||
-      data.creator_name ||
-      (data.creator && data.creator.display_name) ||
-      formatSlug(slug)
-    );
-  }
-
-  function formatSlug(slug) {
-    return String(slug || "A Surfmate creator")
-      .replace(/[-_]+/g, " ")
-      .replace(/\b\w/g, function (char) {
-        return char.toUpperCase();
-      });
-  }
-
-  function setPrimaryCta(href, label) {
-    els.primary.href = href;
-    els.primary.textContent = label;
-    els.cta.hidden = false;
-  }
-
-  function showBadges(show) {
-    els.badges.hidden = !show;
+    els.avatar.classList.remove("is-logo");
+    els.avatarImg.alt = "";
+    els.avatarImg.onerror = showLogoFallback;
+    els.avatarImg.src = url;
+    setHidden(els.avatar, false);
   }
 
   function renderInvalid() {
     document.title = "Invite not found - Surfmate";
+    showLogoFallback();
     els.title.textContent = "This Surfmate invite was not found";
     els.copy.textContent =
-      "The creator link may be outdated or incorrect. You can still explore Surfmate and download the app below.";
-    setPrimaryCta("/", "Go to Surfmate");
-    showBadges(true);
-    els.note.textContent =
-      "If you expected a creator invite, ask them to send you a fresh link.";
+      "The link may be outdated or incorrect. You can still download Surfmate below.";
+    els.primary.href = "/";
+    els.primary.textContent = "Go to Surfmate";
+    setHidden(els.cta, false);
+    setHidden(els.secondary, true);
+    setHidden(els.badges, false);
+    if (els.note) {
+      els.note.textContent =
+        "If you expected a creator invite, ask them to send you a fresh link.";
+    }
   }
 
-  function renderCreatorInvite(displayName, platform) {
+  function renderCreatorInvite(creator, platform) {
+    var displayName = creator.display_name || creator.username || "A Surfmate creator";
     document.title = displayName + " invited you to Surfmate";
     els.title.textContent = displayName + " invited you to Surfmate";
+    els.copy.textContent = SUBLINE;
+    showAvatar(creator.avatar_url || null);
+
+    els.primary.textContent = "Download Surfmate";
+    if (els.secondary) {
+      els.secondary.href = APP_SCHEME;
+    }
 
     if (platform === "ios") {
-      els.copy.textContent =
-        "Download Surfmate on your iPhone or iPad and join the community through this creator invite.";
-      setPrimaryCta(APP_STORE_URL, "Download on the App Store");
-      showBadges(false);
+      els.primary.href = APP_STORE_URL;
+      setHidden(els.cta, false);
+      setHidden(els.secondary, false);
+      setHidden(els.badges, true);
+      if (els.note) {
+        els.note.textContent =
+          "If Surfmate is already installed, your phone may open the app directly.";
+      }
       return;
     }
 
     if (platform === "android") {
-      els.copy.textContent =
-        "Download Surfmate on Android and join the community through this creator invite.";
-      setPrimaryCta(PLAY_STORE_URL, "Get it on Google Play");
-      showBadges(false);
+      els.primary.href = PLAY_STORE_URL;
+      setHidden(els.cta, false);
+      setHidden(els.secondary, false);
+      setHidden(els.badges, true);
+      if (els.note) {
+        els.note.textContent =
+          "If Surfmate is already installed, your phone may open the app directly.";
+      }
       return;
     }
 
-    els.copy.textContent =
-      "You are on desktop right now. Download Surfmate on your phone using the badges below to continue with this creator invite.";
-    setPrimaryCta("/", "Explore Surfmate");
-    showBadges(true);
+    els.primary.href = APP_STORE_URL;
+    setHidden(els.cta, true);
+    setHidden(els.secondary, true);
+    setHidden(els.badges, false);
+    if (els.note) {
+      els.note.textContent = "Download Surfmate on your phone to continue.";
+    }
+  }
+
+  async function fetchCreatorLanding(client, slug, platform) {
+    var result = await client.rpc("get_public_creator_landing", {
+      p_slug: slug,
+      p_platform_hint: platform,
+      p_landing_context: document.referrer || null,
+    });
+
+    if (!result.error) {
+      return unwrapRpcData(result.data);
+    }
+
+    var message = String((result.error && result.error.message) || "");
+    var missingLandingRpc = /get_public_creator_landing|could not find the function/i.test(
+      message
+    );
+
+    if (!missingLandingRpc) {
+      throw result.error;
+    }
+
+    var fallback = await client.rpc("record_creator_link_click", {
+      p_slug: slug,
+      p_platform_hint: platform,
+      p_landing_context: document.referrer || null,
+    });
+
+    if (fallback.error) {
+      throw fallback.error;
+    }
+
+    var fallbackData = unwrapRpcData(fallback.data);
+    if (!fallbackData || fallbackData.recorded === false) {
+      return { found: false };
+    }
+
+    return {
+      found: true,
+      slug: slug,
+      username: fallbackData.username || slug,
+      display_name:
+        fallbackData.display_name ||
+        fallbackData.creator_display_name ||
+        fallbackData.creator_name ||
+        null,
+      avatar_url: fallbackData.avatar_url || null,
+    };
   }
 
   async function init() {
-    var slug = getSlugFromLocation();
+    var slug = parseCreatorSlug(getRawSlugFromLocation());
 
     if (!slug) {
       renderInvalid();
       return;
     }
 
-    storeSlug(slug);
-
     try {
       var client = await getSupabase();
       var platform = detectPlatform();
-      var result = await client.rpc("record_creator_link_click", {
-        p_slug: slug,
-        p_platform_hint: platform,
-        p_landing_context: document.referrer || null,
-      });
+      var data = await fetchCreatorLanding(client, slug, platform);
 
-      if (result.error) {
-        throw result.error;
-      }
-
-      var data = result.data;
-      if (!data || data.recorded === false) {
+      if (!data || data.found === false) {
         renderInvalid();
         return;
       }
 
-      renderCreatorInvite(extractDisplayName(data, slug), platform);
+      storeSlug(data.slug || slug);
+      renderCreatorInvite(data, platform);
     } catch (error) {
-      console.error("Failed to load creator referral landing page.", error);
+      console.error("Failed to load creator landing page.", error);
       renderInvalid();
     }
   }
