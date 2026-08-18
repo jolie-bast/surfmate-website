@@ -2,6 +2,39 @@
 <html lang="de">
   <head>
     <link rel="stylesheet" href="./css/consent.css" />
+    <script>
+      (function () {
+        var params = new URLSearchParams(window.location.search);
+        if (params.has("web")) return;
+
+        try {
+          if (document.referrer) {
+            var referrerHost = new URL(document.referrer).hostname;
+            if (referrerHost === window.location.hostname) return;
+          }
+        } catch (error) {}
+
+        var APP_STORE_URL =
+          "https://apps.apple.com/de/app/surfmate-surf-log-connect/id6760191082";
+        var PLAY_STORE_URL =
+          "https://play.google.com/store/apps/details?id=com.joliebast.surfmateapp&pcampaignid=web_share";
+        var ua = navigator.userAgent || "";
+        var platform = navigator.platform || "";
+        var maxTouchPoints = navigator.maxTouchPoints || 0;
+        var isIOS =
+          /iPhone|iPad|iPod/i.test(ua) ||
+          (platform === "MacIntel" && maxTouchPoints > 1);
+
+        if (isIOS) {
+          window.location.replace(APP_STORE_URL);
+          return;
+        }
+
+        if (/Android/i.test(ua)) {
+          window.location.replace(PLAY_STORE_URL);
+        }
+      })();
+    </script>
     <script
       async
       src="https://www.googletagmanager.com/gtag/js?id=G-DKK7DGE8ED"
