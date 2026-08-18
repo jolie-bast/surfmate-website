@@ -605,7 +605,7 @@
   }
 
   .story-scene-content {
-    padding: 4.5rem 1.25rem 2rem;
+    padding: 4.5rem 1.25rem 2rem 3.15rem;
   }
 
   .story-scene-content--split {
@@ -629,7 +629,7 @@
 
   .story-memory-card--session {
     top: 12%;
-    left: 4%;
+    left: 2.75rem;
   }
 
   .story-memory-card--spot {
@@ -639,7 +639,7 @@
 
   .story-memory-card--photo {
     bottom: 16%;
-    left: 4%;
+    left: 2.75rem;
   }
 
   .story-memory-card--note {
