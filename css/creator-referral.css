@@ -88,6 +88,14 @@
   line-height: 1.6;
 }
 
+.creator-referral-cta[hidden],
+.creator-referral-badges[hidden],
+.creator-referral-secondary[hidden],
+.creator-referral-avatar[hidden],
+[data-open-system-browser][hidden] {
+  display: none !important;
+}
+
 .creator-referral-cta {
   display: flex;
   flex-direction: column;
@@ -167,6 +175,11 @@
   color: rgba(255, 255, 255, 0.7);
   font-size: 0.95rem;
   line-height: 1.5;
+}
+
+a.creator-referral-secondary[data-open-system-browser] {
+  display: inline-block;
+  margin-top: 0.85rem;
 }
 
 @media (max-width: 768px) {

@@ -68,8 +68,7 @@
             <a
               href="https://apps.apple.com/de/app/surfmate-surf-log-connect/id6760191082"
               class="creator-referral-store-badge"
-              target="_blank"
-              rel="noopener noreferrer"
+              data-store="ios"
             >
               <img
                 src="/assets/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg"
@@ -81,8 +80,7 @@
             <a
               href="https://play.google.com/store/apps/details?id=com.joliebast.surfmateapp&pcampaignid=web_share"
               class="creator-referral-store-badge"
-              target="_blank"
-              rel="noopener noreferrer"
+              data-store="android"
             >
               <img
                 src="/assets/GetItOnGooglePlay_Badge_Web_color_English.svg"
@@ -96,6 +94,14 @@
           <p id="creator-referral-note" class="creator-referral-note">
             If Surfmate is already installed, your phone may open the app directly instead.
           </p>
+          <a
+            class="creator-referral-secondary"
+            href="#"
+            data-open-system-browser
+            hidden
+          >
+            Open in Safari / Chrome
+          </a>
         </div>
       </section>
     </main>
@@ -103,8 +109,10 @@
     <div data-include="footer.html"></div>
 
     <script src="/js/supabase-config.js"></script>
+    <script src="/js/supabase-rpc.js"></script>
     <script src="/js/includes.js"></script>
     <script src="/js/navigation.js"></script>
+    <script src="/js/store-links.js"></script>
     <script src="/js/creator-referral.js" defer></script>
   </body>
 </html>

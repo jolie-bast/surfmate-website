@@ -1,7 +1,4 @@
 (function () {
-  var config = window.SURFMATE_SUPABASE;
-  var supabaseClient = null;
-  var supabaseLoadPromise = null;
   var APP_STORE_URL =
     "https://apps.apple.com/de/app/surfmate-surf-log-connect/id6760191082";
   var PLAY_STORE_URL =
@@ -22,27 +19,6 @@
     badges: document.getElementById("creator-referral-badges"),
     note: document.getElementById("creator-referral-note"),
   };
-
-  function getSupabase() {
-    if (!config || !config.url || !config.anonKey) {
-      return Promise.reject(new Error("Supabase is not configured."));
-    }
-
-    if (supabaseClient) {
-      return Promise.resolve(supabaseClient);
-    }
-
-    if (!supabaseLoadPromise) {
-      supabaseLoadPromise = import("https://esm.sh/@supabase/supabase-js@2.49.1").then(
-        function (module) {
-          supabaseClient = module.createClient(config.url, config.anonKey);
-          return supabaseClient;
-        }
-      );
-    }
-
-    return supabaseLoadPromise;
-  }
 
   function detectPlatform() {
     var ua = navigator.userAgent || "";
@@ -99,6 +75,20 @@
     element.hidden = hidden;
   }
 
+  function bindStoreLinks() {
+    if (window.SurfmateStores) window.SurfmateStores.bind(document);
+  }
+
+  function setPrimaryStore(store) {
+    if (!els.primary) return;
+    els.primary.removeAttribute("data-store");
+    if (store === "ios" || store === "android") {
+      els.primary.setAttribute("data-store", store);
+      els.primary.href = store === "ios" ? APP_STORE_URL : PLAY_STORE_URL;
+    }
+    bindStoreLinks();
+  }
+
   function showLogoFallback() {
     if (!els.avatarImg || !els.avatar) return;
     els.avatarImg.src = LOGO_SRC;
@@ -132,9 +122,11 @@
       "The link may be outdated or incorrect. You can still download Surfmate below.";
     els.primary.href = "/";
     els.primary.textContent = "Go to Surfmate";
+    els.primary.removeAttribute("data-store");
     setHidden(els.cta, false);
     setHidden(els.secondary, true);
     setHidden(els.badges, false);
+    bindStoreLinks();
     if (els.note) {
       els.note.textContent =
         "If you expected a creator invite, ask them to send you a fresh link.";
@@ -154,7 +146,7 @@
     }
 
     if (platform === "ios") {
-      els.primary.href = APP_STORE_URL;
+      setPrimaryStore("ios");
       setHidden(els.cta, false);
       setHidden(els.secondary, false);
       setHidden(els.badges, true);
@@ -166,7 +158,7 @@
     }
 
     if (platform === "android") {
-      els.primary.href = PLAY_STORE_URL;
+      setPrimaryStore("android");
       setHidden(els.cta, false);
       setHidden(els.secondary, false);
       setHidden(els.badges, true);
@@ -177,64 +169,56 @@
       return;
     }
 
-    els.primary.href = APP_STORE_URL;
+    els.primary.removeAttribute("data-store");
     setHidden(els.cta, true);
     setHidden(els.secondary, true);
     setHidden(els.badges, false);
+    bindStoreLinks();
     if (els.note) {
       els.note.textContent = "Download Surfmate on your phone to continue.";
     }
   }
 
-  async function fetchCreatorLanding(client, slug, platform) {
-    var result = await client.rpc("get_public_creator_landing", {
+  async function fetchCreatorLanding(slug, platform) {
+    var payload = {
       p_slug: slug,
       p_platform_hint: platform,
       p_landing_context: document.referrer || null,
-    });
-
-    if (!result.error) {
-      return unwrapRpcData(result.data);
-    }
-
-    var message = String((result.error && result.error.message) || "");
-    var missingLandingRpc = /get_public_creator_landing|could not find the function/i.test(
-      message
-    );
-
-    if (!missingLandingRpc) {
-      throw result.error;
-    }
-
-    var fallback = await client.rpc("record_creator_link_click", {
-      p_slug: slug,
-      p_platform_hint: platform,
-      p_landing_context: document.referrer || null,
-    });
-
-    if (fallback.error) {
-      throw fallback.error;
-    }
-
-    var fallbackData = unwrapRpcData(fallback.data);
-    if (!fallbackData || fallbackData.recorded === false) {
-      return { found: false };
-    }
-
-    return {
-      found: true,
-      slug: slug,
-      username: fallbackData.username || slug,
-      display_name:
-        fallbackData.display_name ||
-        fallbackData.creator_display_name ||
-        fallbackData.creator_name ||
-        null,
-      avatar_url: fallbackData.avatar_url || null,
     };
+
+    try {
+      return await window.SurfmateRpc.call("get_public_creator_landing", payload);
+    } catch (error) {
+      var message = String((error && error.message) || "");
+      var missingLandingRpc = /get_public_creator_landing|could not find the function|404/i.test(
+        message
+      );
+      if (!missingLandingRpc) throw error;
+
+      var fallbackData = await window.SurfmateRpc.call(
+        "record_creator_link_click",
+        payload
+      );
+      if (!fallbackData || fallbackData.recorded === false) {
+        return { found: false };
+      }
+
+      return {
+        found: true,
+        slug: slug,
+        username: fallbackData.username || slug,
+        display_name:
+          fallbackData.display_name ||
+          fallbackData.creator_display_name ||
+          fallbackData.creator_name ||
+          null,
+        avatar_url: fallbackData.avatar_url || null,
+      };
+    }
   }
 
   async function init() {
+    bindStoreLinks();
     var slug = parseCreatorSlug(getRawSlugFromLocation());
 
     if (!slug) {
@@ -243,9 +227,8 @@
     }
 
     try {
-      var client = await getSupabase();
       var platform = detectPlatform();
-      var data = await fetchCreatorLanding(client, slug, platform);
+      var data = await fetchCreatorLanding(slug, platform);
 
       if (!data || data.found === false) {
         renderInvalid();

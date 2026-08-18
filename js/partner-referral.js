@@ -1,7 +1,4 @@
 (function () {
-  var config = window.SURFMATE_SUPABASE;
-  var supabaseClient = null;
-  var supabaseLoadPromise = null;
   var APP_STORE_URL =
     "https://apps.apple.com/de/app/surfmate-surf-log-connect/id6760191082";
   var PLAY_STORE_URL =
@@ -22,27 +19,6 @@
     badges: document.getElementById("partner-referral-badges"),
     note: document.getElementById("partner-referral-note"),
   };
-
-  function getSupabase() {
-    if (!config || !config.url || !config.anonKey) {
-      return Promise.reject(new Error("Supabase is not configured."));
-    }
-
-    if (supabaseClient) {
-      return Promise.resolve(supabaseClient);
-    }
-
-    if (!supabaseLoadPromise) {
-      supabaseLoadPromise = import("https://esm.sh/@supabase/supabase-js@2.49.1").then(
-        function (module) {
-          supabaseClient = module.createClient(config.url, config.anonKey);
-          return supabaseClient;
-        }
-      );
-    }
-
-    return supabaseLoadPromise;
-  }
 
   function detectPlatform() {
     var ua = navigator.userAgent || "";
@@ -80,6 +56,20 @@
     element.hidden = hidden;
   }
 
+  function bindStoreLinks() {
+    if (window.SurfmateStores) window.SurfmateStores.bind(document);
+  }
+
+  function setPrimaryStore(store) {
+    if (!els.primary) return;
+    els.primary.removeAttribute("data-store");
+    if (store === "ios" || store === "android") {
+      els.primary.setAttribute("data-store", store);
+      els.primary.href = store === "ios" ? APP_STORE_URL : PLAY_STORE_URL;
+    }
+    bindStoreLinks();
+  }
+
   function showSurfmateLogo() {
     if (!els.logoImg || !els.logo) return;
     els.logoImg.src = LOGO_SRC;
@@ -113,9 +103,11 @@
       "The link may be outdated or incorrect. You can still download Surfmate below.";
     els.primary.href = "/";
     els.primary.textContent = "Go to Surfmate";
+    els.primary.removeAttribute("data-store");
     setHidden(els.cta, false);
     setHidden(els.secondary, true);
     setHidden(els.badges, false);
+    bindStoreLinks();
     if (els.note) {
       els.note.textContent =
         "If you expected a partner invite, ask them to send you a fresh link.";
@@ -135,7 +127,7 @@
     }
 
     if (platform === "ios") {
-      els.primary.href = APP_STORE_URL;
+      setPrimaryStore("ios");
       setHidden(els.cta, false);
       setHidden(els.secondary, false);
       setHidden(els.badges, true);
@@ -147,7 +139,7 @@
     }
 
     if (platform === "android") {
-      els.primary.href = PLAY_STORE_URL;
+      setPrimaryStore("android");
       setHidden(els.cta, false);
       setHidden(els.secondary, false);
       setHidden(els.badges, true);
@@ -161,26 +153,22 @@
     setHidden(els.cta, true);
     setHidden(els.secondary, true);
     setHidden(els.badges, false);
+    bindStoreLinks();
     if (els.note) {
       els.note.textContent = "Download Surfmate on your phone to continue.";
     }
   }
 
-  async function fetchPartnerLanding(client, slug, platform) {
-    var result = await client.rpc("get_public_partner_landing", {
+  async function fetchPartnerLanding(slug, platform) {
+    return window.SurfmateRpc.call("get_public_partner_landing", {
       p_slug: slug,
       p_platform_hint: platform,
       p_landing_context: document.referrer || "web_landing",
     });
-
-    if (result.error) {
-      throw result.error;
-    }
-
-    return unwrapRpcData(result.data);
   }
 
   async function init() {
+    bindStoreLinks();
     var slug = parsePartnerSlug(getRawSlugFromLocation());
 
     if (!slug) {
@@ -189,9 +177,8 @@
     }
 
     try {
-      var client = await getSupabase();
       var platform = detectPlatform();
-      var data = await fetchPartnerLanding(client, slug, platform);
+      var data = await fetchPartnerLanding(slug, platform);
 
       if (!data || data.found === false) {
         renderInvalid();
