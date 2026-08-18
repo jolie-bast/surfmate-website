@@ -62,6 +62,17 @@
   object-fit: contain;
 }
 
+.creator-referral-avatar.is-partner-logo {
+  width: 96px;
+  height: 96px;
+  padding: 0.45rem;
+  background: rgba(255, 255, 255, 0.94);
+}
+
+.creator-referral-avatar.is-partner-logo img {
+  object-fit: contain;
+}
+
 .creator-referral-title {
   margin: 0;
   color: var(--surfmate-white);

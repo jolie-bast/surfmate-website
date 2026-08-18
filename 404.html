@@ -33,17 +33,22 @@
   <body>
     <main>
       <h1>Page not found</h1>
-      <p>If you followed a creator invite, we are redirecting you now.</p>
+      <p>If you followed a creator or partner invite, we are redirecting you now.</p>
       <p><a href="/">Back to Surfmate</a></p>
     </main>
     <script>
       (function () {
         var pathname = window.location.pathname || "";
-        if (!pathname.startsWith("/c/")) return;
+        var prefix = pathname.startsWith("/c/")
+          ? "/c/"
+          : pathname.startsWith("/p/")
+            ? "/p/"
+            : "";
+        if (!prefix) return;
 
         var segments = pathname.split("/").filter(Boolean);
         var slug = segments[1] || "";
-        var target = "/c/?slug=" + encodeURIComponent(slug);
+        var target = prefix + "?slug=" + encodeURIComponent(slug);
         if (window.location.search) {
           target += "&" + window.location.search.slice(1);
         }
