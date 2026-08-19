@@ -62,6 +62,15 @@
     });
   }
 
+  if (apply) {
+    apply.addEventListener("click", function () {
+      var target = document.getElementById("apply");
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
+  }
+
   goTo(1);
 })();
 

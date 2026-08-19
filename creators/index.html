@@ -28,27 +28,6 @@
   <body class="creators-page">
     <div data-include="header.html"></div>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        let attempts = 0;
-        const maxAttempts = 10;
-
-        const makeHeaderDark = () => {
-          attempts++;
-          const header = document.querySelector(".header");
-          if (header) {
-            header.classList.add("scrolled");
-            header.style.background = "rgba(0, 0, 0, 0.95)";
-            header.style.backdropFilter = "blur(10px)";
-          } else if (attempts < maxAttempts) {
-            setTimeout(makeHeaderDark, 300);
-          }
-        };
-
-        makeHeaderDark();
-      });
-    </script>
-
     <main class="creators-main">
       <section class="creators-hero" aria-labelledby="creators-heading">
         <div class="creators-hero-media">
@@ -63,10 +42,13 @@
           />
         </div>
         <div class="creators-hero-inner">
-          <h1 id="creators-heading" class="creators-hero-title">
-            Help build the world's biggest surf community
-          </h1>
           <p class="creators-kicker">Surfmate Creator Program</p>
+          <h1 id="creators-heading" class="creators-hero-title">
+            Become a Surfmate Creator
+          </h1>
+          <p class="creators-hero-lead">
+            Use Surfmate in your surf life, share it with your community, and get rewarded.
+          </p>
           <a class="creators-button" href="#apply">Apply to become a Creator</a>
         </div>
       </section>
@@ -135,9 +117,9 @@
                 <button type="button" class="creators-button creators-wizard-next" data-wizard-next>
                   Next
                 </button>
-                <a class="creators-button creators-wizard-apply" href="#apply" data-wizard-apply hidden>
+                <button type="button" class="creators-button creators-wizard-apply" data-wizard-apply hidden>
                   Apply to become a Creator
-                </a>
+                </button>
               </div>
             </div>
           </div>
@@ -283,20 +265,15 @@
         <div class="creators-wrap">
           <article class="creators-founder">
             <div class="creators-founder-media">
-              <img
-                src="/assets/founder-shooting/surfmate-jolie-surf-portrait.avif"
-                alt="Jolie Bast"
-                class="creators-founder-photo"
-                width="336"
-                height="336"
-              />
-              <a
-                href="https://giuliamuskatphoto.wixsite.com/photography"
-                class="creators-photo-credit"
-                target="_blank"
-                rel="noopener noreferrer"
-                >@ Giulia Muskat</a
-              >
+              <div class="creators-founder-crop">
+                <img
+                  src="/assets/founder-shooting/surfmate-jolie-surf-portrait.avif"
+                  alt="Jolie Bast"
+                  class="creators-founder-photo"
+                  width="448"
+                  height="448"
+                />
+              </div>
             </div>
             <div class="creators-founder-copy">
               <p class="creators-kicker">Founder &amp; Creator</p>
