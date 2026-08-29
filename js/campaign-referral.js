@@ -4,6 +4,9 @@
   var PLAY_STORE_URL =
     "https://play.google.com/store/apps/details?id=com.joliebast.surfmateapp&pcampaignid=web_share";
   var APP_SCHEME = "surfmate://";
+  var SKIP_KEY = "surfmate_skip_store_redirect";
+  var IN_APP_RE =
+    /Instagram|FBAN|FBAV|FB_IAB|Line\/|Twitter|TikTok|musical_ly|BytedanceWebview|TTWebView|Snapchat|aweme/i;
   var TITLE = "Join Surfmate";
   var SUBLINE =
     "Log sessions, find spots, and meet surfers nearby.";
@@ -25,9 +28,19 @@
 
   function detectPlatform() {
     var ua = navigator.userAgent || "";
-    if (/iPhone|iPad|iPod/i.test(ua)) return "ios";
+    var platform = navigator.platform || "";
+    var maxTouchPoints = navigator.maxTouchPoints || 0;
+    var isIOS =
+      /iPhone|iPad|iPod/i.test(ua) ||
+      (platform === "MacIntel" && maxTouchPoints > 1);
+
+    if (isIOS) return "ios";
     if (/Android/i.test(ua)) return "android";
     return "desktop";
+  }
+
+  function isInAppBrowser() {
+    return IN_APP_RE.test(navigator.userAgent || "");
   }
 
   function getRawSlugFromLocation() {
@@ -84,6 +97,37 @@
       .catch(function (error) {
         console.error("Failed to record campaign store click.", error);
       });
+  }
+
+  function shouldAutoRedirectToStore(platform) {
+    if (platform !== "ios" && platform !== "android") return false;
+
+    var params = new URLSearchParams(window.location.search);
+    if (params.has("web")) return false;
+
+    if (isInAppBrowser()) return false;
+
+    try {
+      if (sessionStorage.getItem(SKIP_KEY) === "1") return false;
+    } catch (error) {}
+
+    return true;
+  }
+
+  function markStoreRedirectDone() {
+    try {
+      sessionStorage.setItem(SKIP_KEY, "1");
+    } catch (error) {}
+  }
+
+  function showOpeningStore(platform) {
+    showLogo();
+    els.title.textContent =
+      platform === "ios" ? "Opening the App Store…" : "Opening Google Play…";
+    els.copy.textContent = "Taking you to download Surfmate.";
+    if (els.note) {
+      els.note.textContent = "If nothing happens, use the download button below.";
+    }
   }
 
   function bindTrackedStoreLinks() {
@@ -170,19 +214,27 @@
     bindTrackedStoreLinks();
     var slug = parseCampaignSlug(getRawSlugFromLocation());
     var platform = detectPlatform();
+    activeSlug = slug || "";
 
-    if (!slug) {
-      activeSlug = "";
-      renderDownload(platform);
-      return;
+    if (slug) {
+      try {
+        await fetchCampaignLanding(slug, platform);
+      } catch (error) {
+        console.error("Failed to load marketing campaign landing.", error);
+      }
     }
 
-    activeSlug = slug;
-
-    try {
-      await fetchCampaignLanding(slug, platform);
-    } catch (error) {
-      console.error("Failed to load marketing campaign landing.", error);
+    if (shouldAutoRedirectToStore(platform)) {
+      var store = platform === "ios" ? "ios" : "android";
+      showOpeningStore(platform);
+      setPrimaryStore(store);
+      setHidden(els.cta, false);
+      setHidden(els.secondary, true);
+      setHidden(els.badges, true);
+      markStoreRedirectDone();
+      await recordStoreClick(store);
+      openStore(store);
+      return;
     }
 
     renderDownload(platform);
