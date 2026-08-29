@@ -2,6 +2,102 @@
 <html lang="en">
   <head>
     <link rel="stylesheet" href="/css/consent.css" />
+    <script src="/js/supabase-config.js"></script>
+    <script>
+      (function () {
+        var SKIP_KEY = "surfmate_campaign_store_redirect";
+        var HOME_SKIP_KEY = "surfmate_skip_store_redirect";
+        var APP_STORE_URL =
+          "https://apps.apple.com/de/app/surfmate-surf-log-connect/id6760191082";
+        var PLAY_STORE_URL =
+          "https://play.google.com/store/apps/details?id=com.joliebast.surfmateapp&pcampaignid=web_share";
+        var APP_STORE_ITMS = "itms-apps://apps.apple.com/app/id6760191082";
+        var PLAY_STORE_MARKET = "market://details?id=com.joliebast.surfmateapp";
+        var IN_APP_RE =
+          /Instagram|FBAN|FBAV|FB_IAB|Line\/|Twitter|TikTok|musical_ly|BytedanceWebview|TTWebView|Snapchat|aweme/i;
+
+        var params = new URLSearchParams(window.location.search);
+        if (params.has("web")) return;
+
+        try {
+          if (sessionStorage.getItem(SKIP_KEY) === "1") return;
+        } catch (error) {}
+
+        var ua = navigator.userAgent || "";
+        var platformName = navigator.platform || "";
+        var maxTouchPoints = navigator.maxTouchPoints || 0;
+        var isIOS =
+          /iPhone|iPad|iPod/i.test(ua) ||
+          (platformName === "MacIntel" && maxTouchPoints > 1);
+        var isAndroid = /Android/i.test(ua);
+        if (!isIOS && !isAndroid) return;
+
+        var segments = (window.location.pathname || "").split("/").filter(Boolean);
+        var gIndex = segments.indexOf("g");
+        var rawSlug =
+          (gIndex === -1 ? "" : segments[gIndex + 1] || "") ||
+          params.get("slug") ||
+          "";
+        var slug = String(rawSlug)
+          .trim()
+          .toLowerCase();
+        if (slug === "index.html") slug = "";
+        if (slug && !/^[a-z0-9-]{2,30}$/.test(slug)) slug = "";
+
+        var store = isIOS ? "ios" : "android";
+        var platformHint = store;
+
+        try {
+          sessionStorage.setItem(SKIP_KEY, "1");
+          sessionStorage.setItem(HOME_SKIP_KEY, "1");
+        } catch (error) {}
+
+        var config = window.SURFMATE_SUPABASE || {};
+        function trackRpc(fnName, payload) {
+          if (!config.url || !config.anonKey || !slug) return;
+          try {
+            fetch(
+              config.url.replace(/\/$/, "") + "/rest/v1/rpc/" + fnName,
+              {
+                method: "POST",
+                headers: {
+                  apikey: config.anonKey,
+                  Authorization: "Bearer " + config.anonKey,
+                  "Content-Type": "application/json",
+                  Prefer: "return=representation",
+                },
+                body: JSON.stringify(payload || {}),
+                keepalive: true,
+              }
+            );
+          } catch (error) {}
+        }
+
+        if (slug) {
+          trackRpc("get_public_marketing_campaign_landing", {
+            p_slug: slug,
+            p_platform_hint: platformHint,
+            p_landing_context: document.referrer || "web_landing",
+          });
+          trackRpc("record_marketing_campaign_store_click", {
+            p_slug: slug,
+            p_store: store,
+            p_platform_hint: platformHint,
+          });
+        }
+
+        var httpsUrl = isIOS ? APP_STORE_URL : PLAY_STORE_URL;
+        if (IN_APP_RE.test(ua)) {
+          window.location.href = isIOS ? APP_STORE_ITMS : PLAY_STORE_MARKET;
+          window.setTimeout(function () {
+            window.location.href = httpsUrl;
+          }, 600);
+          return;
+        }
+
+        window.location.href = httpsUrl;
+      })();
+    </script>
     <script
       async
       src="https://www.googletagmanager.com/gtag/js?id=G-DKK7DGE8ED"
@@ -108,7 +204,6 @@
 
     <div data-include="footer.html"></div>
 
-    <script src="/js/supabase-config.js"></script>
     <script src="/js/supabase-rpc.js"></script>
     <script src="/js/includes.js"></script>
     <script src="/js/navigation.js"></script>
