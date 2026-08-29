@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="/css/consent.css" />
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-DKK7DGE8ED"
+    ></script>
+    <script src="/js/gtag-init.js"></script>
+    <script src="/js/consent.js" defer></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Join Surfmate. Log sessions, find spots, and meet surfers nearby."
+    />
+    <title>Join Surfmate</title>
+
+    <link rel="stylesheet" href="/css/main.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link rel="stylesheet" href="/css/creator-referral.css" />
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+  </head>
+  <body class="creator-referral-page">
+    <div data-include="header.html"></div>
+
+    <main class="creator-referral-main">
+      <section class="creator-referral-hero" aria-labelledby="campaign-landing-title">
+        <div class="creator-referral-inner">
+          <div id="campaign-landing-logo" class="creator-referral-avatar is-logo" hidden>
+            <img
+              id="campaign-landing-logo-img"
+              src="/assets/logo-surfmate-schriftzug.svg"
+              alt="Surfmate"
+              width="88"
+              height="88"
+            />
+          </div>
+          <h1 id="campaign-landing-title" class="creator-referral-title">
+            Loading Surfmate...
+          </h1>
+          <p id="campaign-landing-copy" class="creator-referral-copy">
+            Preparing the best next step for your device.
+          </p>
+
+          <div id="campaign-landing-cta" class="creator-referral-cta" hidden>
+            <a
+              id="campaign-landing-primary"
+              class="creator-referral-button"
+              href="/"
+            >
+              Download Surfmate
+            </a>
+            <a
+              id="campaign-landing-secondary"
+              class="creator-referral-secondary"
+              href="surfmate://"
+              hidden
+            >
+              Already have the app? Open Surfmate
+            </a>
+          </div>
+
+          <div id="campaign-landing-badges" class="creator-referral-badges" hidden>
+            <a
+              href="https://apps.apple.com/de/app/surfmate-surf-log-connect/id6760191082"
+              class="creator-referral-store-badge"
+              data-store="ios"
+            >
+              <img
+                src="/assets/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg"
+                alt="Download on the App Store"
+                width="120"
+                height="40"
+              />
+            </a>
+            <a
+              href="https://play.google.com/store/apps/details?id=com.joliebast.surfmateapp&pcampaignid=web_share"
+              class="creator-referral-store-badge"
+              data-store="android"
+            >
+              <img
+                src="/assets/GetItOnGooglePlay_Badge_Web_color_English.svg"
+                alt="Get it on Google Play"
+                width="135"
+                height="40"
+              />
+            </a>
+          </div>
+
+          <p id="campaign-landing-note" class="creator-referral-note">
+            If Surfmate is already installed, your phone may open the app directly instead.
+          </p>
+          <a
+            class="creator-referral-secondary"
+            href="#"
+            data-open-system-browser
+            hidden
+          >
+            Open in Safari / Chrome
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <div data-include="footer.html"></div>
+
+    <script src="/js/supabase-config.js"></script>
+    <script src="/js/supabase-rpc.js"></script>
+    <script src="/js/includes.js"></script>
+    <script src="/js/navigation.js"></script>
+    <script src="/js/store-links.js"></script>
+    <script src="/js/campaign-referral.js" defer></script>
+  </body>
+</html>

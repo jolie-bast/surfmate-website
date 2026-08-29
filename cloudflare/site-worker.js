@@ -1,7 +1,7 @@
 /**
  * Cloudflare Worker for surfmate.eu (GitHub Pages origin).
  *
- * GitHub Pages ignores `_redirects`, so `/c/:slug` and `/p/:slug` would 404.
+ * GitHub Pages ignores `_redirects`, so `/c|p|g/:slug` would 404.
  * This worker soft-rewrites those paths to the landing pages (HTTP 200, URL stays).
  * It also forces the AASA file to `application/json` for Universal Links.
  *
@@ -10,12 +10,14 @@
  * 2. Add routes (or one `surfmate.eu/*`):
  *      surfmate.eu/c/*
  *      surfmate.eu/p/*
+ *      surfmate.eu/g/*
  *      surfmate.eu/.well-known/apple-app-site-association
  *      surfmate.eu/apple-app-site-association
  *
- * Prefer Transform Rules instead of a Worker? Add two URL Rewrites:
- *   Path matches ^/c/[^/]+/?$  →  rewrite to /c/index.html
- *   Path matches ^/p/[^/]+/?$  →  rewrite to /p/index.html
+ * Prefer Transform Rules instead of a Worker? Add URL Rewrites:
+ *   /c/* → /c/index.html
+ *   /p/* → /p/index.html
+ *   /g/* → /g/index.html
  */
 
 const INTERNAL_HEADER = "X-Surfmate-Internal";
@@ -36,6 +38,11 @@ function referralRewritePath(pathname) {
   const partner = pathname.match(/^\/p\/([^/]+)\/?$/);
   if (partner && partner[1] && partner[1] !== "index.html") {
     return "/p/index.html";
+  }
+
+  const campaign = pathname.match(/^\/g\/([^/]+)\/?$/);
+  if (campaign && campaign[1] && campaign[1] !== "index.html") {
+    return "/g/index.html";
   }
 
   return null;

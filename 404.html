@@ -11,7 +11,9 @@
           ? "/c/"
           : pathname.startsWith("/p/")
             ? "/p/"
-            : "";
+            : pathname.startsWith("/g/")
+              ? "/g/"
+              : "";
         if (!prefix) return;
 
         var segments = pathname.split("/").filter(Boolean);
@@ -65,7 +67,7 @@
   <body>
     <main>
       <h1>Page not found</h1>
-      <p>If you followed a creator or partner invite, we are redirecting you now.</p>
+      <p>If you followed a Surfmate invite or campaign link, we are redirecting you now.</p>
       <p><a href="/">Back to Surfmate</a></p>
     </main>
   </body>
