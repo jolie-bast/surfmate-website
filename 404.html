@@ -4,10 +4,42 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Not found - Surfmate</title>
+    <script>
+      (function () {
+        var pathname = window.location.pathname || "";
+        var prefix = pathname.startsWith("/c/")
+          ? "/c/"
+          : pathname.startsWith("/p/")
+            ? "/p/"
+            : "";
+        if (!prefix) return;
+
+        var segments = pathname.split("/").filter(Boolean);
+        var slug = segments[1] || "";
+        if (!slug || slug === "index.html") return;
+
+        document.documentElement.className = "is-campaign-redirect";
+
+        var target = prefix + "?slug=" + encodeURIComponent(slug);
+        if (window.location.search) {
+          target += "&" + window.location.search.slice(1);
+        }
+        window.location.replace(target);
+      })();
+    </script>
     <style>
       :root {
         color-scheme: dark;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      html.is-campaign-redirect,
+      html.is-campaign-redirect body {
+        background: #000;
+      }
+
+      html.is-campaign-redirect body > * {
+        display: none;
       }
 
       body {
@@ -36,24 +68,5 @@
       <p>If you followed a creator or partner invite, we are redirecting you now.</p>
       <p><a href="/">Back to Surfmate</a></p>
     </main>
-    <script>
-      (function () {
-        var pathname = window.location.pathname || "";
-        var prefix = pathname.startsWith("/c/")
-          ? "/c/"
-          : pathname.startsWith("/p/")
-            ? "/p/"
-            : "";
-        if (!prefix) return;
-
-        var segments = pathname.split("/").filter(Boolean);
-        var slug = segments[1] || "";
-        var target = prefix + "?slug=" + encodeURIComponent(slug);
-        if (window.location.search) {
-          target += "&" + window.location.search.slice(1);
-        }
-        window.location.replace(target);
-      })();
-    </script>
   </body>
 </html>

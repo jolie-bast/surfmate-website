@@ -1,6 +1,7 @@
 /**
- * Cloudflare Worker for GitHub Pages.
+ * Cloudflare Worker for GitHub Pages (AASA only).
  *
+ * Prefer `site-worker.js` if you also need `/c/:slug` and `/p/:slug` rewrites.
  * GitHub Pages serves extensionless files as application/octet-stream.
  * Apple Universal Links need this path as application/json, without a redirect.
  *
