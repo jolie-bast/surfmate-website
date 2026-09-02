@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Surfmate – Confirm email</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+      color: #111827;
+      background: #ffffff;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    main {
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin: 0 0 12px;
+    }
+    p {
+      margin: 0 0 16px;
+      color: #4b5563;
+    }
+    a.button,
+    span.button {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 12px 18px;
+      border-radius: 12px;
+      background: #111827;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    span.button-static {
+      cursor: default;
+      user-select: none;
+    }
+    .muted {
+      font-size: 0.9rem;
+    }
+    .error {
+      color: #b91c1c;
+    }
+    .spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      margin-right: 6px;
+      vertical-align: -3px;
+      border: 2px solid rgba(17, 24, 39, 0.15);
+      border-top-color: #111827;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main id="main">
+    <h1>Confirming email…</h1>
+    <p class="muted"><span class="spinner" aria-hidden="true"></span>Please wait</p>
+  </main>
+  <script>
+    (function () {
+      var main = document.getElementById("main");
+      var query = new URLSearchParams(window.location.search);
+      var token = query.get("token") || "";
+      var userId = query.get("uid") || "";
+      var appDeepLink = "surfmate://auth/callback";
+      var confirmedButtonDelayMs = 2800;
+      // Public anon key (same as mobile app / js/supabase-config.js).
+      // Override via window.__SURFMATE_* if needed.
+      var supabaseUrl = "https://jycbthjasldnqavajrlf.supabase.co";
+      var anonKey =
+        "sb_publishable_Q1q7u9-B8zs4JZuA7HMigw_LPyMkagk";
+
+      function isMobileUa() {
+        return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent || "");
+      }
+
+      function render(title, bodyHtml, buttonHref, buttonLabel) {
+        main.innerHTML =
+          "<h1>" + title + "</h1>" +
+          bodyHtml +
+          (buttonHref
+            ? '<p><a class="button" href="' + buttonHref + '">' + buttonLabel + "</a></p>"
+            : "");
+      }
+
+      function renderConfirmedWaiting() {
+        var mobile = isMobileUa();
+        render(
+          "Email confirmed",
+          "<p>Your email address is confirmed.</p>" +
+            '<p class="muted">' +
+            (mobile
+              ? '<span class="spinner" aria-hidden="true"></span>Opening Surfmate…'
+              : '<span class="spinner" aria-hidden="true"></span>Almost ready…') +
+            "</p>",
+          null,
+          null
+        );
+      }
+
+      function renderConfirmedReady() {
+        var mobile = isMobileUa();
+        if (mobile) {
+          render(
+            "Email confirmed",
+            "<p>Your email address is confirmed.</p>" +
+              '<p class="muted">Tap below to return to Surfmate.</p>',
+            appDeepLink,
+            "Open Surfmate"
+          );
+          return;
+        }
+
+        render(
+          "Email confirmed",
+          "<p>Your email address is confirmed.</p>" +
+            '<p class="muted">Open Surfmate on your phone to continue.</p>' +
+            '<p><span class="button button-static" role="status">Confirmed</span></p>',
+          null,
+          null
+        );
+      }
+
+      if (!token || !userId) {
+        render(
+          "Link not valid",
+          '<p class="error">This confirmation link is missing information.</p>' +
+            '<p class="muted">Request a new one from the Surfmate app.</p>',
+          null,
+          null
+        );
+        return;
+      }
+
+      if (typeof window.__SURFMATE_SUPABASE_URL__ === "string" && window.__SURFMATE_SUPABASE_URL__) {
+        supabaseUrl = window.__SURFMATE_SUPABASE_URL__;
+      }
+      if (typeof window.__SURFMATE_SUPABASE_ANON_KEY__ === "string" && window.__SURFMATE_SUPABASE_ANON_KEY__) {
+        anonKey = window.__SURFMATE_SUPABASE_ANON_KEY__;
+      }
+
+      fetch(supabaseUrl.replace(/\/+$/, "") + "/functions/v1/soft-email-verification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: anonKey,
+          Authorization: "Bearer " + anonKey,
+        },
+        body: JSON.stringify({ action: "verify", token: token, userId: userId }),
+      })
+        .then(function (res) {
+          return res.json().then(function (json) {
+            return { ok: res.ok, json: json };
+          });
+        })
+        .then(function (result) {
+          if (!result.ok || (result.json && result.json.error)) {
+            render(
+              "Link not valid",
+              '<p class="error">' +
+                (result.json && result.json.error
+                  ? result.json.error
+                  : "Could not confirm this email.") +
+                "</p>" +
+                '<p class="muted">Request a new confirmation email from the Surfmate app.</p>',
+              null,
+              null
+            );
+            return;
+          }
+
+          renderConfirmedWaiting();
+
+          if (isMobileUa()) {
+            window.location.replace(appDeepLink);
+          }
+
+          setTimeout(renderConfirmedReady, confirmedButtonDelayMs);
+        })
+        .catch(function () {
+          render(
+            "Something went wrong",
+            '<p class="error">Please try again from the Surfmate app.</p>',
+            null,
+            null
+          );
+        });
+    })();
+  </script>
+</body>
+</html>
