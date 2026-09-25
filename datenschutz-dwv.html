@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <link rel="stylesheet" href="./css/consent.css" />
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-DKK7DGE8ED"
+    ></script>
+    <script src="./js/gtag-init.js"></script>
+    <script src="./js/consent.js" defer></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Datenschutzerklärung für die Umfrage der Teilnehmenden an den Deutschen Meisterschaften im Wellenreiten. Verantwortliche Stelle: Deutscher Wellenreitverband e.V."
+    />
+    <title>Datenschutzerklärung – Deutsche Meisterschaften</title>
+
+    <link rel="stylesheet" href="./css/main.css" />
+    <link rel="stylesheet" href="./css/legal.css" />
+    <link rel="stylesheet" href="./css/datenschutz.css" />
+
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+  </head>
+  <body>
+    <div data-include="header.html"></div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        let attempts = 0;
+        const maxAttempts = 10;
+
+        const makeHeaderBlack = () => {
+          attempts++;
+          const header = document.querySelector(".header");
+
+          if (header) {
+            header.classList.add("scrolled");
+            header.style.background = "rgba(0, 0, 0, 0.95)";
+            header.style.backdropFilter = "blur(10px)";
+          } else if (attempts < maxAttempts) {
+            setTimeout(makeHeaderBlack, 300);
+          }
+        };
+
+        makeHeaderBlack();
+      });
+    </script>
+
+    <main class="main-content" style="padding-top: var(--header-height)">
+      <section class="content-section">
+        <div class="container">
+          <header class="content-header">
+            <h1>Datenschutzerklärung</h1>
+          </header>
+
+          <div class="content-body">
+            <p><strong>Stand:</strong> 25. September 2026</p>
+
+            <h2>Umfrage zu den Deutschen Meisterschaften im Wellenreiten</h2>
+            <p>
+              Diese Datenschutzerklärung gilt ausschließlich für die
+              freiwillige Umfrage der Teilnehmenden an den Deutschen
+              Meisterschaften im Wellenreiten 2026. Sie gilt nicht für die
+              übrige Nutzung von surfmate.eu.
+            </p>
+
+            <h2>Verantwortliche Stelle</h2>
+            <p>
+              Die verantwortliche Stelle für die Datenverarbeitung im Rahmen
+              dieser Umfrage ist:
+            </p>
+            <p>
+              <strong>Deutscher Wellenreitverband e.V.</strong><br />
+              Ulrich-Brisch-Weg 1<br />
+              50858 Köln<br /><br />
+              <strong>Telefon:</strong> +49 221 98656110<br />
+              <strong>E-Mail:</strong>
+              <a href="mailto:info@wellenreitverband.de"
+                >info@wellenreitverband.de</a
+              >
+            </p>
+            <p>
+              Verantwortliche Stelle ist die natürliche oder juristische Person,
+              die allein oder gemeinsam mit anderen über die Zwecke und Mittel
+              der Verarbeitung von personenbezogenen Daten (z. B. Namen,
+              E-Mail-Adressen o. Ä.) entscheidet.
+            </p>
+
+            <h2>Umfrage für Teilnehmende der Deutschen Meisterschaften 2026</h2>
+            <p>
+              Für die Moderation und das Kommentieren der Deutschen
+              Meisterschaften im Wellenreiten 2026 bieten wir eine freiwillige
+              Umfrage für die Teilnehmenden an.
+            </p>
+            <p>
+              <strong>Verantwortlich:</strong> Deutscher Wellenreitverband e.V.
+              (DWV)
+            </p>
+            <p>
+              <strong>Verarbeitete Daten:</strong> Name bzw. Spitzname sowie
+              deine freiwilligen Antworten auf die Umfragefragen (z. B.
+              Homespot, Lieblingswelle, persönliche Anekdoten).
+            </p>
+            <p>
+              <strong>Zweck:</strong> Wir nutzen die Angaben, um dich während
+              des Wettbewerbs beim Kommentieren vorzustellen. Die Angaben werden
+              dabei vor Ort und im Livestream öffentlich genannt.
+            </p>
+            <p>
+              <strong>Rechtsgrundlage:</strong> Deine Einwilligung gemäß Art. 6
+              Abs. 1 lit. a DSGVO. Du kannst sie jederzeit mit Wirkung für die
+              Zukunft widerrufen, z. B. per E-Mail an
+              <a href="mailto:info@wellenreitverband.de"
+                >info@wellenreitverband.de</a
+              >.
+            </p>
+            <p>
+              <strong>Dienstleister:</strong> Für die Umfrage nutzen wir den
+              Formulardienst Tally (Tally BV, Belgien). Tally verarbeitet die
+              Daten in unserem Auftrag auf Grundlage eines
+              Auftragsverarbeitungsvertrags gemäß Art. 28 DSGVO. Weitere Infos:
+              <a
+                href="https://tally.so/help/privacy-policy"
+                target="_blank"
+                rel="noopener"
+                >https://tally.so/help/privacy-policy</a
+              >
+            </p>
+            <p>
+              <strong>Speicherdauer:</strong> Wir löschen die Antworten
+              spätestens 4 Wochen nach Ende der Veranstaltung.
+            </p>
+            <p>
+              <strong>Deine Rechte:</strong> Du hast das Recht auf Auskunft,
+              Berichtigung, Löschung, Einschränkung der Verarbeitung und
+              Widerruf deiner Einwilligung sowie das Recht auf Beschwerde bei
+              einer Datenschutz-Aufsichtsbehörde.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div data-include="footer.html"></div>
+
+    <script src="./js/includes.js"></script>
+    <script src="./js/navigation.js"></script>
+  </body>
+</html>
