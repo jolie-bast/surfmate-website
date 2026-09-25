@@ -59,7 +59,7 @@
 
 /* External links specific styling */
 .content-body a[href*="mailerlite.com"],
-.content-body a[href*="ionos.de"],
+.content-body a[href*="cloudflare.com"],
 .content-body a[href*="e-recht24.de"] {
   background: rgba(var(--accent-color-rgb), 0.1);
   padding: 0.2rem 0.5rem;
