@@ -939,6 +939,11 @@ a.join-button.join-button--ghost:focus-visible {
   .join-area.join-area--lead {
     flex-direction: column;
     align-items: stretch;
+    gap: 0.35rem;
+  }
+
+  .join-area.join-area--lead .join-area-people {
+    flex: none;
   }
 }
 
