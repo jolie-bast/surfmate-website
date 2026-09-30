@@ -114,7 +114,7 @@
 
 .team-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--spacing-lg);
   max-width: var(--max-width);
   margin: 0 auto;
@@ -157,6 +157,14 @@
   object-fit: cover;
   display: block;
   transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.team-card-photo--marlene {
+  object-position: center 42%;
+}
+
+.team-card-photo--magnus {
+  object-position: center 18%;
 }
 
 .team-card:hover .team-card-photo,
