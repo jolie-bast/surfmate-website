@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <link rel="stylesheet" href="/css/consent.css" />
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-DKK7DGE8ED"
+    ></script>
+    <script src="/js/gtag-init.js"></script>
+    <script src="/js/consent.js" defer></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Join the Crew: offene Rollen bei Surfmate in Tech, Marketing, Events und Brand. Kein Anschreiben, kein Lebenslauf — eine kurze Mail reicht."
+    />
+    <title>Join the Crew – Surfmate</title>
+    <link rel="canonical" href="https://surfmate.eu/join/" />
+
+    <link rel="stylesheet" href="/css/main.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link rel="stylesheet" href="/css/join.css" />
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+  </head>
+  <body class="join-page">
+    <div data-include="header.html"></div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        let attempts = 0;
+        const maxAttempts = 10;
+
+        const makeHeaderBlack = () => {
+          attempts++;
+          const header = document.querySelector(".header");
+
+          if (header) {
+            header.classList.add("scrolled");
+            header.style.background = "rgba(0, 0, 0, 0.95)";
+            header.style.backdropFilter = "blur(10px)";
+          } else if (attempts < maxAttempts) {
+            setTimeout(makeHeaderBlack, 300);
+          }
+        };
+
+        makeHeaderBlack();
+      });
+    </script>
+
+    <main class="join-main">
+      <section class="join-hero" aria-labelledby="join-heading">
+        <div class="join-hero-media">
+          <img
+            src="/assets/surfmate-kirsten-frank-loggertour-team.avif"
+            alt=""
+            class="join-hero-img"
+            width="2400"
+            height="1350"
+            fetchpriority="high"
+            decoding="async"
+          />
+          <a
+            href="https://kirstenfrank.myportfolio.com/"
+            class="join-hero-photo-credit"
+            target="_blank"
+            rel="noopener noreferrer"
+            >@ Kirsten Frank</a
+          >
+        </div>
+        <div class="join-hero-inner">
+          <p class="join-kicker">Join us</p>
+          <h1 id="join-heading" class="join-hero-title">Join the Crew</h1>
+          <p class="join-hero-lead">
+            Jeder bringt etwas Einzigartiges ein – und genau das macht uns stark.
+          </p>
+          <a class="join-button" href="#rollen">Offene Rollen</a>
+        </div>
+      </section>
+
+      <section class="join-intro" aria-labelledby="join-vision-heading">
+        <div class="join-wrap join-wrap--narrow">
+          <h2 id="join-vision-heading" class="join-intro-title">
+            Surfmate verbindet Surfende weltweit.
+          </h2>
+          <p>
+            Wir wollen Einsamkeit im Surfen bekämpfen, Menschen im Line-up und an
+            Land zusammenbringen und etwas Gutes bewirken, ohne das zu verändern,
+            was Surfen ausmacht. Wir starten mit dem Wellenreiten, bald kommt Rapid
+            Surfing dazu, danach Kitesurfen, Windsurfen, Wingfoilen und mehr.
+          </p>
+          <p>
+            <strong>Das hier ist kein fester Job.</strong> Es ist die Einladung, bei
+            einem richtig geilen Projekt mitzumachen: Bring deine Expertise ein,
+            wachs mit uns und bau im Team etwas auf, das in der Surfszene etwas
+            bewegt. Unser langfristiges Ziel ist es, Surfmate zu gründen und echte
+            Jobs in der Surfszene zu schaffen, und wer von Anfang an dabei ist,
+            gestaltet das mit.
+          </p>
+        </div>
+      </section>
+
+      <section class="join-crew" aria-labelledby="join-crew-heading">
+        <div class="join-wrap">
+          <header class="join-section-header">
+            <p class="join-kicker">Die Crew</p>
+            <h2 id="join-crew-heading" class="join-section-title">Vier Bereiche</h2>
+            <p class="join-section-lead">
+              Tech, Marketing, Events &amp; Community und Business &amp; Brand.
+              Offene Plätze führen direkt zur Ausschreibung.
+            </p>
+          </header>
+
+          <article class="join-lead">
+            <p class="join-area-label">Lead</p>
+            <p class="join-lead-role">Founder, Product, Dev &amp; Partnerships</p>
+            <p class="join-lead-name">Jolie</p>
+          </article>
+
+          <div class="join-areas">
+            <article class="join-area">
+              <h3 class="join-area-label">Tech</h3>
+              <ul class="join-seats">
+                <li class="join-seat">
+                  <span class="join-seat-role">Spots &amp; Daten</span>
+                  <span class="join-seat-who">Nico</span>
+                </li>
+                <li class="join-seat join-seat--open">
+                  <a href="#developer">
+                    <span class="join-seat-role">Developer (Backend &amp; React Native)</span>
+                    <span class="join-seat-who">Offen</span>
+                  </a>
+                </li>
+                <li class="join-seat join-seat--open">
+                  <a href="#ux-ui">
+                    <span class="join-seat-role">UX/UI Designer &amp; User Research</span>
+                    <span class="join-seat-who">Offen</span>
+                  </a>
+                </li>
+              </ul>
+            </article>
+
+            <article class="join-area">
+              <h3 class="join-area-label">Marketing</h3>
+              <ul class="join-seats">
+                <li class="join-seat join-seat--open">
+                  <a href="#graphic-design">
+                    <span class="join-seat-role">Graphic Designer</span>
+                    <span class="join-seat-who">Offen</span>
+                  </a>
+                </li>
+                <li class="join-seat join-seat--open">
+                  <a href="#social">
+                    <span class="join-seat-role">Social Media &amp; Content</span>
+                    <span class="join-seat-who">Offen</span>
+                  </a>
+                </li>
+                <li class="join-seat join-seat--open">
+                  <a href="#growth">
+                    <span class="join-seat-role">Growth</span>
+                    <span class="join-seat-who">Offen</span>
+                  </a>
+                </li>
+              </ul>
+            </article>
+
+            <article class="join-area">
+              <h3 class="join-area-label">Events &amp; Community</h3>
+              <ul class="join-seats">
+                <li class="join-seat">
+                  <span class="join-seat-role">Networking, On-Site &amp; Rapid Surfing</span>
+                  <span class="join-seat-who">Marlene</span>
+                </li>
+                <li class="join-seat join-seat--open">
+                  <a href="#events">
+                    <span class="join-seat-role">Surf Events &amp; On-Site Planning</span>
+                    <span class="join-seat-who">Offen</span>
+                  </a>
+                </li>
+              </ul>
+            </article>
+
+            <article class="join-area">
+              <h3 class="join-area-label">Business &amp; Brand</h3>
+              <ul class="join-seats">
+                <li class="join-seat">
+                  <span class="join-seat-role">Business Development</span>
+                  <span class="join-seat-who">Magnus</span>
+                </li>
+                <li class="join-seat join-seat--open">
+                  <a href="#wear">
+                    <span class="join-seat-role">Surfmate Wear, Shop &amp; Gamification</span>
+                    <span class="join-seat-who">Offen</span>
+                  </a>
+                </li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="join-roles" id="rollen" aria-labelledby="join-roles-heading">
+        <div class="join-wrap">
+          <header class="join-section-header">
+            <p class="join-kicker">Ausschreibungen</p>
+            <h2 id="join-roles-heading" class="join-section-title">Offene Rollen</h2>
+          </header>
+
+          <div class="join-role-group" aria-labelledby="join-tech-heading">
+            <h3 id="join-tech-heading" class="join-group-title">Tech</h3>
+
+            <article class="join-role" id="developer">
+              <h4>Developer (Backend &amp; React Native)</h4>
+              <p>
+                Du arbeitest mit Jolie an neuen Features für die App und wirst Schritt
+                für Schritt ins Backend eingearbeitet.
+              </p>
+              <p class="join-brings">
+                <span>Du bringst mit:</span> Erfahrung mit Backend-Entwicklung und
+                React Native, Neugier und Lust, Features von der Idee bis zum Release
+                zu begleiten.
+              </p>
+              <a
+                class="join-role-link"
+                href="mailto:jolie@surfmate.eu?subject=Join%20the%20Crew%20%E2%80%93%20Developer%20(Backend%20%26%20React%20Native)"
+                >Diese Rolle anschreiben</a
+              >
+            </article>
+
+            <article class="join-role" id="ux-ui">
+              <h4>UX/UI Designer &amp; User Research</h4>
+              <p>
+                Du sorgst dafür, dass Surfmate sich richtig anfühlt. Du führst Umfragen
+                und User Testings durch, findest heraus, was die Community wirklich
+                braucht, und machst daraus durchdachte Designs.
+              </p>
+              <p class="join-brings">
+                <span>Du bringst mit:</span> Erfahrung in UX/UI (Portfolio), Figma,
+                Erfahrung mit Nutzerforschung und Freude daran, mit echten Menschen zu
+                testen.
+              </p>
+              <a
+                class="join-role-link"
+                href="mailto:jolie@surfmate.eu?subject=Join%20the%20Crew%20%E2%80%93%20UX%2FUI%20Designer%20%26%20User%20Research"
+                >Diese Rolle anschreiben</a
+              >
+            </article>
+          </div>
+
+          <div class="join-role-group" aria-labelledby="join-marketing-heading">
+            <h3 id="join-marketing-heading" class="join-group-title">Marketing</h3>
+
+            <article class="join-role" id="graphic-design">
+              <h4>Graphic Designer</h4>
+              <p>
+                Du prägst den Look von Surfmate: Social-Media-Grafiken, Kampagnen,
+                Event-Material und alles, was unsere Marke sichtbar macht.
+              </p>
+              <p class="join-brings">
+                <span>Du bringst mit:</span> Ein Portfolio, sicheren Umgang mit
+                Design-Tools und ein Gespür für Surf-Ästhetik.
+              </p>
+              <a
+                class="join-role-link"
+                href="mailto:jolie@surfmate.eu?subject=Join%20the%20Crew%20%E2%80%93%20Graphic%20Designer"
+                >Diese Rolle anschreiben</a
+              >
+            </article>
+
+            <article class="join-role" id="social">
+              <h4>Social Media &amp; Content</h4>
+              <p>
+                Du bist die Stimme von Surfmate auf Instagram und TikTok. Du planst
+                Content, drehst und schneidest Videos und bist nah an unserer Community.
+              </p>
+              <p class="join-brings">
+                <span>Du bringst mit:</span> Erfahrung mit Short-Form-Content und
+                Community Management. Bonus: Du bist oft am Wasser und filmst gern.
+              </p>
+              <a
+                class="join-role-link"
+                href="mailto:jolie@surfmate.eu?subject=Join%20the%20Crew%20%E2%80%93%20Social%20Media%20%26%20Content"
+                >Diese Rolle anschreiben</a
+              >
+            </article>
+
+            <article class="join-role" id="growth">
+              <h4>Growth</h4>
+              <p>
+                Du bringst Surfmate zu neuen Surfenden, über Creator-Kooperationen,
+                Kampagnen und Ads, und schaust dir an, was wirklich funktioniert.
+              </p>
+              <p class="join-brings">
+                <span>Du bringst mit:</span> Erfahrung in Online-Marketing,
+                Influencer-Marketing oder Performance-Ads und Spaß an Zahlen.
+              </p>
+              <a
+                class="join-role-link"
+                href="mailto:jolie@surfmate.eu?subject=Join%20the%20Crew%20%E2%80%93%20Growth"
+                >Diese Rolle anschreiben</a
+              >
+            </article>
+          </div>
+
+          <div class="join-role-group" aria-labelledby="join-events-heading">
+            <h3 id="join-events-heading" class="join-group-title">Events &amp; Community</h3>
+
+            <article class="join-role" id="events">
+              <h4>Surf Events &amp; On-Site Planning</h4>
+              <p>
+                Du behältst den Überblick, wo in der Surfszene was abgeht, und planst,
+                wo Surfmate nächstes Jahr dabei ist: Contests, Festivals, Markets und
+                eigene Community-Events.
+              </p>
+              <p class="join-brings">
+                <span>Du bringst mit:</span> Organisationstalent, Erfahrung in
+                Eventplanung und Vernetzung in der Surf-Szene.
+              </p>
+              <a
+                class="join-role-link"
+                href="mailto:jolie@surfmate.eu?subject=Join%20the%20Crew%20%E2%80%93%20Surf%20Events%20%26%20On-Site%20Planning"
+                >Diese Rolle anschreiben</a
+              >
+            </article>
+          </div>
+
+          <div class="join-role-group" aria-labelledby="join-brand-heading">
+            <h3 id="join-brand-heading" class="join-group-title">Business &amp; Brand</h3>
+
+            <article class="join-role" id="wear">
+              <h4>Surfmate Wear, Shop &amp; Gamification</h4>
+              <p>
+                Du arbeitest mit Jolie an unserer Modebrand Surfmate Wear, die
+                nachhaltig in Portugal produziert wird, baust den Shop mit auf und
+                hilfst dabei, Shop und App über ein Gamification-Konzept zu verbinden.
+              </p>
+              <p class="join-brings">
+                <span>Du bringst mit:</span> Erfahrung in Mode, E-Commerce oder
+                Produktentwicklung und kreative Ideen, wie man Community und Brand
+                zusammenbringt.
+              </p>
+              <a
+                class="join-role-link"
+                href="mailto:jolie@surfmate.eu?subject=Join%20the%20Crew%20%E2%80%93%20Surfmate%20Wear%2C%20Shop%20%26%20Gamification"
+                >Diese Rolle anschreiben</a
+              >
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="join-ambassadors" id="ambassadors" aria-labelledby="join-ambassadors-heading">
+        <div class="join-wrap join-wrap--narrow">
+          <p class="join-kicker">Fortlaufend</p>
+          <h2 id="join-ambassadors-heading" class="join-section-title">
+            Surfmate Ambassadors
+          </h2>
+          <p>
+            Du kitest, windsurfst, wingst oder bist Local an deinem Wellenreit- oder
+            Rapid-Spot? Hilf uns, Surfmate in deine Community zu bringen.
+          </p>
+          <a
+            class="join-role-link"
+            href="mailto:jolie@surfmate.eu?subject=Join%20the%20Crew%20%E2%80%93%20Surfmate%20Ambassador"
+            >Als Ambassador schreiben</a
+          >
+        </div>
+      </section>
+
+      <section class="join-apply" id="mitmachen" aria-labelledby="join-apply-heading">
+        <div class="join-wrap join-wrap--narrow">
+          <h2 id="join-apply-heading" class="join-section-title">So machst du mit</h2>
+          <p>
+            Schick uns eine kurze Mail an
+            <a class="join-mail" href="mailto:jolie@surfmate.eu?subject=Join%20the%20Crew"
+              >jolie@surfmate.eu</a
+            >
+            mit:
+          </p>
+          <ol class="join-steps">
+            <li>der Rolle, die dich interessiert</li>
+            <li>ein paar Sätzen über dich und dein Verhältnis zum Surfen</li>
+            <li>warum dich unsere Vision anspricht</li>
+            <li>
+              einem Link zu Portfolio, GitHub, Instagram oder LinkedIn (falls vorhanden)
+            </li>
+          </ol>
+          <p class="join-apply-note">
+            Kein Anschreiben, kein Lebenslauf. Danach lernen wir uns in einem kurzen
+            Call kennen, und wenn es passt, startest du mit einem kleinen gemeinsamen
+            Projekt.
+          </p>
+          <a
+            class="join-button"
+            href="mailto:jolie@surfmate.eu?subject=Join%20the%20Crew"
+            >jolie@surfmate.eu</a
+          >
+        </div>
+      </section>
+    </main>
+
+    <div data-include="footer.html"></div>
+
+    <script src="/js/includes.js"></script>
+    <script src="/js/navigation.js"></script>
+  </body>
+</html>
