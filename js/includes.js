@@ -111,7 +111,10 @@ async function runAboutIntroTypewriterSequence() {
     return;
   }
 
-  if (prefersReducedMotion()) {
+  if (
+    prefersReducedMotion() ||
+    aboutTitle.textContent.trim() === aboutTitleText
+  ) {
     aboutTitle.textContent = aboutTitleText;
     revealAboutIntroCopy(aboutCopy);
     return;

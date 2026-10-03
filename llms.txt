@@ -1,0 +1,35 @@
+# Surfmate
+
+> Surfmate is the social surf platform to remember every surf, organize spots, discover events, and connect with other surfers. Tagline: Your Surf. Your Story.
+
+Surfmate is a community app for iOS and Android, made by Jolie Bast in Hamburg. Surfers use it to log sessions, share spotchecks with friends, keep secret spots private, and find contests, festivals, and meetups. More than 1,600 surfers are already on Surfmate. The longer plain-text brief, including the full Q&A, is at https://surfmate.eu/llms-full.txt.
+
+## Product
+- [Home](https://surfmate.eu/): Story, features, and answers about sessions, spotchecks, spots, following, the feed, profiles, and the journal
+- [Full site brief](https://surfmate.eu/llms-full.txt): Plain-text product description and complete Q&A
+- [Events](https://surfmate.eu/events/): Surf contests, festivals, meetups, and tours in a list, calendar, and map
+- [Share an event](https://surfmate.eu/events/submit/): Add a surf event for the community
+- [Partners](https://surfmate.eu/partners/): Brands, event series, and local spots that ride with Surfmate
+- [Creators](https://surfmate.eu/creators/): Creator program for surfers who use Surfmate and share it with their community
+- [Shop](https://surfmate.eu/shop/): Surfmate products, ordered via Instagram DM
+
+## Company
+- [Team](https://surfmate.eu/team.html): Jolie Bast (founder), Nikolaus Lieberum, Marlene, and Magnus
+- [Join the crew](https://surfmate.eu/join/): Open roles in tech, design, marketing, events, and brand
+- [Support](https://surfmate.eu/support/): Feedback, questions, and help
+- [Support the project](https://ko-fi.com/M2Y1202LAB): Ko-fi page for funding Surfmate
+
+## App
+- [App Store](https://apps.apple.com/de/app/surfmate-surf-log-connect/id6760191082): Surfmate for iPhone and iPad
+- [Google Play](https://play.google.com/store/apps/details?id=com.joliebast.surfmateapp): Surfmate for Android
+
+## Optional
+- [Imprint](https://surfmate.eu/impressum.html): Legal notice, Jolie Bast, Hamburg
+- [Legal overview](https://surfmate.eu/legal.html): Links to privacy, terms, and guidelines
+- [Privacy policy](https://surfmate.eu/datenschutz.html): Website privacy
+- [App privacy policy](https://surfmate.eu/datenschutz-app.html): App privacy
+- [Terms](https://surfmate.eu/terms.html): Terms of use
+- [Terms of sale](https://surfmate.eu/terms-of-sale.html): Terms for purchases
+- [Withdrawal policy](https://surfmate.eu/withdrawal-policy.html): Right of withdrawal
+- [Community guidelines](https://surfmate.eu/community-guidelines.html): How to behave on Surfmate
+- [Data deletion](https://surfmate.eu/data-deletion.html): How to ask for account data to be deleted
