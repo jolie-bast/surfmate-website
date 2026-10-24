@@ -38,20 +38,27 @@
     />
   </head>
   <body class="wear-teaser-page">
+    <div data-include="header.html"></div>
+
+    <script>
+      // Solid black header on the Wear page (same approach as the old shop page)
+      document.addEventListener("DOMContentLoaded", () => {
+        let attempts = 0;
+        const makeHeaderDark = () => {
+          attempts++;
+          const header = document.querySelector(".header");
+          if (header) {
+            header.classList.add("scrolled");
+          } else if (attempts < 10) {
+            setTimeout(makeHeaderDark, 300);
+          }
+        };
+        makeHeaderDark();
+      });
+    </script>
+
     <main class="wt">
       <section class="wt-copy">
-        <header class="wt-header">
-          <a href="/" class="wt-logo" aria-label="Surfmate home">
-            <img src="/assets/logo-surfmate-schriftzug.svg" alt="Surfmate" />
-          </a>
-          <a
-            href="https://www.instagram.com/surfmate.wear/"
-            class="wt-insta"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Follow @surfmate.wear</a
-          >
-        </header>
 
         <div class="wt-body">
           <p class="wt-kicker">Drop 01 · Sunday, Nov 15</p>
@@ -97,7 +104,8 @@
         <div class="wt-strip">
           <span>Made in Portugal</span><span aria-hidden="true">·</span>
           <span>Hand-printed on Mallorca</span><span aria-hidden="true">·</span>
-          <span>Nov 15–29 only</span>
+          <span>Nov 15–29 only</span><span aria-hidden="true">·</span>
+          <a href="https://www.instagram.com/surfmate.wear/" target="_blank" rel="noopener noreferrer">@surfmate.wear</a>
         </div>
       </section>
 
@@ -122,13 +130,10 @@
       </div>
     </main>
 
-    <footer class="wt-footer">
-      <a href="/impressum.html">Impressum</a>
-      <a href="/datenschutz.html">Privacy</a>
-      <a href="/terms-of-sale.html">Terms of sale</a>
-      <a href="/withdrawal-policy.html">Withdrawal</a>
-    </footer>
+    <div data-include="footer.html"></div>
 
+    <script src="/js/includes.js"></script>
+    <script src="/js/navigation.js"></script>
     <script src="/js/wear-teaser.js" defer></script>
   </body>
 </html>

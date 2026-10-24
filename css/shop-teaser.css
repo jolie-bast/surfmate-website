@@ -19,6 +19,8 @@
 .wt {
   display: flex;
   flex-wrap: wrap;
+  /* room for the fixed site header (includes/header.html) */
+  padding-top: var(--header-height);
   min-height: 100vh;
   min-height: 100svh;
 }
@@ -29,7 +31,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  padding: 2rem 3.5rem 0;
+  padding: 0 3.5rem;
 }
 
 .wt-header {
@@ -335,4 +337,8 @@
   .wt-title {
     font-size: 4.125rem;
   }
+}
+
+.wt-strip a {
+  text-decoration: none;
 }
