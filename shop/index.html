@@ -12,127 +12,123 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Order Surfmate products — how to buy via Instagram DM."
+      content="Surfmate Wear Drop 01 — Nov 15. Made in Portugal, hand-printed on Mallorca. Online for two weeks only. Join the list for early access."
     />
-    <title>Shop – Surfmate</title>
-    <link rel="canonical" href="https://surf-mate.de/shop/" />
+    <title>Surfmate Wear – Drop 01 · Nov 15</title>
+    <link rel="canonical" href="https://surfmate.eu/shop/" />
+
+    <meta property="og:title" content="Surfmate Wear – Drop 01 · Nov 15" />
+    <meta
+      property="og:description"
+      content="Paddle out. Dare it. Two weeks online, small numbers. Join the list for early access."
+    />
+    <meta property="og:image" content="https://surfmate.eu/assets/wear/teaser-hoodie-1400.jpg" />
+    <meta property="og:url" content="https://surfmate.eu/shop/" />
+    <meta property="og:type" content="website" />
 
     <link rel="stylesheet" href="/css/main.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-    />
-    <link rel="stylesheet" href="/css/shop.css" />
+    <link rel="stylesheet" href="/css/shop-teaser.css" />
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      imagesrcset="/assets/wear/teaser-hoodie-800.webp 800w, /assets/wear/teaser-hoodie-1400.webp 1400w"
+      imagesizes="(min-width: 960px) 45vw, 100vw"
+    />
   </head>
-  <body class="shop-page">
-    <div data-include="header.html"></div>
+  <body class="wear-teaser-page">
+    <main class="wt">
+      <section class="wt-copy">
+        <header class="wt-header">
+          <a href="/" class="wt-logo" aria-label="Surfmate home">
+            <img src="/assets/logo-surfmate-schriftzug.svg" alt="Surfmate" />
+          </a>
+          <a
+            href="https://www.instagram.com/surfmate.wear/"
+            class="wt-insta"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Follow @surfmate.wear</a
+          >
+        </header>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        let attempts = 0;
-        const maxAttempts = 10;
+        <div class="wt-body">
+          <p class="wt-kicker">Drop 01 · Sunday, Nov 15</p>
+          <h1 class="wt-title">Paddle<br />out.<br />Dare it.</h1>
+          <p class="wt-text">
+            Tees, tops, one hoodie, a tote and a wax comb. Made in Portugal,
+            hand-printed on Mallorca. Online for two weeks, in small numbers.
+            The list gets in one hour early.
+          </p>
 
-        const makeHeaderDark = () => {
-          attempts++;
-          const header = document.querySelector(".header");
-          if (header) {
-            header.classList.add("scrolled");
-            header.style.background = "rgba(0, 0, 0, 0.95)";
-            header.style.backdropFilter = "blur(10px)";
-          } else if (attempts < maxAttempts) {
-            setTimeout(makeHeaderDark, 300);
-          }
-        };
+          <div class="wt-countdown-wrap" data-countdown="2026-11-15T19:00:00Z">
+            <p class="wt-label" id="wt-countdown-label">Shop opens in</p>
+            <div class="wt-countdown" role="timer" aria-labelledby="wt-countdown-label">
+              <div class="wt-unit"><span class="wt-num" data-unit="days">–</span><span class="wt-unit-label">Days</span></div>
+              <div class="wt-unit"><span class="wt-num" data-unit="hours">–</span><span class="wt-unit-label">Hours</span></div>
+              <div class="wt-unit"><span class="wt-num" data-unit="mins">–</span><span class="wt-unit-label">Minutes</span></div>
+            </div>
+          </div>
 
-        makeHeaderDark();
-      });
-    </script>
+          <form class="wt-form" id="wt-form" novalidate>
+            <label for="wt-email" class="wt-sr-only">Email</label>
+            <input
+              id="wt-email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              placeholder="you@email.com"
+              required
+            />
+            <button type="submit" id="wt-submit">Join the list</button>
+          </form>
+          <p class="wt-error" id="wt-error" role="alert" hidden></p>
+          <p class="wt-success" id="wt-success" role="status" hidden>
+            You're on the list. We'll email you the early-access link on Nov 15.
+          </p>
+          <p class="wt-note">
+            Early access Nov 15, 7 pm Lisbon · 8 pm Berlin. Public one hour
+            later. By signing up you agree to receive Surfmate Wear emails — see
+            our <a href="/datenschutz.html">privacy policy</a>.
+          </p>
+        </div>
 
-    <main class="shop-main">
-      <section class="shop-hero" aria-labelledby="shop-heading">
-        <div class="shop-hero-media">
+        <div class="wt-strip">
+          <span>Made in Portugal</span><span aria-hidden="true">·</span>
+          <span>Hand-printed on Mallorca</span><span aria-hidden="true">·</span>
+          <span>Nov 15–29 only</span>
+        </div>
+      </section>
+
+      <div class="wt-media">
+        <picture>
+          <source
+            type="image/webp"
+            srcset="/assets/wear/teaser-hoodie-800.webp 800w, /assets/wear/teaser-hoodie-1400.webp 1400w"
+            sizes="(min-width: 960px) 45vw, 100vw"
+          />
           <img
-            src="/assets/surfmate-hoodie.JPG"
-            alt=""
-            class="shop-hero-img"
-            width="6864"
-            height="4576"
+            src="/assets/wear/teaser-hoodie-1400.jpg"
+            srcset="/assets/wear/teaser-hoodie-800.jpg 800w, /assets/wear/teaser-hoodie-1400.jpg 1400w"
+            sizes="(min-width: 960px) 45vw, 100vw"
+            width="1400"
+            height="2100"
+            alt="Two surfers at the beach at sunset, one wearing the black Surfmate hoodie with the back print Your Surf. Your Story."
             fetchpriority="high"
             decoding="async"
           />
-        </div>
-        <div class="shop-hero-inner">
-          <h1 id="shop-heading" class="shop-hero-title">Shop</h1>
-          <p class="shop-hero-subline">
-            Surfmate gear — order directly via Instagram.
-          </p>
-        </div>
-      </section>
-
-      <section class="shop-content-section" aria-labelledby="shop-order-heading">
-        <div class="shop-section-inner">
-          <p class="shop-intro">
-            No checkout on this site — just message us on Instagram and we’ll
-            take it from there.
-          </p>
-
-          <h2 id="shop-order-heading" class="shop-order-heading">
-            How to Order
-          </h2>
-
-          <ol class="shop-steps">
-            <li class="shop-step">
-              <span class="shop-step-number" aria-hidden="true">1</span>
-              <p class="shop-step-text">Send us a DM on Instagram.</p>
-            </li>
-            <li class="shop-step">
-              <span class="shop-step-number" aria-hidden="true">2</span>
-              <p class="shop-step-text">
-                Tell us your size, color and shipping address.
-              </p>
-            </li>
-            <li class="shop-step">
-              <span class="shop-step-number" aria-hidden="true">3</span>
-              <p class="shop-step-text">We’ll send you an invoice.</p>
-            </li>
-            <li class="shop-step">
-              <span class="shop-step-number" aria-hidden="true">4</span>
-              <p class="shop-step-text">Pay via bank transfer.</p>
-            </li>
-            <li class="shop-step">
-              <span class="shop-step-number" aria-hidden="true">5</span>
-              <p class="shop-step-text">
-                We ship your order within 7–24 working days. 🌊
-              </p>
-            </li>
-          </ol>
-
-          <div class="shop-cta">
-            <a
-              href="https://www.instagram.com/jolie.surfs/"
-              class="shop-instagram-button"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <i class="bi bi-instagram" aria-hidden="true"></i>
-              Message us on Instagram
-            </a>
-          </div>
-
-          <p class="shop-legal-note">
-            Orders are subject to our
-            <a href="/terms-of-sale.html">General Terms and Conditions</a>
-            and
-            <a href="/withdrawal-policy.html">Right of Withdrawal</a>.
-          </p>
-        </div>
-      </section>
+        </picture>
+      </div>
     </main>
 
-    <div data-include="footer.html"></div>
+    <footer class="wt-footer">
+      <a href="/impressum.html">Impressum</a>
+      <a href="/datenschutz.html">Privacy</a>
+      <a href="/terms-of-sale.html">Terms of sale</a>
+      <a href="/withdrawal-policy.html">Withdrawal</a>
+    </footer>
 
-    <script src="/js/includes.js"></script>
-    <script src="/js/navigation.js"></script>
+    <script src="/js/wear-teaser.js" defer></script>
   </body>
 </html>

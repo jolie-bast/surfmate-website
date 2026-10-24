@@ -1,0 +1,338 @@
+/* Surfmate Wear — Drop 01 teaser (/shop/)
+   Wear brand world: black & white only, photos, Surfmate fonts + Inter. */
+
+.wear-teaser-page {
+  margin: 0;
+  padding: 0;
+  background: #1a1a1a;
+  color: #ffffff;
+  font-family: var(--font-family-ui);
+}
+
+.wear-teaser-page a {
+  color: #ffffff;
+}
+.wear-teaser-page a:hover {
+  color: #cfcfcf;
+}
+
+.wt {
+  display: flex;
+  flex-wrap: wrap;
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+/* ---------- Copy column ---------- */
+.wt-copy {
+  flex: 1 1 560px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 3.5rem 0;
+}
+
+.wt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  min-height: 44px;
+}
+
+.wt-logo {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+}
+.wt-logo img {
+  height: 28px;
+  width: auto;
+  display: block;
+  filter: invert(1); /* black wordmark → white on dark */
+}
+
+.wt-insta {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.wt-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.75rem;
+  padding: 3.5rem 0;
+  max-width: 560px;
+}
+
+.wt-kicker {
+  margin: 0;
+  font-family: var(--font-family-primary);
+  font-size: 2.125rem;
+  line-height: 1;
+}
+
+.wt-title {
+  margin: 0;
+  font-family: var(--font-family-heading);
+  font-weight: 900;
+  font-size: clamp(3rem, 6.4vw, 6.25rem);
+  overflow-wrap: normal;
+  word-break: keep-all;
+  line-height: 0.85;
+  text-transform: uppercase;
+}
+
+.wt-text {
+  margin: 0;
+  max-width: 500px;
+  font-size: 1.125rem;
+  line-height: 1.55;
+  color: #e6e6e6;
+}
+
+/* ---------- Countdown ---------- */
+.wt-countdown-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.wt-label {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #cfcfcf;
+}
+
+.wt-countdown {
+  display: flex;
+  gap: 0.625rem;
+}
+
+.wt-unit {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+  border: 1.5px solid #ffffff;
+  border-radius: 15px;
+  padding: 0.875rem 0.625rem;
+}
+
+.wt-num {
+  font-family: var(--font-family-heading);
+  font-weight: 900;
+  font-size: 2.5rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.wt-unit-label {
+  font-size: 0.75rem;
+  color: #cfcfcf;
+}
+
+/* ---------- Form ---------- */
+.wt-form {
+  display: flex;
+  gap: 0.625rem;
+  flex-wrap: wrap;
+}
+
+.wt-form input {
+  flex: 1 1 220px;
+  min-width: 0;
+  min-height: 52px;
+  padding: 0 1.25rem;
+  font-family: var(--font-family-ui);
+  font-size: 1rem;
+  color: #ffffff;
+  background: #1a1a1a;
+  border: 1.5px solid #ffffff;
+  border-radius: 999px;
+}
+.wt-form input::placeholder {
+  color: #9a9a9a;
+}
+.wt-form input:focus-visible,
+.wt-form button:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+}
+
+.wt-form button {
+  min-height: 52px;
+  padding: 0 1.75rem;
+  font-family: var(--font-family-ui);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  background: #ffffff;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.wt-form button:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.wt-error,
+.wt-success {
+  margin: -0.75rem 0 0;
+  font-size: 0.9375rem;
+}
+.wt-success {
+  margin: 0;
+  font-weight: 500;
+}
+
+.wt-note {
+  margin: -0.5rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: #cfcfcf;
+}
+.wt-note a {
+  text-decoration: underline;
+}
+
+.wt-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.wt-strip {
+  border-top: 1.5px solid #ffffff;
+  padding: 1rem 0;
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ---------- Photo column ---------- */
+.wt-media {
+  flex: 1 1 480px;
+  min-width: 0;
+  min-height: 560px;
+  position: relative;
+}
+.wt-media picture,
+.wt-media img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 60% 45%;
+}
+
+/* ---------- Footer ---------- */
+.wt-footer {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  padding: 1.25rem 1rem 1.75rem;
+  border-top: 1.5px solid #333333;
+  font-size: 0.8125rem;
+}
+.wt-footer a {
+  color: #cfcfcf;
+}
+
+/* ---------- Mobile: photo first, then copy ---------- */
+@media (max-width: 959px) {
+  .wt {
+    flex-direction: column;
+    flex-wrap: nowrap;
+  }
+  .wt-copy {
+    display: contents;
+  }
+  .wt-header {
+    order: 1;
+    padding: 0.75rem 1rem;
+  }
+  .wt-media {
+    order: 2;
+    flex: 0 0 auto;
+    min-height: 0;
+    height: 62svh;
+    max-height: 560px;
+  }
+  .wt-media img {
+    object-position: 62% 48%;
+  }
+  .wt-body {
+    order: 3;
+    padding: 1.75rem 1rem 2rem;
+    gap: 1.125rem;
+    max-width: none;
+  }
+  .wt-strip {
+    order: 4;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    font-size: 0.625rem;
+  }
+  .wt-kicker {
+    font-size: 1.5rem;
+  }
+  .wt-text {
+    font-size: 0.9375rem;
+  }
+  .wt-unit {
+    border-radius: 12px;
+    padding: 0.625rem 0.375rem;
+  }
+  .wt-num {
+    font-size: 1.875rem;
+  }
+  .wt-form {
+    flex-direction: column;
+  }
+  .wt-form input,
+  .wt-form button {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+}
+
+.wt-live {
+  display: inline-flex;
+  align-items: center;
+  min-height: 52px;
+  padding: 0 1.75rem;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #1a1a1a !important;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+@media (max-width: 959px) {
+  .wt-title {
+    font-size: 4.125rem;
+  }
+}
