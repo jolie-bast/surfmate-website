@@ -1,0 +1,46 @@
+<!-- @dsCard height=288 -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Surfmate — cover</title></head>
+<body style="margin:0;">
+<!--
+  Derivation:
+  Blocks: brand-blue (identity ocean hue — 380×140, rx=radius-xl) · ink (deep surface — 180×84, rx=radius-lg) ·
+          mint (relief tint — 184×84, rx=radius-lg)
+  Arrangement: one wide slab over two smaller blocks, staggered right — echoes the hero's single wide photo
+          band sitting above compact content sections
+  Pattern: horizontal wave arcs (the waves-horizontal icon's own motif) at a space-lg pitch, in surface-white
+          over the blue slab and brand-blue-dark over the ink block — the literal ocean, not a generic swell
+  Scales used: radius-xl, radius-lg, space-lg; brand-blue, ink, mint, brand-blue-dark, surface, text-muted
+-->
+<svg viewBox="0 0 960 288" width="960" height="288" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .ground { fill: var(--surface); }
+    .name { fill: var(--ink); font-family: var(--font-display); font-weight: 900; }
+    .tagline { fill: var(--text-muted); font-family: var(--font-ui); font-weight: 400; }
+    .block-blue { fill: var(--brand-blue); rx: var(--radius-xl); }
+    .block-ink { fill: var(--ink); rx: var(--radius-lg); }
+    .block-mint { fill: var(--mint); rx: var(--radius-lg); }
+    .wave-light { fill: none; stroke: var(--surface); stroke-width: 3; stroke-linecap: round; opacity: 0.85; }
+    .wave-dark { fill: none; stroke: var(--brand-blue-dark); stroke-width: 3; stroke-linecap: round; }
+  </style>
+
+  <rect class="ground" x="0" y="0" width="960" height="288" />
+
+  <rect class="block-blue" x="520" y="24" width="380" height="140" />
+  <rect class="block-ink" x="520" y="180" width="180" height="84" />
+  <rect class="block-mint" x="716" y="180" width="184" height="84" />
+
+  <!-- wave-horizontal motif, tiled at the space-lg pitch (28px), over the blue slab -->
+  <path class="wave-light" d="M 540 70 q 12 -14 24 0 t 24 0 24 0 24 0 24 0 24 0 24 0 24 0 24 0 24 0 24 0 24 0" />
+  <path class="wave-light" d="M 540 98 q 12 -14 24 0 t 24 0 24 0 24 0 24 0 24 0 24 0 24 0 24 0 24 0 24 0 24 0" />
+  <path class="wave-light" d="M 540 126 q 12 -14 24 0 t 24 0 24 0 24 0 24 0 24 0 24 0 24 0 24 0 24 0 24 0 24 0" />
+
+  <!-- same motif, smaller, over the ink block -->
+  <path class="wave-dark" d="M 540 222 q 9 -10 18 0 t 18 0 18 0 18 0 18 0 18 0 18 0" />
+
+  <text class="name" x="64" y="188" font-size="90" style="line-height:0.92;">Surfmate</text>
+  <text class="tagline" x="64" y="216" font-size="14">Your Surf. Your Story.</text>
+</svg>
+</body>
+</html>

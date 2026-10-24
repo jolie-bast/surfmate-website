@@ -221,30 +221,33 @@
     background: rgba(0, 0, 0, 0.44);
   }
   .wt-inner {
-    padding: calc(var(--header-height) + 1rem) 1rem 1.75rem;
-    gap: 0.875rem;
+    padding: calc(var(--header-height) + 1.25rem) 1.25rem 2.5rem;
+    gap: 1.25rem;
   }
   .wt-kicker {
     font-size: 0.6875rem;
   }
   .wt-title {
-    font-size: 4rem;
-    line-height: 1.1;
-    margin-bottom: 0.75rem;
+    font-size: clamp(2.25rem, 9.5vw, 2.875rem);
+    line-height: 1.05;
+    margin-bottom: 0.25rem;
   }
   .wt-bar {
     flex-direction: column;
     align-items: stretch;
-    gap: 1.25rem;
-    padding-top: 1rem;
+    gap: 1.5rem;
+    padding-top: 1.25rem;
   }
   .wt-countdown-wrap {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: baseline;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.625rem;
+  }
+  .wt-label {
+    letter-spacing: 0.12em;
   }
   .wt-num {
-    font-size: 2.125rem;
+    font-size: 2rem;
   }
   .wt-u {
     font-size: 0.75rem;
@@ -253,9 +256,11 @@
   .wt-signup {
     flex: 0 0 auto;
     min-width: 0;
+    gap: 0.75rem;
   }
   .wt-form {
     flex-direction: column;
+    gap: 0.625rem;
   }
   .wt-form input,
   .wt-form input[name="name"],

@@ -1,0 +1,58 @@
+{
+  "v": 3,
+  "layout": "files",
+  "createdOnFiles": { "v": 1, "at": "2026-09-18T12:00:00Z" },
+  "title": "Surfmate",
+  "namespace": "Surfmate",
+  "libraries": [],
+  "sections": {},
+  "groups": ["Logos", "Icons"],
+  "assetGroups": {
+    "Logos": {
+      "name": "Logos",
+      "tile": "l",
+      "order": ["surfmate-wordmark.svg"],
+      "files": {
+        "surfmate-wordmark.svg": {
+          "name": "surfmate-wordmark.svg",
+          "blob": "6ce1ffd54e615cb898792a7dc5fe977a",
+          "size": 3109,
+          "type": "image/svg+xml"
+        }
+      }
+    },
+    "Icons": {
+      "name": "Icons",
+      "tile": "s",
+      "order": ["waves-horizontal.svg", "calendar-event.svg", "users.svg"],
+      "files": {
+        "waves-horizontal.svg": {
+          "name": "waves-horizontal.svg",
+          "blob": "0de32fb5857b387fd2feb715294ca5bc",
+          "size": 389,
+          "type": "image/svg+xml"
+        },
+        "calendar-event.svg": {
+          "name": "calendar-event.svg",
+          "blob": "988734928ab2ee339513f8bd79951502",
+          "size": 483,
+          "type": "image/svg+xml"
+        },
+        "users.svg": {
+          "name": "users.svg",
+          "blob": "814c8316d0925529451eb339734b25d7",
+          "size": 418,
+          "type": "image/svg+xml"
+        }
+      }
+    }
+  },
+  "blobs": {},
+  "docs": { "readme": "project/README.md", "sections": [] },
+  "lastChange": {
+    "by": "Jolie Bast",
+    "at": "2026-09-18T12:00:00Z",
+    "via": "Claude Code",
+    "note": "Extracted from the surfmate-website codebase: tokens from css/variables.css and css/base.css, five components hand-written from their source CSS, wordmark and a sample of the Lucide icon set, and the three brand fonts."
+  }
+}
