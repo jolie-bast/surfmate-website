@@ -54,28 +54,41 @@
   var form = document.getElementById("wt-form");
   if (!form) return;
 
-  var input = document.getElementById("wt-email");
+  var nameInput = document.getElementById("wt-name");
+  var emailInput = document.getElementById("wt-email");
   var button = document.getElementById("wt-submit");
   var errorEl = document.getElementById("wt-error");
   var successEl = document.getElementById("wt-success");
   var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  var showError = function (msg) {
+  var showError = function (msg, field) {
     errorEl.textContent = msg;
     errorEl.hidden = false;
-    input.setAttribute("aria-invalid", "true");
-    input.focus();
+    if (field) {
+      field.setAttribute("aria-invalid", "true");
+      field.focus();
+    }
   };
 
-  input.addEventListener("input", function () {
+  var clearError = function () {
     errorEl.hidden = true;
-    input.removeAttribute("aria-invalid");
-  });
+    nameInput.removeAttribute("aria-invalid");
+    emailInput.removeAttribute("aria-invalid");
+  };
+
+  nameInput.addEventListener("input", clearError);
+  emailInput.addEventListener("input", clearError);
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
-    var email = input.value.trim();
-    if (!emailRe.test(email)) return showError("Please enter a valid email.");
+    var name = nameInput.value.trim();
+    var email = emailInput.value.trim();
+    if (name.length < 2) {
+      return showError("Please enter your name.", nameInput);
+    }
+    if (!emailRe.test(email)) {
+      return showError("Please enter a valid email.", emailInput);
+    }
     if (!WEAR_FORM_URL) {
       console.warn("wear-teaser: WEAR_FORM_URL is not set");
       return showError("Sign-up isn't open yet — follow @surfmate.wear.");
@@ -85,6 +98,7 @@
     button.textContent = "Joining…";
 
     var body = new URLSearchParams();
+    body.append("fields[name]", name);
     body.append("fields[email]", email);
     body.append("ml-submit", "1");
     body.append("anticsrf", "true");

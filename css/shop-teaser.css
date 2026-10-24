@@ -116,7 +116,7 @@
 }
 
 .wt-signup {
-  flex: 0 1 480px;
+  flex: 0 1 520px;
   min-width: 280px;
   display: flex;
   flex-direction: column;
@@ -130,6 +130,9 @@
 }
 .wt-form[hidden] {
   display: none;
+}
+.wt-form input[name="name"] {
+  flex: 1 1 100%;
 }
 .wt-form input {
   flex: 1 1 200px;
@@ -255,6 +258,7 @@
     flex-direction: column;
   }
   .wt-form input,
+  .wt-form input[name="name"],
   .wt-form button {
     flex: 0 0 auto;
     width: 100%;
