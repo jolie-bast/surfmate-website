@@ -7,7 +7,8 @@
   // group (NOT the app newsletter form used in js/waitlist.js) and paste its
   // subscribe URL here, e.g.
   // "https://assets.mailerlite.com/jsonp/2025965/forms/<FORM_ID>/subscribe"
-  var WEAR_FORM_URL = "";
+  var WEAR_FORM_URL =
+    "https://assets.mailerlite.com/jsonp/2025965/forms/202215834903381236/subscribe";
 
   // Shopify store URL — once the drop is live the countdown turns into a link.
   var SHOP_URL = "";
