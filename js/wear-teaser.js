@@ -49,6 +49,17 @@
     tick();
   }
 
+  // ---- Header: transparent over the photo, solid once you scroll past it ---
+  var hero = document.querySelector(".wt");
+  var syncHeader = function () {
+    var header = document.querySelector(".header");
+    if (!header || !hero) return;
+    var past = window.scrollY > hero.offsetHeight - header.offsetHeight;
+    header.classList.toggle("scrolled", past);
+  };
+  window.addEventListener("scroll", syncHeader, { passive: true });
+  setTimeout(syncHeader, 600); // header arrives via includes.js
+
   // ---- Sign-up -------------------------------------------------------------
   var form = document.getElementById("wt-form");
   if (!form) return;
@@ -59,6 +70,25 @@
   var errorEl = document.getElementById("wt-error");
   var successEl = document.getElementById("wt-success");
   var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  var firstLook = document.getElementById("wt-firstlook");
+  var LIST_KEY = "surfmate_wear_list";
+
+  var revealFirstLook = function (scroll) {
+    if (!firstLook) return;
+    firstLook.hidden = false;
+    if (scroll) {
+      firstLook.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  // Returning visitors who already joined see the first look right away.
+  try {
+    if (localStorage.getItem(LIST_KEY) === "1") {
+      form.hidden = true;
+      successEl.hidden = false;
+      revealFirstLook(false);
+    }
+  } catch (e) {}
 
   var showError = function (msg) {
     errorEl.textContent = msg;
@@ -94,6 +124,10 @@
     var done = function () {
       form.hidden = true;
       successEl.hidden = false;
+      try {
+        localStorage.setItem(LIST_KEY, "1");
+      } catch (e) {}
+      revealFirstLook(true);
       if (typeof gtag === "function") {
         gtag("event", "sign_up", { method: "wear_waitlist" });
       }

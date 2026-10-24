@@ -123,6 +123,9 @@
   gap: 0.625rem;
 }
 
+.wt-form[hidden] {
+  display: none;
+}
 .wt-form {
   display: flex;
   gap: 0.5rem;
@@ -259,5 +262,101 @@
   .wt-note {
     text-align: center;
     font-size: 0.75rem;
+  }
+}
+
+/* ---------- First look (revealed after sign-up) ---------- */
+.wt-firstlook {
+  background: #1a1a1a;
+  border-top: 1.5px solid #ffffff;
+  scroll-margin-top: var(--header-height);
+}
+.wt-firstlook[hidden] {
+  display: none;
+}
+.wt-firstlook-inner {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 4rem 2.5rem 5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.wt-firstlook-title {
+  margin: 0;
+  font-family: var(--font-family-primary);
+  font-weight: 400;
+  font-size: clamp(3rem, 6vw, 5rem);
+  line-height: 1.1;
+  color: #ffffff;
+}
+.wt-firstlook-text {
+  margin: 0 0 1.5rem;
+  max-width: 520px;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: #e6e6e6;
+}
+.wt-looks {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+.wt-look {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+.wt-look--wide {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+.wt-look img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 15px;
+}
+/* the wide image fills the two rows the small images define */
+.wt-look--wide picture {
+  flex: 1 1 auto;
+  position: relative;
+  display: block;
+  min-height: 0;
+}
+.wt-look--wide img {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  aspect-ratio: auto;
+}
+.wt-look figcaption {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.wt-success a {
+  text-decoration: underline;
+}
+
+@media (max-width: 767px) {
+  .wt-firstlook-inner {
+    padding: 2.5rem 1rem 3rem;
+  }
+  .wt-looks {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+  .wt-look--wide {
+    grid-row: auto;
+  }
+  .wt-look--wide img {
+    position: static;
+    aspect-ratio: 4 / 5;
+    height: auto;
   }
 }
