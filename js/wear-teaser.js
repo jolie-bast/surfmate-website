@@ -54,6 +54,7 @@
   if (!form) return;
 
   var input = document.getElementById("wt-email");
+  var nameInput = document.getElementById("wt-name");
   var button = document.getElementById("wt-submit");
   var errorEl = document.getElementById("wt-error");
   var successEl = document.getElementById("wt-success");
@@ -85,6 +86,8 @@
 
     var body = new URLSearchParams();
     body.append("fields[email]", email);
+    var name = nameInput ? nameInput.value.trim() : "";
+    if (name) body.append("fields[name]", name);
     body.append("ml-submit", "1");
     body.append("anticsrf", "true");
 
