@@ -20,7 +20,7 @@
     <meta property="og:title" content="Surfmate Wear – Drop 01 · Nov 15" />
     <meta
       property="og:description"
-      content="Paddle out. Dare it. Two weeks online, small numbers. Join the list for early access."
+      content="Your Surf. Your Story. Two weeks online, small numbers. Join the list for early access."
     />
     <meta property="og:image" content="https://surfmate.eu/assets/wear/teaser-hoodie-1400.jpg" />
     <meta property="og:url" content="https://surfmate.eu/shop/" />
@@ -34,99 +34,64 @@
       as="image"
       type="image/webp"
       imagesrcset="/assets/wear/teaser-hoodie-800.webp 800w, /assets/wear/teaser-hoodie-1400.webp 1400w"
-      imagesizes="(min-width: 960px) 45vw, 100vw"
+      imagesizes="100vw"
     />
   </head>
   <body class="wear-teaser-page">
     <div data-include="header.html"></div>
 
-    <script>
-      // Solid black header on the Wear page (same approach as the old shop page)
-      document.addEventListener("DOMContentLoaded", () => {
-        let attempts = 0;
-        const makeHeaderDark = () => {
-          attempts++;
-          const header = document.querySelector(".header");
-          if (header) {
-            header.classList.add("scrolled");
-          } else if (attempts < 10) {
-            setTimeout(makeHeaderDark, 300);
-          }
-        };
-        makeHeaderDark();
-      });
-    </script>
-
     <main class="wt">
-      <section class="wt-copy">
+      <picture class="wt-bg">
+        <source
+          type="image/webp"
+          srcset="/assets/wear/teaser-hoodie-800.webp 800w, /assets/wear/teaser-hoodie-1400.webp 1400w"
+          sizes="100vw"
+        />
+        <img
+          src="/assets/wear/teaser-hoodie-1400.jpg"
+          srcset="/assets/wear/teaser-hoodie-800.jpg 800w, /assets/wear/teaser-hoodie-1400.jpg 1400w"
+          sizes="100vw"
+          width="1400"
+          height="2100"
+          alt="Two surfers at the beach at sunset, one wearing the black Surfmate hoodie with the back print Your Surf. Your Story."
+          fetchpriority="high"
+          decoding="async"
+        />
+      </picture>
+      <div class="wt-shade" aria-hidden="true"></div>
 
-        <div class="wt-body">
-          <p class="wt-kicker">Drop 01 · Sunday, Nov 15</p>
-          <h1 class="wt-title">Paddle<br />out.<br />Dare it.</h1>
-          <p class="wt-text">
-            Tees, tops, one hoodie, a tote and a wax comb. Made in Portugal,
-            hand-printed on Mallorca. Online for two weeks, in small numbers.
-            The list gets in one hour early.
-          </p>
+      <div class="wt-inner">
+        <p class="wt-kicker">Surfmate Wear · Drop 01 · Nov 15 — the brand behind the community</p>
+        <h1 class="wt-title">Your Surf.<br />Your Story.</h1>
 
+        <div class="wt-bar">
           <div class="wt-countdown-wrap" data-countdown="2026-11-15T19:00:00Z">
             <p class="wt-label" id="wt-countdown-label">Shop opens in</p>
             <div class="wt-countdown" role="timer" aria-labelledby="wt-countdown-label">
-              <div class="wt-unit"><span class="wt-num" data-unit="days">–</span><span class="wt-unit-label">Days</span></div>
-              <div class="wt-unit"><span class="wt-num" data-unit="hours">–</span><span class="wt-unit-label">Hours</span></div>
-              <div class="wt-unit"><span class="wt-num" data-unit="mins">–</span><span class="wt-unit-label">Minutes</span></div>
+              <span class="wt-num" data-unit="days">–</span><span class="wt-u">d</span>
+              <span class="wt-num" data-unit="hours">–</span><span class="wt-u">h</span>
+              <span class="wt-num" data-unit="mins">–</span><span class="wt-u">m</span>
             </div>
           </div>
 
-          <form class="wt-form" id="wt-form" novalidate>
-            <label for="wt-email" class="wt-sr-only">Email</label>
-            <input
-              id="wt-email"
-              name="email"
-              type="email"
-              autocomplete="email"
-              placeholder="you@email.com"
-              required
-            />
-            <button type="submit" id="wt-submit">Join the list</button>
-          </form>
-          <p class="wt-error" id="wt-error" role="alert" hidden></p>
-          <p class="wt-success" id="wt-success" role="status" hidden>
-            You're on the list. We'll email you the early-access link on Nov 15.
-          </p>
-          <p class="wt-note">
-            Early access Nov 15, 7 pm Lisbon · 8 pm Berlin. Public one hour
-            later. By signing up you agree to receive Surfmate Wear emails — see
-            our <a href="/datenschutz.html">privacy policy</a>.
-          </p>
+          <div class="wt-signup">
+            <form class="wt-form" id="wt-form" novalidate>
+              <label for="wt-email" class="wt-sr-only">Email</label>
+              <input id="wt-email" name="email" type="email" autocomplete="email" placeholder="you@email.com" required />
+              <button type="submit" id="wt-submit">Get early access</button>
+            </form>
+            <p class="wt-error" id="wt-error" role="alert" hidden></p>
+            <p class="wt-success" id="wt-success" role="status" hidden>
+              You're on the list. We'll email you the early-access link on Nov 15.
+            </p>
+            <p class="wt-note">
+              Join the list and shop one hour before everyone else — Nov 15,
+              7 pm Lisbon · 8 pm Berlin. Two weeks only.
+              <a href="/datenschutz.html">Privacy</a> ·
+              <a href="https://www.instagram.com/surfmate.wear/" target="_blank" rel="noopener noreferrer">@surfmate.wear</a>
+            </p>
+          </div>
         </div>
-
-        <div class="wt-strip">
-          <span>Made in Portugal</span><span aria-hidden="true">·</span>
-          <span>Hand-printed on Mallorca</span><span aria-hidden="true">·</span>
-          <span>Nov 15–29 only</span><span aria-hidden="true">·</span>
-          <a href="https://www.instagram.com/surfmate.wear/" target="_blank" rel="noopener noreferrer">@surfmate.wear</a>
-        </div>
-      </section>
-
-      <div class="wt-media">
-        <picture>
-          <source
-            type="image/webp"
-            srcset="/assets/wear/teaser-hoodie-800.webp 800w, /assets/wear/teaser-hoodie-1400.webp 1400w"
-            sizes="(min-width: 960px) 45vw, 100vw"
-          />
-          <img
-            src="/assets/wear/teaser-hoodie-1400.jpg"
-            srcset="/assets/wear/teaser-hoodie-800.jpg 800w, /assets/wear/teaser-hoodie-1400.jpg 1400w"
-            sizes="(min-width: 960px) 45vw, 100vw"
-            width="1400"
-            height="2100"
-            alt="Two surfers at the beach at sunset, one wearing the black Surfmate hoodie with the back print Your Surf. Your Story."
-            fetchpriority="high"
-            decoding="async"
-          />
-        </picture>
       </div>
     </main>
 

@@ -7,6 +7,8 @@ body {
 /* Smooth Scrolling */
 html {
   scroll-behavior: smooth;
+  /* never fake a bold Seattle */
+  font-synthesis-weight: none;
 }
 
 /* Display headings */

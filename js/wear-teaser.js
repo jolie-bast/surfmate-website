@@ -101,7 +101,7 @@
       .then(done)
       .catch(function () {
         button.disabled = false;
-        button.textContent = "Join the list";
+        button.textContent = "Get early access";
         showError("Something went wrong — please try again.");
       });
   });

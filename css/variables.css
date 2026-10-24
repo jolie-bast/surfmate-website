@@ -12,7 +12,8 @@
   /* Typography */
   --font-family-primary: "seattle-regular", -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, sans-serif;
-  --font-family-primary-bold: "seattle-bold", -apple-system, BlinkMacSystemFont,
+  /* Seattle is always used in Regular — the bold token points to Regular too */
+  --font-family-primary-bold: "seattle-regular", -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, sans-serif;
   --font-family-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     sans-serif;
