@@ -68,6 +68,7 @@
   margin: 0 0 1rem;
   color: #73c9eb;
   font-family: var(--font-family-primary-bold);
+  line-height: 1.1;
   font-size: 0.82rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -84,7 +85,7 @@
   margin: 1.35rem 0 0;
   font-family: var(--font-family-primary-bold);
   font-size: clamp(1.2rem, 2.4vw, 1.5rem);
-  line-height: 1.45;
+  line-height: 1.1;
 }
 
 .creators-hero-copy,
@@ -124,7 +125,7 @@
   color: #03141d;
   font-family: var(--font-family-primary-bold);
   font-size: 1rem;
-  line-height: 1;
+  line-height: 1.1;
   text-decoration: none;
   box-shadow: 0 16px 36px rgba(115, 201, 235, 0.22);
   appearance: none;
@@ -230,7 +231,7 @@ a.creators-button:focus-visible {
   color: var(--surfmate-white);
   font-family: var(--font-family-primary-bold);
   font-size: 1.2rem;
-  line-height: 1.5;
+  line-height: 1.1;
 }
 
 .creators-founder-copy p + p {
@@ -241,6 +242,7 @@ a.creators-button:focus-visible {
   color: #73c9eb;
   text-decoration: none;
   font-family: var(--font-family-primary-bold);
+  line-height: 1.1;
 }
 
 .creators-founder-contact a:hover,
@@ -272,6 +274,7 @@ a.creators-button:focus-visible {
   background: transparent;
   color: rgba(255, 255, 255, 0.45);
   font-family: var(--font-family-primary-bold);
+  line-height: 1.1;
   cursor: pointer;
 }
 
@@ -308,6 +311,7 @@ a.creators-button:focus-visible {
   margin: 0 0 1rem;
   color: #73c9eb;
   font-family: var(--font-family-primary-bold);
+  line-height: 1.1;
   font-size: 0.8rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -348,7 +352,7 @@ a.creators-button:focus-visible {
   color: var(--surfmate-white);
   font-family: var(--font-family-primary-bold);
   font-size: 1rem;
-  line-height: 1;
+  line-height: 1.1;
   appearance: none;
   -webkit-appearance: none;
   cursor: pointer;
@@ -425,6 +429,7 @@ a.creators-button:focus-visible {
   margin-top: 2.5rem;
   text-align: center;
   font-family: var(--font-family-primary-bold);
+  line-height: 1.1;
   color: var(--surfmate-white);
 }
 
@@ -454,6 +459,7 @@ a.creators-button:focus-visible {
 .creators-platforms legend {
   padding: 0;
   font-family: var(--font-family-primary-bold);
+  line-height: 1.1;
   font-size: 0.95rem;
 }
 
@@ -492,6 +498,7 @@ a.creators-button:focus-visible {
   padding: 0.85rem 1rem;
   cursor: pointer;
   font-family: var(--font-family-primary-bold);
+  line-height: 1.1;
   user-select: none;
 }
 
@@ -562,6 +569,7 @@ a.creators-button:focus-visible {
   display: block;
   margin-bottom: 0.4rem;
   font-family: var(--font-family-primary-bold);
+  line-height: 1.1;
   font-size: 0.82rem;
   color: rgba(255, 255, 255, 0.7);
 }
@@ -576,6 +584,7 @@ a.creators-button:focus-visible {
   background: rgba(0, 0, 0, 0.28);
   color: var(--surfmate-white);
   font-family: var(--font-family-primary);
+  line-height: 1.1;
   font-size: 1rem;
 }
 
@@ -596,6 +605,7 @@ a.creators-button:focus-visible {
   display: block;
   margin-bottom: 0.45rem;
   font-family: var(--font-family-primary-bold);
+  line-height: 1.1;
   font-size: 0.95rem;
 }
 
@@ -609,6 +619,7 @@ a.creators-button:focus-visible {
   background: rgba(255, 255, 255, 0.04);
   color: var(--surfmate-white);
   font-family: var(--font-family-primary);
+  line-height: 1.1;
   font-size: 1rem;
 }
 

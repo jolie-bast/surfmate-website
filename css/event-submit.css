@@ -377,6 +377,7 @@
 
 .form-section-title {
   font-family: var(--font-family-primary-bold);
+  line-height: 1.1;
   font-size: 1.05rem;
   color: var(--surfmate-dark);
   margin: 0;
@@ -466,6 +467,7 @@
 
 .optional-mark {
   font-family: var(--font-family-primary);
+  line-height: 1.1;
   font-weight: 400;
   font-size: 0.85rem;
   color: #6b7280;
@@ -529,6 +531,7 @@
   border-radius: var(--border-radius-pill);
   padding: 10px 14px;
   font-family: var(--font-family-primary-bold);
+  line-height: 1.1;
   font-size: 0.9rem;
   color: #6b7280;
   cursor: pointer;
@@ -581,6 +584,7 @@
 
 .schedule-option-text strong {
   font-family: var(--font-family-primary-bold);
+  line-height: 1.1;
   font-size: 0.95rem;
   color: var(--surfmate-dark);
 }
@@ -828,7 +832,7 @@
 .schedule-preview-block-date {
   font-family: var(--font-family-primary-bold);
   font-size: 1rem;
-  line-height: 1.25;
+  line-height: 1.1;
   color: #0f2a3d;
 }
 
@@ -946,6 +950,7 @@
 
 .selected-place-name {
   font-family: var(--font-family-primary-bold);
+  line-height: 1.1;
   color: #065f46;
 }
 
@@ -955,6 +960,7 @@
   background: transparent;
   color: #047857;
   font-family: var(--font-family-primary-bold);
+  line-height: 1.1;
   font-size: 0.85rem;
   cursor: pointer;
   text-decoration: underline;
@@ -1038,6 +1044,7 @@
   text-align: left;
   cursor: pointer;
   font-family: var(--font-family-primary);
+  line-height: 1.1;
 }
 
 .place-result-btn:last-child {
@@ -1052,6 +1059,7 @@
 
 .place-result-name {
   font-family: var(--font-family-primary-bold);
+  line-height: 1.1;
   color: var(--surfmate-dark);
 }
 
@@ -1210,6 +1218,7 @@
 .event-submit-auth-summary {
   padding: var(--spacing-md) var(--spacing-lg);
   font-family: var(--font-family-primary-bold);
+  line-height: 1.1;
   font-size: 0.95rem;
   color: var(--surfmate-dark);
   cursor: pointer;

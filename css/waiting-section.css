@@ -64,7 +64,7 @@
   border-radius: var(--border-radius-pill);
   font-family: var(--font-family-primary-bold);
   font-size: 1rem;
-  line-height: 1;
+  line-height: 1.1;
   padding: calc(14px + var(--seattle-button-balance)) 28px
     calc(14px - var(--seattle-button-balance));
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);

@@ -61,6 +61,7 @@
 .nav-link {
   color: var(--surfmate-white);
   font-family: var(--font-family-primary-bold);
+  line-height: 1.1;
   font-weight: 700;
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--border-radius-md);

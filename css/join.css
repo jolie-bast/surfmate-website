@@ -26,6 +26,7 @@
   margin: 0 0 0.75rem;
   color: var(--surfmate-blue);
   font-family: var(--font-family-primary-bold);
+  line-height: 1.1;
   font-size: 0.82rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -74,7 +75,7 @@
   color: #03141d;
   font-family: var(--font-family-primary-bold);
   font-size: 1rem;
-  line-height: 1;
+  line-height: 1.1;
   text-decoration: none;
   box-shadow: 0 16px 36px rgba(115, 201, 235, 0.22);
   transition:
@@ -505,6 +506,7 @@ a.join-button:focus-visible {
 .join-seat .join-person-role {
   color: #0c7ea6;
   font-family: var(--font-family-primary-bold);
+  line-height: 1.1;
   font-size: 0.75rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -612,6 +614,7 @@ a.join-button:focus-visible {
   background: var(--surfmate-blue);
   color: #03141d;
   font-family: var(--font-family-primary-bold);
+  line-height: 1.1;
   font-size: 0.72rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -699,6 +702,7 @@ a.join-button:focus-visible {
   margin-top: 1.15rem;
   color: #fff;
   font-family: var(--font-family-primary-bold);
+  line-height: 1.1;
   font-size: 0.92rem;
   letter-spacing: 0.04em;
   text-decoration: none;

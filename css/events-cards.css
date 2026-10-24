@@ -188,7 +188,7 @@ a.events-card:hover {
   margin: 0;
   font-family: var(--font-family-primary-bold);
   font-size: 1.02rem;
-  line-height: 1.3;
+  line-height: 1.1;
   color: var(--surfmate-white);
 }
 
