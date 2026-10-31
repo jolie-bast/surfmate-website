@@ -1,5 +1,5 @@
 body {
-  font-family: var(--font-family-primary);
+  font-family: var(--font-family-ui);
   color: var(--surfmate-dark);
   background-color: var(--surfmate-white);
 }
@@ -50,18 +50,36 @@ h3 {
 }
 
 p {
+  font-family: var(--font-family-ui);
   font-size: 1.1rem;
   margin-bottom: var(--spacing-lg);
   line-height: 1.7;
+  padding-top: 0;
 }
 
-/* Seattle sits optically high, add a global top offset everywhere Seattle is used. */
+li,
+dd,
+dt,
+td,
+textarea {
+  font-family: var(--font-family-ui);
+  padding-top: 0;
+}
+
+/* Quotes and image captions stay in Seattle. */
+blockquote,
+blockquote p,
+cite,
+figcaption,
+caption {
+  font-family: var(--font-family-primary);
+}
+
+/* Seattle sits optically high. Offset display type, not running text. */
 h3,
 h4,
 h5,
 h6,
-p,
-li,
 a,
 span,
 strong,
@@ -69,23 +87,43 @@ em,
 b,
 i,
 small,
-input,
-textarea,
 label,
-select,
-option,
 blockquote,
 cite,
 figcaption,
 caption,
-td,
 th,
-dt,
-dd,
 legend,
 summary,
 time {
   padding-top: var(--seattle-top-padding);
+}
+
+p a,
+p span,
+p strong,
+p em,
+p b,
+p i,
+p small,
+li a,
+li span,
+li strong,
+li em,
+li b,
+li i,
+li small,
+dd a,
+dd span,
+dd strong,
+td a,
+td span,
+td strong,
+blockquote,
+blockquote p,
+figcaption,
+caption {
+  padding-top: 0;
 }
 
 a {

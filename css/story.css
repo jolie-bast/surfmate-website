@@ -1,668 +1,91 @@
-/* ===== STORY JOURNEY ===== */
-.story-journey {
-  position: relative;
+/* Founder story: dark band, then a light close */
+.story-band--dark {
   background: #000;
-  color: var(--surfmate-white);
+  color: #fff;
+  padding: 3rem 0;
 }
 
-.story-journey p {
-  margin-bottom: 0;
-}
-
-.story-highlight {
-  color: var(--surfmate-blue);
-  font-family: var(--font-family-primary-bold);
-  line-height: 1.1;
-}
-
-/* Progress indicator — anchored to sticky stage, not viewport */
-.story-progress {
-  position: absolute;
-  left: 1.25rem;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 50;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.story-journey.is-active .story-progress {
-  opacity: 1;
-}
-
-.story-progress-year {
-  font-size: 0.65rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.45);
-  font-family: var(--font-family-primary-bold);
-  line-height: 1.1;
-}
-
-.story-progress-track {
-  position: relative;
-  width: 2px;
-  height: 140px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 2px;
-}
-
-.story-progress-fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 0%;
-  background: var(--surfmate-blue);
-  border-radius: 2px;
-}
-
-.story-progress-dots {
-  position: absolute;
-  inset: 0;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.story-progress-dots li {
-  width: 8px;
-  height: 8px;
-  margin-left: -3px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  transition: background 0.3s ease, transform 0.3s ease;
-}
-
-.story-progress-dots li.is-active {
-  background: var(--surfmate-blue);
-  border-color: var(--surfmate-blue);
-  transform: scale(1.25);
-}
-
-/* Scroll track + pinned stage */
-.story-scroll-track {
-  height: 500vh;
-  position: relative;
-}
-
-.story-stage {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  width: 100%;
-  overflow: hidden;
-  isolation: isolate;
-}
-
-/* Scenes — stacked, only active one visible (JS enhances after load) */
-.story-scene {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.45s ease, visibility 0.45s ease;
-  pointer-events: none;
-}
-
-.story-scene.is-active {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
-
-/* Fallback before JS: first scene visible so the section never stays blank black */
-.story-journey:not([data-story-enhanced]) .story-scene--dream {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
-
-.story-journey:not([data-story-enhanced]) .story-scene--dream .story-line[data-story-line="dream-1"] {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.story-scene-bg {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.story-scene-bg--void {
-  background: #000;
-}
-
-.story-scene-bg--ocean {
-  opacity: var(--ocean, 0);
-  background:
-    linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 20, 40, 0.85) 60%, #001a2e 100%),
-    url("../assets/surfmate-beginning.avif") center center / cover no-repeat;
-  transform: scale(calc(1.06 - var(--ocean, 0) * 0.06));
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.story-scene-bg--dawn {
-  background:
-    linear-gradient(160deg, rgba(10, 22, 40, 0.72) 0%, rgba(26, 58, 82, 0.65) 45%, rgba(45, 90, 114, 0.7) 100%),
-    url("../assets/founder-shooting/surfmate-duenen.avif") center / cover no-repeat;
-}
-
-.story-scene-bg--chaos {
-  background: linear-gradient(180deg, #1a1a1a 0%, #2a2030 50%, #1a1a1a 100%);
-}
-
-.story-scene-bg--calm {
-  background:
-    linear-gradient(180deg, rgba(13, 27, 42, 0.82) 0%, rgba(27, 40, 56, 0.78) 100%),
-    url("../assets/founder-shooting/surfmate-jolie-surf-blick-nach-oben.avif") center / cover no-repeat;
-}
-
-.story-scene-bg--yours {
-  background: linear-gradient(180deg, #0a1628 0%, #0d2137 50%, #001a2e 100%);
-}
-
-/* Wave */
-.story-wave-svg {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 28vh;
-  z-index: 2;
-  opacity: var(--wave, 0);
-  pointer-events: none;
-}
-
-.story-wave-path {
-  fill: rgba(115, 201, 235, 0.35);
-}
-
-/* Content */
-.story-scene-content {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 5rem 1.5rem 3rem;
-  max-width: 900px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.story-scene-content--split {
-  flex-direction: row;
-  gap: 2.5rem;
-  max-width: 960px;
-  text-align: left;
-  align-items: center;
-  justify-content: center;
-}
-
-.story-line {
-  font-family: var(--font-family-heading);
-  font-size: clamp(1.75rem, 5vw, 3rem);
-  line-height: 1.15;
-  letter-spacing: 0.02em;
-  margin: 0;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.35s ease, transform 0.35s ease;
-}
-
-.story-line.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.story-line + .story-line,
-.story-line + .story-chaos-line,
-.story-chaos-line + .story-chaos-line,
-.story-chaos-line + .story-line {
-  margin-top: 0.75rem;
-}
-
-.story-line--small {
-  font-size: clamp(1rem, 2.5vw, 1.35rem);
-  font-family: var(--font-family-primary);
-  line-height: 1.1;
-  max-width: 520px;
-}
-
-/* Scene 2 — Polaroid */
-.story-polaroid {
-  position: relative;
-  flex-shrink: 0;
-  width: min(240px, 40vw);
+.story-band--light {
   background: #fff;
-  padding: 0.75rem 0.75rem 2.5rem;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
-  transform: rotate(-4deg) scale(0.92);
-  opacity: 0;
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  color: var(--surfmate-dark);
+  padding: 2.75rem 0;
 }
 
-.story-polaroid.is-visible {
-  opacity: 1;
-  transform: rotate(-4deg) scale(1);
+.story-inner,
+.story-close-wrap {
+  max-width: 980px;
+  margin-inline: auto;
 }
 
-.story-polaroid-img {
+.story-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  gap: 1.75rem 2.25rem;
+  align-items: start;
+}
+
+.story-figure {
+  margin: 0;
+}
+
+.story-figure img {
   display: block;
   width: 100%;
-  aspect-ratio: 4 / 5;
+  height: auto;
+  border-radius: 12px;
   object-fit: cover;
 }
 
-.story-polaroid-caption {
-  position: absolute;
-  bottom: 0.6rem;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-family: "Segoe UI", cursive;
-  font-size: 0.85rem;
-  color: #333;
-}
-
-.story-first-surf-text {
-  flex: 1;
-  min-width: 0;
-}
-
-.story-tattoo {
-  width: 100%;
-  max-width: 210px;
-  margin-top: 1.25rem;
-  color: var(--surfmate-blue);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.story-tattoo.is-visible {
-  opacity: 1;
-}
-
-.story-tattoo-path {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  transition: stroke-dashoffset 1.4s ease;
-}
-
-.story-tattoo.is-drawn .story-tattoo-path {
-  stroke-dashoffset: 0;
-}
-
-/* Scene 3 — Lost */
-.story-chaos-layer {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-}
-
-.story-scatter {
-  position: absolute;
-  opacity: 0;
-  transition: opacity 0.4s ease, transform 0.6s ease;
-}
-
-.story-scene--lost.is-active .story-scatter.is-visible {
-  opacity: 1;
-}
-
-.story-scatter--photo-1 {
-  top: 14%;
-  left: 8%;
-  width: clamp(72px, 12vw, 120px);
-  transform: rotate(-12deg) translate(var(--sx1, 0px), var(--sy1, 0px));
-}
-
-.story-scatter--photo-2 {
-  top: 16%;
-  right: 8%;
-  width: clamp(64px, 10vw, 100px);
-  transform: rotate(8deg) translate(var(--sx2, 0px), var(--sy2, 0px));
-}
-
-.story-scatter--photo-3 {
-  bottom: 18%;
-  left: 12%;
-  width: clamp(68px, 11vw, 110px);
-  transform: rotate(-5deg) translate(var(--sx3, 0px), var(--sy3, 0px));
-}
-
-.story-scatter img {
-  width: 100%;
-  border-radius: 4px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-  display: block;
-}
-
-.story-scatter--story-ring {
-  top: 30%;
-  left: 50%;
-  transform: translateX(-50%) translate(var(--sx4, 0px), var(--sy4, 0px));
-  display: flex;
-  gap: 6px;
-}
-
-.story-scatter--story-ring span {
-  width: clamp(32px, 5vw, 52px);
-  height: clamp(32px, 5vw, 52px);
-  border-radius: 50%;
-  border: 2px solid var(--surfmate-blue);
-  background: linear-gradient(135deg, #333, #555);
-}
-
-.story-scatter--weather,
-.story-scatter--map {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.5rem 0.75rem;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: var(--border-radius-md);
-  font-size: 0.8rem;
-  backdrop-filter: blur(8px);
-}
-
-.story-scatter--weather {
-  top: 52%;
-  right: 10%;
-  transform: translate(var(--sx5, 0px), var(--sy5, 0px));
-}
-
-.story-scatter--map {
-  bottom: 32%;
-  right: 16%;
-  transform: translate(var(--sx6, 0px), var(--sy6, 0px));
-}
-
-.story-chaos-line {
-  font-family: var(--font-family-primary-bold);
+.story-figure figcaption {
+  margin-top: 0.55rem;
+  font-family: var(--font-family-primary);
+  padding-top: var(--seattle-top-padding);
+  font-size: 0.82rem;
   line-height: 1.1;
-  font-size: clamp(1rem, 2.5vw, 1.25rem);
-  color: rgba(255, 255, 255, 0.55);
-  margin: 0;
-  opacity: 0;
-  transform: translateX(0);
-  transition: opacity 0.35s ease, transform 0.35s ease;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.62);
 }
 
-.story-chaos-line.is-visible {
-  opacity: 1;
+.story-copy p,
+.story-close p {
+  margin: 0 0 0.8rem;
+  font-family: var(--font-family-ui);
+  font-size: clamp(0.95rem, 1.35vw, 1.05rem);
+  line-height: 1.6;
 }
 
-.story-chaos-line:nth-child(odd).is-visible {
-  transform: translateX(-8px);
+.story-copy p {
+  color: rgba(255, 255, 255, 0.9);
 }
 
-.story-chaos-line:nth-child(even).is-visible {
-  transform: translateX(8px);
+.story-copy p:last-child,
+.story-close p:last-child {
+  margin-bottom: 0;
 }
 
-/* Scene 4 — Turning Point */
-.story-memory-cards {
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-  pointer-events: none;
+.story-close {
+  max-width: 38rem;
 }
 
-.story-memory-card {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.65rem 1rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: var(--border-radius-md);
-  font-size: 0.85rem;
-  backdrop-filter: blur(10px);
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.4s ease, transform 0.4s ease;
+.story-close p {
+  color: var(--surfmate-dark);
 }
 
-.story-memory-card.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.story-memory-card--session {
-  top: 18%;
-  left: 10%;
-}
-
-.story-memory-card--spot {
-  top: 22%;
-  right: 8%;
-}
-
-.story-memory-card--photo {
-  bottom: 24%;
-  left: 14%;
-}
-
-.story-memory-card--note {
-  bottom: 18%;
-  right: 10%;
-}
-
-/* Scene 5 — Yours */
-.story-signature {
-  margin: 1.25rem 0 0;
-  font-family: var(--font-family-primary-bold);
-  line-height: 1.1;
-  font-size: clamp(1.5rem, 4vw, 2rem);
-  letter-spacing: 0.01em;
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.4s ease, transform 0.4s ease;
-}
-
-.story-signature.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.story-signature strong {
-  color: var(--surfmate-white);
-}
-
-.story-cta-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  justify-content: center;
-  margin-top: 1.75rem;
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.4s ease, transform 0.4s ease;
-}
-
-.story-cta-group.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.story-store-badge {
-  display: inline-block;
-  text-decoration: none;
-  transition: transform 0.15s ease;
-}
-
-.story-store-badge:hover {
-  transform: scale(1.05);
-}
-
-.story-store-badge img {
-  display: block;
-  height: 40px;
-  width: auto;
-}
-
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .story-scroll-track {
-    height: auto;
-  }
-
-  .story-stage {
-    position: relative;
-    height: auto;
-  }
-
-  .story-scene {
-    position: relative;
-    opacity: 1;
-    visibility: visible;
-    min-height: 80vh;
-    padding: var(--spacing-3xl) 0;
-  }
-
-  .story-scene + .story-scene {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .story-progress {
-    display: none;
-  }
-
-  .story-line,
-  .story-chaos-line,
-  .story-polaroid,
-  .story-tattoo,
-  .story-memory-card,
-  .story-scatter,
-  .story-signature,
-  .story-cta-group {
-    opacity: 1 !important;
-    transform: none !important;
-  }
-
-  .story-tattoo-path {
-    stroke-dashoffset: 0;
-  }
-
-  .story-scene-bg--ocean {
-    opacity: 1;
-  }
-}
-
-/* Responsive */
 @media (max-width: 768px) {
-  .story-progress {
-    left: 0.85rem;
-    gap: 0.45rem;
+  .story-band--dark {
+    padding: 2.25rem 0;
   }
 
-  .story-progress-year {
-    font-size: 0.55rem;
+  .story-band--light {
+    padding: 2rem 0;
   }
 
-  .story-progress-track {
-    width: 2px;
-    height: 110px;
-    background: rgba(255, 255, 255, 0.15);
+  .story-inner {
+    grid-template-columns: 1fr;
+    gap: 1.15rem;
   }
 
-  .story-progress-track::before {
-    content: none;
-  }
-
-  .story-progress-fill {
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 0%;
-    transform: none;
-  }
-
-  .story-progress-dots {
-    flex-direction: column;
-    justify-content: space-between;
-  }
-
-  .story-progress-dots li {
-    margin-left: -3px;
-    position: relative;
-    z-index: 1;
-  }
-
-  .story-scroll-track {
-    height: 450vh;
-  }
-
-  .story-scene-content {
-    padding: 4.5rem 1.25rem 2rem 3.15rem;
-  }
-
-  .story-scene-content--split {
-    flex-direction: column;
-    text-align: center;
-    gap: 1.5rem;
-  }
-
-  .story-polaroid {
-    width: min(200px, 55vw);
-  }
-
-  .story-tattoo {
-    margin: 1rem auto 0;
-  }
-
-  .story-memory-card {
-    font-size: 0.72rem;
-    padding: 0.45rem 0.65rem;
-  }
-
-  .story-memory-card--session {
-    top: 12%;
-    left: 2.75rem;
-  }
-
-  .story-memory-card--spot {
-    top: 14%;
-    right: 4%;
-  }
-
-  .story-memory-card--photo {
-    bottom: 16%;
-    left: 2.75rem;
-  }
-
-  .story-memory-card--note {
-    bottom: 12%;
-    right: 4%;
-  }
-
-  .story-scatter--photo-1,
-  .story-scatter--photo-2,
-  .story-scatter--photo-3 {
-    width: 56px;
-  }
-
-  .story-cta-group {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .story-store-badge img {
-    height: 36px;
+  .story-figure {
+    max-width: 420px;
   }
 }

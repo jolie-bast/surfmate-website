@@ -258,9 +258,9 @@
 
 .partners-map .leaflet-popup-content {
   margin: 14px 36px 14px 14px;
-  font-family: var(--font-family-primary);
+  font-family: var(--font-family-ui);
   font-size: 0.92rem;
-  line-height: 1.1;
+  line-height: 1.45;
   color: #0f2737;
 }
 
