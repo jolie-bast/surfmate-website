@@ -7,9 +7,8 @@
         Stay in the loop — surf stories, updates, and what&apos;s new at Surfmate.
       </p>
 
-      <!-- Newsletter Form -->
-      <div class="waitlist-form" style="position: relative;">
-        <form id="waitlist-form" class="custom-waitlist-form" method="post" action="javascript:void(0)" style="transition: opacity 0.3s ease;">
+      <div class="waitlist-form">
+        <form id="waitlist-form" class="custom-waitlist-form" method="post" action="#newsletter" novalidate>
           <div class="form-row">
             <input
               type="email"
@@ -17,20 +16,19 @@
               name="email"
               placeholder="Your Email Address"
               autocomplete="email"
+              inputmode="email"
               required
+              aria-describedby="error-message"
             />
             <button type="submit" id="waitlist-submit">Subscribe</button>
           </div>
-          <div id="error-message" class="error-message" style="display: none;"></div>
+          <p id="error-message" class="error-message" role="alert" hidden></p>
         </form>
 
-        <!-- Success Message -->
-        <div id="success-message" class="success-message" style="display: none; position: absolute; top: -50px; left: 0; width: 100%; opacity: 0; transition: opacity 0.5s ease;">
+        <div id="success-message" class="success-message" role="status" hidden>
           <p><strong>You&apos;re subscribed!</strong></p>
           <p>Thanks for joining the Surfmate newsletter. We&apos;ll keep you posted.</p>
         </div>
-      </div>
-
       </div>
     </div>
   </div>

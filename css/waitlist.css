@@ -32,12 +32,16 @@
 }
 
 .custom-waitlist-form input[type="email"]::placeholder {
-  color: var(--text-light-gray);
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.custom-waitlist-form input[type="email"][aria-invalid="true"] {
+  border-color: #ff6b6b;
 }
 
 .custom-waitlist-form button {
   background-color: var(--surfmate-blue);
-  color: var(--primary-black);
+  color: var(--surfmate-dark);
   border: none;
   border-radius: var(--border-radius-pill);
   font-family: var(--font-family-primary-bold);
@@ -67,13 +71,17 @@
 /* Success Message */
 .success-message {
   text-align: center;
-  padding: 40px 20px;
+  padding: 8px 0 0;
 }
 
 .success-message p {
-  color: var(--text-light-gray);
+  color: var(--surfmate-dark);
   font-size: 18px;
-  margin: 0;
+  margin: 0 0 8px;
+}
+
+.success-message p:last-child {
+  margin-bottom: 0;
 }
 
 /* Responsive */
@@ -94,8 +102,8 @@
 
 .waitlist {
   padding: 80px 0;
-  background: var(--primary-black);
-  color: var(--text-white);
+  background: var(--surfmate-white);
+  color: var(--surfmate-dark);
   text-align: center;
 }
 
@@ -105,12 +113,9 @@
   padding: 0 20px;
 }
 
-.waitlist-title {
-  color: var(--text-white);
-}
-
+.waitlist-title,
 .waitlist-description {
-  color: var(--text-light-gray);
+  color: var(--surfmate-dark);
 }
 
 .waitlist-form {

@@ -486,6 +486,9 @@ function initAfterAllIncludes() {
   if (typeof window.initFaq === "function") {
     window.initFaq();
   }
+  if (typeof window.initWaitlistForm === "function") {
+    window.initWaitlistForm();
+  }
   if (typeof window.initStoryJourney === "function") {
     window.initStoryJourney();
   }

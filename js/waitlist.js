@@ -1,119 +1,103 @@
-// Waitlist Form Handler
-document.addEventListener("DOMContentLoaded", function () {
-  console.log("DOMContentLoaded - waitlist script starting");
+// Newsletter signup. MailerLite returns JSON; only success:true counts as subscribed.
+(function () {
+  var SUBSCRIBE_URL =
+    "https://assets.mailerlite.com/jsonp/2025965/forms/176152449210385721/subscribe";
+  var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  // Wait a bit for includes to load
-  setTimeout(function () {
-    const form = document.getElementById("waitlist-form");
-    const emailInput = document.getElementById("waitlist-email");
-    const errorMessage = document.getElementById("error-message");
-    const successMessage = document.getElementById("success-message");
-    const submitButton = document.getElementById("waitlist-submit");
+  function firstError(data) {
+    var emailErrors = data && data.errors && data.errors.fields && data.errors.fields.email;
+    if (emailErrors && emailErrors.length) return emailErrors[0];
+    if (data && typeof data.message === "string" && data.message) return data.message;
+    return "Something went wrong. Please try again.";
+  }
 
-    console.log("Elements found:", {
-      form: !!form,
-      emailInput: !!emailInput,
-      errorMessage: !!errorMessage,
-      successMessage: !!successMessage,
-      submitButton: !!submitButton,
+  function initWaitlistForm() {
+    var form = document.getElementById("waitlist-form");
+    if (!form || form.dataset.bound === "true") return;
+
+    var emailInput = document.getElementById("waitlist-email");
+    var errorMessage = document.getElementById("error-message");
+    var successMessage = document.getElementById("success-message");
+    var submitButton = document.getElementById("waitlist-submit");
+    if (!emailInput || !errorMessage || !successMessage || !submitButton) return;
+
+    form.dataset.bound = "true";
+
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorMessage.hidden = false;
+      emailInput.setAttribute("aria-invalid", "true");
+      emailInput.focus();
+    }
+
+    function hideError() {
+      errorMessage.hidden = true;
+      errorMessage.textContent = "";
+      emailInput.removeAttribute("aria-invalid");
+    }
+
+    emailInput.addEventListener("input", function () {
+      if (!errorMessage.hidden) hideError();
     });
 
-    if (form && emailInput && errorMessage && successMessage && submitButton) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
 
-      // Set fixed width for button to prevent size changes
-      const buttonWidth = submitButton.offsetWidth;
-      submitButton.style.width = buttonWidth + "px";
-      submitButton.style.minWidth = buttonWidth + "px";
-
-      function showError(message) {
-        console.log("Showing error:", message);
-        errorMessage.textContent = message;
-        errorMessage.style.display = "block";
-        emailInput.style.borderColor = "var(--surfmate-blue)";
-        emailInput.focus();
+      var email = emailInput.value.trim();
+      if (!email) {
+        showError("Please enter your email address.");
+        return;
+      }
+      if (!emailPattern.test(email)) {
+        showError("Please enter a valid email address.");
+        return;
       }
 
-      function hideError() {
-        console.log("Hiding error");
-        errorMessage.style.display = "none";
-        emailInput.style.borderColor = "#444444";
-      }
+      hideError();
+      submitButton.disabled = true;
+      var previousLabel = submitButton.textContent;
+      submitButton.textContent = "Subscribing...";
 
-      function showSuccess() {
-        console.log("Showing success message");
-        form.style.opacity = "0";
-        form.style.visibility = "hidden";
-        successMessage.style.display = "block";
-        successMessage.style.opacity = "1";
-        console.log(
-          "Success message display set to:",
-          successMessage.style.display
-        );
-      }
+      var body = new URLSearchParams();
+      body.set("fields[email]", email);
+      body.set("ml-submit", "1");
+      body.set("anticsrf", "true");
 
-      emailInput.addEventListener("input", function () {
-        if (errorMessage.style.display === "block") hideError();
-      });
-
-      form.addEventListener("submit", function (e) {
-        console.log("Form submit event triggered");
-        e.preventDefault();
-        e.stopPropagation();
-        handleFormSubmission();
-        return false;
-      });
-
-      function handleFormSubmission() {
-        console.log("handleFormSubmission called");
-        const email = emailInput.value.trim();
-        console.log("Email:", email);
-
-        if (!email) return showError("Please enter your email");
-        if (!emailRegex.test(email))
-          return showError("Please enter a valid email address");
-
-        hideError();
-        submitButton.textContent = "Subscribing...";
-        submitButton.disabled = true;
-
-        const formData = new URLSearchParams();
-        formData.append("fields[email]", email);
-        formData.append("ml-submit", "1");
-        formData.append("anticsrf", "true");
-
-        console.log("Sending request to MailerLite...");
-
-        fetch(
-          "https://assets.mailerlite.com/jsonp/2025965/forms/176152449210385721/subscribe",
-          {
-            method: "POST",
-            body: formData,
-            mode: "no-cors",
+      fetch(SUBSCRIBE_URL, { method: "POST", body: body })
+        .then(function (response) {
+          return response
+            .json()
+            .then(function (data) {
+              return { ok: response.ok, data: data };
+            })
+            .catch(function () {
+              return { ok: false, data: null };
+            });
+        })
+        .then(function (result) {
+          if (result.ok && result.data && result.data.success === true) {
+            emailInput.value = "";
+            form.hidden = true;
+            successMessage.hidden = false;
+            return;
           }
-        )
-          .then(() => {
-            console.log("MailerLite request completed successfully");
-            submitButton.textContent = "Subscribe";
-            submitButton.disabled = false;
-            emailInput.value = "";
-            showSuccess();
-          })
-          .catch((error) => {
-            console.log("MailerLite request error:", error);
-            submitButton.textContent = "Subscribe";
-            submitButton.disabled = false;
-            emailInput.value = "";
-            showSuccess();
-          });
-      }
-    } else {
-      console.error(
-        "Some waitlist elements not found! Retrying in 1 second..."
-      );
+          submitButton.disabled = false;
+          submitButton.textContent = previousLabel;
+          showError(firstError(result.data));
+        })
+        .catch(function () {
+          submitButton.disabled = false;
+          submitButton.textContent = previousLabel;
+          showError("Something went wrong. Please try again.");
+        });
+    });
+  }
 
-      // Retry after another second if elements not found
-      setTimeout(arguments.callee, 1000);
-    }
-  }, 500); // Wait 500ms for includes to load
-});
+  window.initWaitlistForm = initWaitlistForm;
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initWaitlistForm);
+  } else {
+    initWaitlistForm();
+  }
+})();
