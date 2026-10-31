@@ -23,7 +23,7 @@ const FULL_BRIEF_INTRO = `# Surfmate
 
 > Surfmate is the social surf platform to remember every surf, organize spots, discover events, and connect with other surfers. Tagline: Your Surf. Your Story.
 
-Surfmate is a community app for iOS and Android, made by Jolie Bast in Hamburg. More than 1,600 surfers use it.
+Surfmate is a community app for iOS and Android, made by Jolie Bast in Hamburg. More than 2,000 surfers use it.
 
 The app helps surfers:
 
@@ -200,7 +200,7 @@ for (const phrase of [
   "Surfmate helps you capture every surf",
   "There was a girl with a dream",
   "Support Surfmate",
-  "Join <strong>1,600+</strong> surfers",
+  "Join <strong>2,000+</strong> surfers",
 ]) {
   if (!inlinedHome.includes(phrase)) {
     throw new Error(`Inlined homepage is missing: ${phrase}`);
