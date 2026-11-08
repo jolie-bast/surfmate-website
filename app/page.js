@@ -392,9 +392,9 @@ export default async function HomePage() {
       <section style={{ background: "var(--sm-black)", color: "#fff" }}>
         <div className="sm-container" style={{ padding: "96px 24px", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 64 }}>
           <img
-            src="/images/wear-hoodie-back-solo.webp"
-            alt="Surfmate Wear hoodie, back print: Surfmate, Your Surf. Your Story."
-            style={{ flex: "1 1 420px", minWidth: 0, width: "100%", aspectRatio: "4 / 5", objectFit: "cover", objectPosition: "50% 20%", borderRadius: 15, display: "block" }}
+            src="/images/wear-campaign.webp"
+            alt="Two surfers at golden hour, back print: Surfmate, Your Surf. Your Story."
+            style={{ flex: "1 1 420px", minWidth: 0, width: "100%", aspectRatio: "4 / 5", objectFit: "cover", objectPosition: "50% 30%", borderRadius: 15, display: "block" }}
           />
           <div style={{ flex: "1 1 420px", minWidth: 0, display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 28 }}>
             <span style={{ width: 220, display: "flex", flexDirection: "column", alignItems: "center", gap: 11 }}>
