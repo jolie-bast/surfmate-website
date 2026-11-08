@@ -60,6 +60,22 @@
   var errorEl = document.getElementById("wt-error");
   var successEl = document.getElementById("wt-success");
   var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  var submitting = false;
+
+  // MailerLite JSON: only success:true is a signup. Field errors come back
+  // on errors.fields (email, name, …).
+  var firstError = function (data) {
+    var fields = data && data.errors && data.errors.fields;
+    if (fields) {
+      var keys = Object.keys(fields);
+      for (var i = 0; i < keys.length; i++) {
+        var list = fields[keys[i]];
+        if (list && list.length) return list[0];
+      }
+    }
+    if (data && typeof data.message === "string" && data.message) return data.message;
+    return "Something went wrong — please try again.";
+  };
 
   var showError = function (msg, field) {
     errorEl.textContent = msg;
@@ -94,8 +110,8 @@
       return showError("Sign-up isn't open yet — follow @surfmate.wear.");
     }
 
-    button.disabled = true;
-    button.textContent = "Joining…";
+    if (submitting) return;
+    submitting = true;
 
     var body = new URLSearchParams();
     body.append("fields[name]", name);
@@ -103,21 +119,45 @@
     body.append("ml-submit", "1");
     body.append("anticsrf", "true");
 
-    var done = function () {
-      form.hidden = true;
-      successEl.hidden = false;
-      if (typeof gtag === "function") {
-        gtag("event", "sign_up", { method: "wear_waitlist" });
-      }
+    var resetButton = function () {
+      submitting = false;
+      button.disabled = false;
+      button.textContent = "Get early access";
     };
 
-    // no-cors: the response is opaque, so treat a completed request as success.
-    fetch(WEAR_FORM_URL, { method: "POST", body: body, mode: "no-cors" })
-      .then(done)
-      .catch(function () {
-        button.disabled = false;
-        button.textContent = "Get early access";
-        showError("Something went wrong — please try again.");
-      });
+    // iOS Safari cancels a fetch started in the submit turn if the submit
+    // button is disabled there. Run the request on the next turn.
+    window.setTimeout(function () {
+      button.disabled = true;
+      button.textContent = "Joining…";
+
+      fetch(WEAR_FORM_URL, { method: "POST", body: body })
+        .then(function (response) {
+          return response.json().then(
+            function (data) {
+              return { ok: response.ok, data: data };
+            },
+            function () {
+              return { ok: false, data: null };
+            }
+          );
+        })
+        .then(function (result) {
+          if (result.ok && result.data && result.data.success === true) {
+            form.hidden = true;
+            successEl.hidden = false;
+            if (typeof gtag === "function") {
+              gtag("event", "sign_up", { method: "wear_waitlist" });
+            }
+            return;
+          }
+          resetButton();
+          showError(firstError(result.data));
+        })
+        .catch(function () {
+          resetButton();
+          showError("Something went wrong — please try again.");
+        });
+    }, 0);
   });
 })();

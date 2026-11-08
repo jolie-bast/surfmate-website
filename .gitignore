@@ -1,2 +1,8 @@
 # Optional local overrides
-js/mapbox-config.local.js
+public/js/mapbox-config.local.js
+
+# Next.js
+node_modules
+.next
+out
+

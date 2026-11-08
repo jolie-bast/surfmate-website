@@ -1,23 +1,24 @@
 /**
- * Prepares the static site for clients that do not run JavaScript.
+ * Prepares the legacy static pages (under public/) for clients that do not
+ * run JavaScript. The homepage and spot pages are server-rendered by Next.js
+ * at build time and do not need this step.
  *
  * Without --deploy:
- *   refreshes llms-full.txt and the FAQ JSON-LD block in index.html
+ *   refreshes llms-full.txt from includes/faq.html
  *
  * With --deploy (GitHub Pages workflow):
- *   also inlines includes/*.html into every page so crawlers see the copy
- *   that browsers otherwise fetch after load.
+ *   also inlines includes/*.html into every legacy page so crawlers see the
+ *   copy that browsers otherwise fetch after load.
  */
 import fs from "node:fs";
 import path from "node:path";
 
 const root = path.resolve(import.meta.dirname, "..");
-const includesDir = path.join(root, "includes");
+const publicDir = path.join(root, "public");
+const includesDir = path.join(publicDir, "includes");
 const deploy = process.argv.includes("--deploy");
 
 const INCLUDE_RE = /<div\b([^>]*?)\sdata-include="([^"]+)"([^>]*)>\s*<\/div>/g;
-const FAQ_SCRIPT_RE =
-  /<script type="application\/ld\+json" id="surfmate-faq">[\s\S]*?<\/script>/;
 
 const FULL_BRIEF_INTRO = `# Surfmate
 
@@ -100,32 +101,6 @@ function extractFaqItems(faqHtml) {
   return items;
 }
 
-function faqJsonLd(items) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "@id": "https://surfmate.eu/#faq",
-    url: "https://surfmate.eu/#faq",
-    isPartOf: { "@id": "https://surfmate.eu/#website" },
-    mainEntity: items.map((item) => ({
-      "@type": "Question",
-      name: item.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: item.answer,
-      },
-    })),
-  };
-}
-
-function injectFaqScript(html, scriptTag) {
-  if (FAQ_SCRIPT_RE.test(html)) {
-    return html.replace(FAQ_SCRIPT_RE, scriptTag);
-  }
-
-  return html.replace("</head>", `    ${scriptTag}\n  </head>`);
-}
-
 function listHtmlFiles(dir, out = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     if (entry.name.startsWith(".")) continue;
@@ -185,56 +160,24 @@ const faqItems = extractFaqItems(
   fs.readFileSync(path.join(includesDir, "faq.html"), "utf8"),
 );
 
-const faqScript = `<script type="application/ld+json" id="surfmate-faq">\n${JSON.stringify(faqJsonLd(faqItems), null, 2).replace(/</g, "\\u003c")}\n    </script>`;
-
-const indexPath = path.join(root, "index.html");
-const indexHtml = fs.readFileSync(indexPath, "utf8");
-const indexWithFaq = injectFaqScript(indexHtml, faqScript);
-
-const inlinedHome = inlineIncludes(indexWithFaq, indexPath);
-for (const phrase of [
-  "Your Surf. Your Story.",
-  "What is Surfmate?",
-  "Log Sessions",
-  "What can I log for a session?",
-  "Surfmate helps you capture every surf",
-  "When I was 18, I fell in love with surfing.",
-  "Support Surfmate",
-  "Join <strong>2,000+</strong> surfers",
-]) {
-  if (!inlinedHome.includes(phrase)) {
-    throw new Error(`Inlined homepage is missing: ${phrase}`);
-  }
-}
-
-JSON.parse(
-  inlinedHome.match(
-    /<script type="application\/ld\+json" id="surfmate-faq">([\s\S]*?)<\/script>/,
-  )[1],
-);
-
-if (indexWithFaq !== indexHtml) {
-  fs.writeFileSync(indexPath, indexWithFaq);
-}
-
 const faqMarkdown = faqItems
   .map((item) => `### ${item.question}\n\n${item.answer}`)
   .join("\n\n");
 
 fs.writeFileSync(
-  path.join(root, "llms-full.txt"),
+  path.join(publicDir, "llms-full.txt"),
   `${FULL_BRIEF_INTRO}\n${faqMarkdown}\n`,
 );
 
 if (!deploy) {
-  console.log(`Refreshed llms-full.txt and FAQ schema (${faqItems.length} answers).`);
+  console.log(`Refreshed llms-full.txt (${faqItems.length} FAQ answers).`);
   process.exit(0);
 }
 
 let pages = 0;
 let inlined = 0;
 
-for (const filePath of listHtmlFiles(root)) {
+for (const filePath of listHtmlFiles(publicDir)) {
   const html = fs.readFileSync(filePath, "utf8");
   const matches = html.match(/data-include="/g);
   if (!matches) continue;
