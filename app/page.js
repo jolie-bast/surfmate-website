@@ -8,6 +8,7 @@ import {
   getWebsiteSpots,
 } from "../lib/supabase";
 import { countrySlug, countryName } from "../lib/countries";
+import { isUpcomingOrLive, eventSortStart } from "../lib/events";
 
 function formatEventDate(startsAt, timezone) {
   if (!startsAt) return "Date TBA";
@@ -26,8 +27,8 @@ async function loadUpcomingEvents() {
   const events = await getWebsiteEvents();
   const now = new Date();
   const upcoming = events
-    .filter((e) => e.starts_at && new Date(e.starts_at) >= now && !e.is_expired)
-    .sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at))
+    .filter((e) => isUpcomingOrLive(e, now))
+    .sort((a, b) => eventSortStart(a) - eventSortStart(b))
     .slice(0, 3);
 
   return Promise.all(
@@ -154,9 +155,14 @@ export default async function HomePage() {
                     </div>
                     <span style={{ fontSize: 14 }}><strong style={{ fontWeight: 600 }}>{e.going}</strong> Surfmates going</span>
                   </div>
-                  <a href={e.website_url || "#download"} className="sm-btn sm-btn-dark" style={{ textAlign: "center", justifyContent: "center" }}>
+                  <a href="/#download" className="sm-btn sm-btn-dark" style={{ textAlign: "center", justifyContent: "center" }}>
                     I’m going – open in app
                   </a>
+                  {e.website_url && (
+                    <a href={e.website_url} style={{ fontSize: 14, fontWeight: 600, textAlign: "center" }}>
+                      Event details ↗
+                    </a>
+                  )}
                 </div>
               </article>
             ))}

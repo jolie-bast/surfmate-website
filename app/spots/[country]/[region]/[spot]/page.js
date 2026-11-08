@@ -9,6 +9,9 @@ import {
   getWebsiteSpotSurfedCount,
 } from "../../../../../lib/supabase";
 import { countryName, countrySlug } from "../../../../../lib/countries";
+import { isUpcomingOrLive, eventSortStart, distanceKm } from "../../../../../lib/events";
+
+const NEARBY_EVENT_RADIUS_KM = 300;
 
 export async function generateStaticParams() {
   const spots = await getWebsiteSpots();
@@ -53,8 +56,10 @@ export default async function SpotPage({ params }) {
   const moreInRegion = allSpots.filter((s) => s.region_slug === spot.region_slug && s.slug !== spot.slug);
   const now = new Date();
   const nearbyEvent = events
-    .filter((e) => e.country_code === spot.country_code && e.starts_at && new Date(e.starts_at) >= now && !e.is_expired)
-    .sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at))[0];
+    .filter((e) => isUpcomingOrLive(e, now) && e.latitude != null && e.longitude != null)
+    .map((e) => ({ ...e, distanceKm: distanceKm(spot.latitude, spot.longitude, e.latitude, e.longitude) }))
+    .filter((e) => e.distanceKm <= NEARBY_EVENT_RADIUS_KM)
+    .sort((a, b) => a.distanceKm - b.distanceKm || eventSortStart(a) - eventSortStart(b))[0];
 
   return (
     <>
@@ -153,7 +158,19 @@ export default async function SpotPage({ params }) {
 
         <aside style={{ flex: "1 1 320px", minWidth: 0, display: "flex", flexDirection: "column", gap: 20 }}>
           <div style={{ borderRadius: 15, background: "var(--sm-mint)", overflow: "hidden", position: "relative", aspectRatio: "4 / 3" }}>
-            <span style={{ position: "absolute", left: "50%", top: "46%", width: 18, height: 18, borderRadius: "50%", background: "var(--sm-black)", border: "3px solid #fff", transform: "translate(-50%, -50%)" }} />
+            <span
+              style={{
+                position: "absolute",
+                left: `${20 + (Math.abs(spot.longitude) % 1) * 60}%`,
+                top: `${20 + (Math.abs(spot.latitude) % 1) * 60}%`,
+                width: 18,
+                height: 18,
+                borderRadius: "50%",
+                background: "var(--sm-black)",
+                border: "3px solid #fff",
+                transform: "translate(-50%, -50%)",
+              }}
+            />
             <span style={{ position: "absolute", left: 14, bottom: 12, fontSize: 12, fontWeight: 600, color: "var(--sm-black)" }}>Approximate location</span>
           </div>
           <div style={{ border: "1px solid var(--sm-border)", borderRadius: 15, padding: 22, display: "flex", flexDirection: "column", gap: 12 }}>
@@ -169,9 +186,9 @@ export default async function SpotPage({ params }) {
               <a href={nearbyEvent.website_url || "/events/"} style={{ textDecoration: "none", display: "flex", gap: 14, alignItems: "center" }}>
                 <span style={{ flex: "none", width: 52, height: 52, borderRadius: 12, background: "var(--sm-black)", color: "#fff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", lineHeight: 1.1 }}>
                   <span style={{ fontSize: 11, fontWeight: 600 }}>
-                    {new Intl.DateTimeFormat("en-GB", { month: "short" }).format(new Date(nearbyEvent.starts_at)).toUpperCase()}
+                    {new Intl.DateTimeFormat("en-GB", { month: "short" }).format(new Date(eventSortStart(nearbyEvent))).toUpperCase()}
                   </span>
-                  <span style={{ fontSize: 18, fontWeight: 600 }}>{new Date(nearbyEvent.starts_at).getDate()}</span>
+                  <span style={{ fontSize: 18, fontWeight: 600 }}>{new Date(eventSortStart(nearbyEvent)).getDate()}</span>
                 </span>
                 <span style={{ fontSize: 15, lineHeight: 1.4 }}>
                   <strong style={{ fontWeight: 600, display: "block" }}>{nearbyEvent.title}</strong>
