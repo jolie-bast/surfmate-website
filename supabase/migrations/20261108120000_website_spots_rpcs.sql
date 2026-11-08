@@ -110,7 +110,9 @@ as $function$
     and s.visibility = 'public'
     and s.is_listed_on_website = true
     and ss.deleted_at is null
-    and ss.visibility <> 'only_me';
+    and ss.visibility <> 'only_me'
+    and ss.show_on_website = true
+    and ss.created_at <= now() - interval '48 hours';
 $function$;
 
 -- 7. Public, opted-in, time-delayed sessions for a spot ------------------------
@@ -147,7 +149,7 @@ as $function$
       and ss.show_on_website = true
       and ss.created_at <= now() - interval '48 hours'
     order by ss.session_date desc nulls last, ss.created_at desc
-    limit greatest(p_limit, 0)
+    limit least(greatest(coalesce(p_limit, 12), 1), 50)
   ) ss
   join public.profiles p on p.id = ss.user_id;
 $function$;
