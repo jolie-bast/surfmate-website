@@ -401,7 +401,7 @@ export default async function HomePage() {
               <img src="/images/logo-surfmate-white.png" alt="Surfmate" style={{ width: "100%", height: "auto", display: "block" }} />
               <span className="sm-seattle" style={{ fontSize: 24, lineHeight: 1.1, whiteSpace: "nowrap" }}>Your Surf. Your Story.</span>
             </span>
-            <h2 className="sm-heavy" style={{ margin: 0, fontSize: "clamp(40px, 5.4vw, 76px)", lineHeight: 0.95 }}>Are you fitting us?</h2>
+            <h2 className="sm-heavy" style={{ margin: 0, fontSize: "clamp(40px, 5.4vw, 76px)", lineHeight: 0.95 }}>Made for the ones who paddle out.</h2>
             <p style={{ margin: 0, fontSize: 18, lineHeight: 1.55, color: "#E6E6E6", maxWidth: 440 }}>
               Surfmate Wear – the brand behind the community. Wear your surf story.
             </p>
