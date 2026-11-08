@@ -1,3 +1,4 @@
+import Script from "next/script";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import EventCard from "../components/EventCard";
@@ -460,7 +461,7 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-      <script src="/js/waitlist.js" defer />
+      <Script src="/js/waitlist.js" strategy="afterInteractive" />
 
       <Footer />
     </>
