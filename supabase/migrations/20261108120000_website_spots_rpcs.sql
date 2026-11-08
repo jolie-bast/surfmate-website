@@ -96,7 +96,11 @@ as $function$
     and s.is_listed_on_website = true;
 $function$;
 
--- 6. "Surfmates have surfed here" count (aggregate only, no identities) -------
+-- 6. "Surfmates have surfed here" count -----------------------------------------
+-- An aggregate headcount only (no names, no session content, no media), so it
+-- is intentionally NOT gated by the per-session show_on_website opt-in or the
+-- 48h delay — those protect the session feed below, which does expose content
+-- and an identity. Secret spots and "only me" sessions are still excluded.
 create or replace function public.get_website_spot_surfed_count(p_slug text)
 returns integer
 language sql
@@ -110,9 +114,7 @@ as $function$
     and s.visibility = 'public'
     and s.is_listed_on_website = true
     and ss.deleted_at is null
-    and ss.visibility <> 'only_me'
-    and ss.show_on_website = true
-    and ss.created_at <= now() - interval '48 hours';
+    and ss.visibility <> 'only_me';
 $function$;
 
 -- 7. Public, opted-in, time-delayed sessions for a spot ------------------------
