@@ -30,7 +30,7 @@ export default function Footer() {
           <a href="/#team">Team</a>
           <a href="/#partners">Partners</a>
           <a href="/creators/">Creators</a>
-          <a href="https://shop.surfmate.eu">Wear ↗</a>
+          <a href="/shop/">Wear</a>
         </nav>
         <nav aria-label="Get in touch" style={{ display: "flex", flexDirection: "column", gap: 10, fontSize: 15 }}>
           <strong style={{ fontWeight: 600 }}>Get in touch</strong>

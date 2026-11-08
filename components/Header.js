@@ -23,7 +23,7 @@ export default function Header({ homeHref = "/" }) {
           <a href="/events/" style={{ textDecoration: "none" }}>Events</a>
           <a href="/#community" style={{ textDecoration: "none" }}>Community</a>
           <a href="/#blog" style={{ textDecoration: "none" }}>Blog</a>
-          <a href="https://shop.surfmate.eu" style={{ textDecoration: "none" }}>Wear ↗</a>
+          <a href="/shop/" style={{ textDecoration: "none" }}>Wear</a>
         </nav>
         <a href="/#download" className="sm-btn sm-btn-dark">Get the app</a>
       </div>
