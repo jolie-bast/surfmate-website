@@ -1,27 +1,15 @@
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import eventTypeBadge from "../components/EventTypeBadge";
+import EventCard from "../components/EventCard";
 import {
   getWebsiteEvents,
   getWebsiteEventGoingCount,
   getWebsitePartners,
   getWebsiteSpots,
+  getWebsiteUserCount,
 } from "../lib/supabase";
 import { countrySlug, countryName } from "../lib/countries";
 import { isUpcomingOrLive, eventSortStart } from "../lib/events";
-
-function formatEventDate(startsAt, timezone) {
-  if (!startsAt) return "Date TBA";
-  try {
-    return new Intl.DateTimeFormat("en-GB", {
-      day: "numeric",
-      month: "short",
-      timeZone: timezone || "UTC",
-    }).format(new Date(startsAt));
-  } catch {
-    return new Date(startsAt).toDateString();
-  }
-}
 
 async function loadUpcomingEvents() {
   const events = await getWebsiteEvents();
@@ -47,13 +35,24 @@ function allPartners(partners) {
   ].filter((p) => !p.hide_logo_on_website);
 }
 
+// Round down to a clean "N00+" so the stat doesn't look like it's ticking up
+// by one with every signup, and still fall back to a safe default if the
+// RPC is unreachable at build time.
+function surferCountLabel(count) {
+  if (!count || count < 100) return "2,000+";
+  const rounded = Math.floor(count / 100) * 100;
+  return `${rounded.toLocaleString("en-US")}+`;
+}
+
 export default async function HomePage() {
-  const [events, partners, spots] = await Promise.all([
+  const [events, partners, spots, userCount] = await Promise.all([
     loadUpcomingEvents(),
     getWebsitePartners(),
     getWebsiteSpots(),
+    getWebsiteUserCount(),
   ]);
   const partnerLogos = allPartners(partners).slice(0, 6);
+  const surferCount = surferCountLabel(userCount);
 
   return (
     <>
@@ -91,7 +90,7 @@ export default async function HomePage() {
               <span style={{ width: 32, height: 32, borderRadius: "50%", background: "var(--sm-blue-light)", border: "2px solid #fff", marginLeft: -10 }} />
               <span style={{ width: 32, height: 32, borderRadius: "50%", background: "var(--sm-mint)", border: "2px solid #fff", marginLeft: -10 }} />
             </div>
-            <span><strong style={{ fontWeight: 600 }}>2,000+ surfers</strong> already connect on Surfmate</span>
+            <span><strong style={{ fontWeight: 600 }}>{surferCount} surfers</strong> already connect on Surfmate</span>
           </div>
         </div>
 
@@ -133,38 +132,7 @@ export default async function HomePage() {
               <p style={{ fontSize: 16, color: "var(--sm-ink)" }}>No upcoming events right now – check back soon.</p>
             )}
             {events.map((e) => (
-              <article key={e.id} style={{ background: "#fff", borderRadius: 15, overflow: "hidden", display: "flex", flexDirection: "column" }}>
-                <div style={{ aspectRatio: "16 / 9", background: "var(--sm-blue-light)", position: "relative" }}>
-                  {e.cover_image_url && (
-                    <img src={e.cover_image_url} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-                  )}
-                  <span style={{ position: "absolute", left: 14, top: 14, background: "#fff", borderRadius: 999, padding: "6px 12px", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                    {eventTypeBadge(e.event_types)}
-                  </span>
-                </div>
-                <div style={{ padding: 20, display: "flex", flexDirection: "column", gap: 14, flex: 1 }}>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                    <span style={{ fontSize: 14, fontWeight: 600, color: "var(--sm-muted)" }}>{formatEventDate(e.starts_at, e.timezone)}</span>
-                    <strong style={{ fontSize: 20, fontWeight: 600, lineHeight: 1.25 }}>{e.title}</strong>
-                    <span style={{ fontSize: 15, color: "var(--sm-muted)" }}>{e.location_name}{e.country_code ? `, ${countryName(e.country_code)}` : ""}</span>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: "auto" }}>
-                    <div style={{ display: "flex" }}>
-                      <span style={{ width: 28, height: 28, borderRadius: "50%", background: "var(--sm-blue)", border: "2px solid #fff" }} />
-                      <span style={{ width: 28, height: 28, borderRadius: "50%", background: "var(--sm-blue-light)", border: "2px solid #fff", marginLeft: -8 }} />
-                    </div>
-                    <span style={{ fontSize: 14 }}><strong style={{ fontWeight: 600 }}>{e.going}</strong> Surfmates going</span>
-                  </div>
-                  <a href="/#download" className="sm-btn sm-btn-dark" style={{ textAlign: "center", justifyContent: "center" }}>
-                    I’m going – open in app
-                  </a>
-                  {e.website_url && (
-                    <a href={e.website_url} style={{ fontSize: 14, fontWeight: 600, textAlign: "center" }}>
-                      Event details ↗
-                    </a>
-                  )}
-                </div>
-              </article>
+              <EventCard key={e.id} event={e} />
             ))}
           </div>
         </div>
@@ -330,12 +298,13 @@ export default async function HomePage() {
           <p className="sm-eyebrow">Spot guide</p>
           <h2 className="sm-heavy" style={{ margin: 0, fontSize: "clamp(32px, 4vw, 52px)", lineHeight: 1 }}>Who is surfing where?</h2>
           <p style={{ margin: 0, fontSize: 17, lineHeight: 1.55, color: "var(--sm-ink)" }}>
-            Every spot has its own page – with public sessions from the community, local knowledge and events nearby.
-            Find the spot, then find your crew.
+            The spots the community actually surfs most, ranked by real activity. Every spot has its own page – with
+            public sessions, local knowledge and events nearby.
           </p>
+          <a href="/spots/" className="sm-btn sm-btn-outline" style={{ alignSelf: "flex-start" }}>Explore all spots</a>
         </div>
         <ol style={{ flex: "1 1 560px", minWidth: 0, listStyle: "none", margin: 0, padding: 0, borderTop: "1px solid var(--sm-border-strong)" }}>
-          {spots.map((spot, i) => (
+          {spots.slice(0, 8).map((spot, i) => (
             <li key={spot.id} style={{ borderBottom: "1px solid var(--sm-border-strong)" }}>
               <a
                 href={`/spots/${countrySlug(spot.country_code)}/${spot.region_slug}/${spot.slug}/`}

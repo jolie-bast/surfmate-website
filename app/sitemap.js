@@ -5,6 +5,7 @@ export const dynamic = "force-static";
 
 const STATIC_PATHS = [
   "/",
+  "/spots/",
   "/events/",
   "/events/submit/",
   "/partners/",

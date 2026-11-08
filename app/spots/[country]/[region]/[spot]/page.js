@@ -68,7 +68,7 @@ export default async function SpotPage({ params }) {
       {/* SPOT HEADER */}
       <section className="sm-container" style={{ padding: "32px 24px 48px", display: "flex", flexDirection: "column", gap: 28 }}>
         <nav aria-label="Breadcrumb" style={{ fontSize: 14, color: "var(--sm-muted)", display: "flex", flexWrap: "wrap", gap: 8 }}>
-          <a href="/#spots">Spots</a>
+          <a href="/spots/">Spots</a>
           <span aria-hidden="true">/</span>
           <span>{countryName(spot.country_code)}</span>
           <span aria-hidden="true">/</span>

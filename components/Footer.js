@@ -12,15 +12,15 @@ export default function Footer() {
         }}
       >
         <div style={{ flex: "1 1 260px", display: "flex", flexDirection: "column", gap: 14 }}>
-          <img src="/assets/logo-surfmate-schriftzug.svg" alt="Surfmate" style={{ height: 16, width: "auto", alignSelf: "flex-start" }} />
+          <img src="/assets/logo-surfmate-schriftzug.svg" alt="Surfmate" style={{ height: 22, width: "auto", alignSelf: "flex-start" }} />
           <p style={{ margin: 0, fontSize: 15, lineHeight: 1.55, color: "var(--sm-muted)", maxWidth: 280 }}>
             The community app connecting surfers worldwide.
           </p>
         </div>
         <nav aria-label="Explore" style={{ display: "flex", flexDirection: "column", gap: 10, fontSize: 15 }}>
           <strong style={{ fontWeight: 600 }}>Explore</strong>
-          <a href="/#spots">Spots</a>
-          <a href="/#events">Events</a>
+          <a href="/spots/">Spots</a>
+          <a href="/events/">Events</a>
           <a href="/#blog">Blog</a>
           <a href="/support/">Support</a>
         </nav>

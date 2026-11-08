@@ -13,14 +13,14 @@ export default function Header({ homeHref = "/" }) {
         }}
       >
         <a href={homeHref} aria-label="Surfmate home" style={{ display: "flex", alignItems: "center" }}>
-          <img src="/assets/logo-surfmate-schriftzug.svg" alt="Surfmate" style={{ height: 18, width: "auto", display: "block" }} />
+          <img src="/assets/logo-surfmate-schriftzug.svg" alt="Surfmate" style={{ height: 28, width: "auto", display: "block" }} />
         </a>
         <nav
           aria-label="Main"
           style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 28, fontSize: 15, fontWeight: 500 }}
         >
-          <a href="/#spots" style={{ textDecoration: "none" }}>Spots</a>
-          <a href="/#events" style={{ textDecoration: "none" }}>Events</a>
+          <a href="/spots/" style={{ textDecoration: "none" }}>Spots</a>
+          <a href="/events/" style={{ textDecoration: "none" }}>Events</a>
           <a href="/#community" style={{ textDecoration: "none" }}>Community</a>
           <a href="/#blog" style={{ textDecoration: "none" }}>Blog</a>
           <a href="https://shop.surfmate.eu" style={{ textDecoration: "none" }}>Wear ↗</a>
