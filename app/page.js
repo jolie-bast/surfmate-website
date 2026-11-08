@@ -430,6 +430,38 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* NEWSLETTER */}
+      <section id="newsletter" style={{ background: "var(--sm-mint)" }}>
+        <div className="sm-container" style={{ padding: "80px 24px", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: 20 }}>
+          <h2 className="sm-heavy" style={{ margin: 0, fontSize: "clamp(28px, 3.4vw, 44px)", lineHeight: 1 }}>Newsletter</h2>
+          <p style={{ margin: 0, fontSize: 17, lineHeight: 1.55, color: "var(--sm-ink)", maxWidth: 460 }}>
+            Stay in the loop – surf stories, updates, and what&apos;s new at Surfmate.
+          </p>
+          <div style={{ width: "100%", maxWidth: 440 }}>
+            <form id="waitlist-form" method="post" action="#newsletter" noValidate style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center" }}>
+              <input
+                type="email"
+                id="waitlist-email"
+                name="email"
+                placeholder="Your email address"
+                autoComplete="email"
+                inputMode="email"
+                required
+                aria-describedby="error-message"
+                style={{ flex: "1 1 240px", minWidth: 0, padding: "12px 16px", fontSize: 16, border: "1px solid var(--sm-border-strong)", borderRadius: 15, fontFamily: "inherit" }}
+              />
+              <button type="submit" id="waitlist-submit" className="sm-btn sm-btn-dark">Subscribe</button>
+              <p id="error-message" role="alert" hidden style={{ width: "100%", margin: 0, fontSize: 14, color: "#B3261E", textAlign: "left" }} />
+            </form>
+            <div id="success-message" role="status" hidden style={{ fontSize: 16, lineHeight: 1.55 }}>
+              <p style={{ margin: "0 0 4px" }}><strong>You&apos;re subscribed!</strong></p>
+              <p style={{ margin: 0, color: "var(--sm-ink)" }}>Thanks for joining the Surfmate newsletter. We&apos;ll keep you posted.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <script src="/js/waitlist.js" defer />
+
       <Footer />
     </>
   );

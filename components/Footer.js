@@ -36,7 +36,7 @@ export default function Footer() {
           <strong style={{ fontWeight: 600 }}>Get in touch</strong>
           <a href="/support/">Support</a>
           <a href="https://instagram.com/surfmate.app">Instagram</a>
-          <a href="/join/">Newsletter</a>
+          <a href="/#newsletter">Newsletter</a>
         </nav>
       </div>
       <div
