@@ -17,6 +17,11 @@ export default function RootLayout({ children }) {
           rel="stylesheet"
         />
         <link rel="icon" href="/assets/favicon.ico" />
+        {/* Preload the display fonts used above the fold: without this, they
+            swap in after first paint and reflow the page, so any #anchor the
+            browser already scrolled to (e.g. #download) drifts out of view. */}
+        <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/8/WOFF/8-Heavy.woff2" crossOrigin="anonymous" />
+        <link rel="preload" as="font" type="font/woff" href="/assets/fonts/Seattle/WOFF/SeattleRegular.woff" crossOrigin="anonymous" />
       </head>
       <body>{children}</body>
     </html>
