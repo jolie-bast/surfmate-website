@@ -1,13 +1,18 @@
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import EventCard from "../../components/EventCard";
+import JsonLd from "../../components/JsonLd";
 import { getWebsiteEvents, getWebsiteEventGoingCount } from "../../lib/supabase";
 import { isUpcomingOrLive, eventSortStart } from "../../lib/events";
+import { breadcrumbNode, eventsItemListNode, pageMetadata } from "../../lib/seo";
 
-export const metadata = {
-  title: "Surf events · Surfmate",
-  description: "Contests, festivals and meetups worldwide – see who is going and meet the crew there.",
-};
+const DESCRIPTION = "Contests, festivals and meetups worldwide – see who is going and meet the crew there.";
+
+export const metadata = pageMetadata({
+  title: "Surf events",
+  description: DESCRIPTION,
+  path: "/events/",
+});
 
 async function loadEvents() {
   const events = await getWebsiteEvents();
@@ -27,7 +32,17 @@ export default async function EventsIndexPage() {
 
   return (
     <>
+      <JsonLd
+        data={[
+          breadcrumbNode([
+            { name: "Home", path: "/" },
+            { name: "Events", path: "/events/" },
+          ]),
+          eventsItemListNode(events),
+        ]}
+      />
       <Header />
+      <main>
 
       <section className="sm-container" style={{ padding: "48px 24px 24px", display: "flex", flexDirection: "column", gap: 18 }}>
         <p className="sm-eyebrow">Upcoming surf events</p>
@@ -51,6 +66,7 @@ export default async function EventsIndexPage() {
           </div>
         )}
       </section>
+      </main>
 
       <Footer />
     </>

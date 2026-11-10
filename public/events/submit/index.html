@@ -15,7 +15,23 @@
       content="Share a surf event with the Surfmate community — no account required."
     />
     <title>Share an event – Surfmate</title>
-    <link rel="canonical" href="https://surfmate.eu/events/submit" />
+    <link rel="canonical" href="https://surfmate.eu/events/submit/" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Surfmate" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:url" content="https://surfmate.eu/events/submit/" />
+    <meta property="og:title" content="Share an event – Surfmate" />
+    <meta property="og:description" content="Share a surf event with the Surfmate community — no account required." />
+    <meta property="og:image" content="https://surfmate.eu/images/community-peniche-laughing.webp" />
+    <meta property="og:image:width" content="1600" />
+    <meta property="og:image:height" content="1066" />
+    <meta property="og:image:alt" content="Surfers together at a Surfmate meetup in Peniche, Portugal" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Share an event – Surfmate" />
+    <meta name="twitter:description" content="Share a surf event with the Surfmate community — no account required." />
+    <meta name="twitter:image" content="https://surfmate.eu/images/community-peniche-laughing.webp" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Share an event – Surfmate","url":"https://surfmate.eu/events/submit/","description":"Share a surf event with the Surfmate community — no account required.","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"Surfmate","url":"https://surfmate.eu/"},"publisher":{"@type":"Organization","name":"Surfmate","url":"https://surfmate.eu/","logo":"https://surfmate.eu/images/app-icon.png"}}</script>
     <link rel="preconnect" href="https://esm.sh" crossorigin />
 
     <link rel="stylesheet" href="/css/main.css" />
@@ -54,52 +70,49 @@
                         type="button"
                         class="wizard-step-marker-btn"
                         data-step-jump="1"
-                        aria-label="Go to step 1: Contact"
+                        aria-label="Go to step 1: Event"
                         aria-current="step"
                         disabled
                       >
                         1
                       </button>
-                      <span class="wizard-step-marker-label">Contact</span>
+                      <span class="wizard-step-marker-label">Event</span>
                     </li>
                     <li class="wizard-step-marker" data-step-marker="2">
                       <button
                         type="button"
                         class="wizard-step-marker-btn"
                         data-step-jump="2"
-                        aria-label="Go to step 2: Event"
-                        aria-current="false"
+                        aria-label="Go to step 2: When"
                         disabled
                       >
                         2
                       </button>
-                      <span class="wizard-step-marker-label">Event</span>
+                      <span class="wizard-step-marker-label">When</span>
                     </li>
                     <li class="wizard-step-marker" data-step-marker="3">
                       <button
                         type="button"
                         class="wizard-step-marker-btn"
                         data-step-jump="3"
-                        aria-label="Go to step 3: When"
-                        aria-current="false"
+                        aria-label="Go to step 3: Type"
                         disabled
                       >
                         3
                       </button>
-                      <span class="wizard-step-marker-label">When</span>
+                      <span class="wizard-step-marker-label">Type</span>
                     </li>
                     <li class="wizard-step-marker" data-step-marker="4">
                       <button
                         type="button"
                         class="wizard-step-marker-btn"
                         data-step-jump="4"
-                        aria-label="Go to step 4: Type"
-                        aria-current="false"
+                        aria-label="Go to step 4: Contact"
                         disabled
                       >
                         4
                       </button>
-                      <span class="wizard-step-marker-label">Type</span>
+                      <span class="wizard-step-marker-label">Contact</span>
                     </li>
                     <li class="wizard-step-marker" data-step-marker="5">
                       <button
@@ -107,7 +120,6 @@
                         class="wizard-step-marker-btn"
                         data-step-jump="5"
                         aria-label="Go to step 5: Send"
-                        aria-current="false"
                         disabled
                       >
                         5
@@ -119,18 +131,14 @@
 
                 <div class="wizard-step-header">
                   <p class="wizard-step-kicker" id="wizard-step-kicker">Step 1 of 5</p>
-                  <h2 class="wizard-step-title" id="wizard-step-title">How can we reach you?</h2>
+                  <h2 class="wizard-step-title" id="wizard-step-title">What’s the event?</h2>
                   <p class="wizard-step-lead" id="wizard-step-lead">
-                    We’ll only use this if we have a question about your event.
+                    Name it and pin the location on the map.
                   </p>
                 </div>
 
                 <div class="wizard-step-panels">
-                  <section
-                    class="wizard-step is-active"
-                    data-step="1"
-                    aria-labelledby="wizard-step-title"
-                  >
+                  <section class="wizard-step" data-step="4" hidden>
                     <div class="form-field">
                       <label for="submitter-email">
                         Your email <span class="required-mark" aria-hidden="true">*</span>
@@ -150,7 +158,11 @@
                     </div>
                   </section>
 
-                  <section class="wizard-step" data-step="2" hidden>
+                  <section
+                    class="wizard-step is-active"
+                    data-step="1"
+                    aria-labelledby="wizard-step-title"
+                  >
                     <div class="form-field">
                       <label for="event-title">
                         Event name <span class="required-mark" aria-hidden="true">*</span>
@@ -200,7 +212,7 @@
                     </div>
                   </section>
 
-                  <section class="wizard-step" data-step="3" hidden>
+                  <section class="wizard-step" data-step="2" hidden>
                     <div class="form-field">
                       <span class="field-label">Schedule</span>
                       <div class="schedule-toggle" role="radiogroup" aria-label="Schedule type">
@@ -423,7 +435,7 @@
                     <p id="schedule-error" class="field-error" hidden role="alert"></p>
                   </section>
 
-                  <section class="wizard-step" data-step="4" hidden>
+                  <section class="wizard-step" data-step="3" hidden>
                     <p class="field-hint section-hint">
                       Pick one or more — tap to toggle.
                     </p>

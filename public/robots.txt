@@ -1,41 +1,165 @@
-# AI crawlers are welcome. A plain-text brief of the site lives at:
+# All crawlers may read the public site, including AI answer engines.
+# Plain-text briefs:
 # https://surfmate.eu/llms.txt
 # https://surfmate.eu/llms-full.txt
+#
+# A named user-agent group does not inherit rules from "*", so the same
+# disallows are repeated for the agents below.
 
 User-agent: *
 Allow: /
+Disallow: /auth/
+Disallow: /c/
+Disallow: /p/
+Disallow: /g/
+Disallow: /download/
+Disallow: /events/submit/partner/
+Disallow: /includes/
+Disallow: /components/
+Disallow: /support.html
+Disallow: /animation-bewegende-welle.html
 
 User-agent: GPTBot
 Allow: /
+Disallow: /auth/
+Disallow: /c/
+Disallow: /p/
+Disallow: /g/
+Disallow: /download/
+Disallow: /events/submit/partner/
+Disallow: /includes/
+Disallow: /components/
+Disallow: /support.html
+Disallow: /animation-bewegende-welle.html
 
 User-agent: OAI-SearchBot
 Allow: /
+Disallow: /auth/
+Disallow: /c/
+Disallow: /p/
+Disallow: /g/
+Disallow: /download/
+Disallow: /events/submit/partner/
+Disallow: /includes/
+Disallow: /components/
+Disallow: /support.html
+Disallow: /animation-bewegende-welle.html
 
 User-agent: ChatGPT-User
 Allow: /
+Disallow: /auth/
+Disallow: /c/
+Disallow: /p/
+Disallow: /g/
+Disallow: /download/
+Disallow: /events/submit/partner/
+Disallow: /includes/
+Disallow: /components/
+Disallow: /support.html
+Disallow: /animation-bewegende-welle.html
 
 User-agent: ClaudeBot
 Allow: /
+Disallow: /auth/
+Disallow: /c/
+Disallow: /p/
+Disallow: /g/
+Disallow: /download/
+Disallow: /events/submit/partner/
+Disallow: /includes/
+Disallow: /components/
+Disallow: /support.html
+Disallow: /animation-bewegende-welle.html
 
 User-agent: Claude-SearchBot
 Allow: /
+Disallow: /auth/
+Disallow: /c/
+Disallow: /p/
+Disallow: /g/
+Disallow: /download/
+Disallow: /events/submit/partner/
+Disallow: /includes/
+Disallow: /components/
+Disallow: /support.html
+Disallow: /animation-bewegende-welle.html
 
 User-agent: PerplexityBot
 Allow: /
+Disallow: /auth/
+Disallow: /c/
+Disallow: /p/
+Disallow: /g/
+Disallow: /download/
+Disallow: /events/submit/partner/
+Disallow: /includes/
+Disallow: /components/
+Disallow: /support.html
+Disallow: /animation-bewegende-welle.html
 
 User-agent: Google-Extended
 Allow: /
+Disallow: /auth/
+Disallow: /c/
+Disallow: /p/
+Disallow: /g/
+Disallow: /download/
+Disallow: /events/submit/partner/
+Disallow: /includes/
+Disallow: /components/
+Disallow: /support.html
+Disallow: /animation-bewegende-welle.html
 
 User-agent: Applebot-Extended
 Allow: /
+Disallow: /auth/
+Disallow: /c/
+Disallow: /p/
+Disallow: /g/
+Disallow: /download/
+Disallow: /events/submit/partner/
+Disallow: /includes/
+Disallow: /components/
+Disallow: /support.html
+Disallow: /animation-bewegende-welle.html
 
 User-agent: Amazonbot
 Allow: /
+Disallow: /auth/
+Disallow: /c/
+Disallow: /p/
+Disallow: /g/
+Disallow: /download/
+Disallow: /events/submit/partner/
+Disallow: /includes/
+Disallow: /components/
+Disallow: /support.html
+Disallow: /animation-bewegende-welle.html
 
 User-agent: CCBot
 Allow: /
+Disallow: /auth/
+Disallow: /c/
+Disallow: /p/
+Disallow: /g/
+Disallow: /download/
+Disallow: /events/submit/partner/
+Disallow: /includes/
+Disallow: /components/
+Disallow: /support.html
+Disallow: /animation-bewegende-welle.html
 
 User-agent: meta-externalagent
 Allow: /
+Disallow: /auth/
+Disallow: /c/
+Disallow: /p/
+Disallow: /g/
+Disallow: /download/
+Disallow: /events/submit/partner/
+Disallow: /includes/
+Disallow: /components/
+Disallow: /support.html
+Disallow: /animation-bewegende-welle.html
 
 Sitemap: https://surfmate.eu/sitemap.xml

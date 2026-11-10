@@ -12,7 +12,7 @@ export default function Footer() {
         }}
       >
         <div style={{ flex: "1 1 260px", display: "flex", flexDirection: "column", gap: 14 }}>
-          <img src="/assets/logo-surfmate-schriftzug.svg" alt="Surfmate" style={{ height: 22, width: "auto", alignSelf: "flex-start" }} />
+          <img src="/assets/logo-surfmate-schriftzug.svg" alt="Surfmate" style={{ height: 40, width: "auto", alignSelf: "flex-start" }} />
           <p style={{ margin: 0, fontSize: 15, lineHeight: 1.55, color: "var(--sm-muted)", maxWidth: 280 }}>
             The community app connecting surfers worldwide.
           </p>
@@ -21,15 +21,16 @@ export default function Footer() {
           <strong style={{ fontWeight: 600 }}>Explore</strong>
           <a href="/spots/">Spots</a>
           <a href="/events/">Events</a>
-          <a href="/#blog">Blog</a>
+          <a href="/#faq">Questions</a>
           <a href="/support/">Support</a>
         </nav>
         <nav aria-label="Surfmate" style={{ display: "flex", flexDirection: "column", gap: 10, fontSize: 15 }}>
           <strong style={{ fontWeight: 600 }}>Surfmate</strong>
           <a href="/#story">Our story</a>
-          <a href="/#team">Team</a>
-          <a href="/#partners">Partners</a>
+          <a href="/team.html">Team</a>
+          <a href="/partners/">Partners</a>
           <a href="/creators/">Creators</a>
+          <a href="/join/">Join</a>
           <a href="/shop/">Wear</a>
         </nav>
         <nav aria-label="Get in touch" style={{ display: "flex", flexDirection: "column", gap: 10, fontSize: 15 }}>
@@ -54,7 +55,7 @@ export default function Footer() {
         <span>
           © {new Date().getFullYear()} Surfmate · <a href="/impressum.html">Imprint</a> · <a href="/datenschutz.html">Privacy</a>
         </span>
-        <span>EN · DE · PT · ES · FR</span>
+        <span>App languages: EN, DE, PT, ES, FR</span>
       </div>
     </footer>
   );

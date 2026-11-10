@@ -1,17 +1,20 @@
 # Surfmate
 
-> Surfmate is the social surf platform to remember every surf, organize spots, discover events, and connect with other surfers. Tagline: Your Surf. Your Story.
+> Surfmate is the free community app to find surfers nearby. See who surfs your spot, share spotchecks, join meetups, and turn strangers in the line-up into surf friends. Tagline: Find surfers nearby. Brand line: Your Surf. Your Story.
 
-Surfmate is a community app for iOS and Android, made by Jolie Bast in Hamburg. Surfers use it to log sessions, share spotchecks with friends, keep secret spots private, and find contests, festivals, and meetups. More than 2,000 surfers are already on Surfmate. The longer plain-text brief, including the full Q&A, is at https://surfmate.eu/llms-full.txt.
+Canonical website: https://surfmate.eu/
+Surfmate is a community app for iOS and Android, made by Jolie Bast in Hamburg, Germany (Deelwisch 43, 22529 Hamburg). Surfers use it to log sessions, share spotchecks with friends, keep secret spots private, and find contests, festivals, and meetups. More than 2,000 surfers are already on Surfmate. The app has no ads. The longer plain-text brief, including the full Q&A, is at https://surfmate.eu/llms-full.txt.
 
 ## Product
-- [Home](https://surfmate.eu/): Story, features, and answers about sessions, spotchecks, spots, following, the feed, profiles, and the journal
+- [Home](https://surfmate.eu/): Story, features, and short answers about the app
+- [Questions](https://surfmate.eu/#faq): What Surfmate is, where it works, sessions, secret spots, ads, who makes it, and how to download it
 - [Full site brief](https://surfmate.eu/llms-full.txt): Plain-text product description and complete Q&A
-- [Events](https://surfmate.eu/events/): Surf contests, festivals, meetups, and tours in a list, calendar, and map
+- [Spot guide](https://surfmate.eu/spots/): Spots the community actually surfs, ranked by logged sessions. Country pages live at /spots/{country}/, region pages at /spots/{country}/{region}/, and each spot at /spots/{country}/{region}/{spot}/
+- [Events](https://surfmate.eu/events/): Surf contests, festivals, meetups, and tours
 - [Share an event](https://surfmate.eu/events/submit/): Add a surf event for the community
 - [Partners](https://surfmate.eu/partners/): Brands, event series, and local spots that ride with Surfmate
 - [Creators](https://surfmate.eu/creators/): Creator program for surfers who use Surfmate and share it with their community
-- [Shop](https://surfmate.eu/shop/): Surfmate products, ordered via Instagram DM
+- [Shop](https://surfmate.eu/shop/): Surfmate Wear, 100% organic cotton, produced in Portugal. Early access by email. Instagram: https://www.instagram.com/surfmate.wear/
 
 ## Company
 - [Team](https://surfmate.eu/team.html): Jolie Bast (founder), Nikolaus Lieberum, Marlene, and Magnus
@@ -22,6 +25,14 @@ Surfmate is a community app for iOS and Android, made by Jolie Bast in Hamburg. 
 ## App
 - [App Store](https://apps.apple.com/de/app/surfmate-surf-log-connect/id6760191082): Surfmate for iPhone and iPad
 - [Google Play](https://play.google.com/store/apps/details?id=com.joliebast.surfmateapp): Surfmate for Android
+
+## Short answers
+- What is Surfmate? A free iOS and Android app to find surfers nearby, log sessions, share spotchecks, and join surf events.
+- Where does it work? Made in Hamburg and used worldwide. Public spot pages cover the spots the community actually surfs.
+- Are secret spots private? Yes. Secret spots are not listed on the website, and sessions there stay private unless the surfer shares the spot.
+- Does Surfmate have ads? No.
+- Who makes it? Jolie Bast in Hamburg, with a small crew. Team page: https://surfmate.eu/team.html
+- How much does it cost? Free on the App Store and Google Play.
 
 ## Optional
 - [Imprint](https://surfmate.eu/impressum.html): Legal notice, Jolie Bast, Hamburg

@@ -20,27 +20,27 @@ const WIZARD_STEP_COUNT = 5;
 const WIZARD_STEPS = [
   {
     id: 1,
-    label: "Contact",
-    title: "How can we reach you?",
-    lead: "We’ll only use this if we have a question about your event.",
-  },
-  {
-    id: 2,
     label: "Event",
     title: "What’s the event?",
     lead: "Name it and pin the location on the map.",
   },
   {
-    id: 3,
+    id: 2,
     label: "When",
     title: "When does it happen?",
     lead: "Dates only, or include start and end times.",
   },
   {
-    id: 4,
+    id: 3,
     label: "Type",
     title: "What kind of event?",
     lead: "Pick everything that fits — festival, contest, meetup, and more.",
+  },
+  {
+    id: 4,
+    label: "Contact",
+    title: "How can we reach you?",
+    lead: "We’ll only use this if we have a question about your event.",
   },
   {
     id: 5,
@@ -55,6 +55,7 @@ let supabaseLoadPromise = null;
 let selectedPlace = null;
 let placeSearchTimer = null;
 let currentWizardStep = 1;
+let submitInFlight = false;
 
 const els = {
   loading: document.getElementById("event-submit-loading"),
@@ -570,7 +571,11 @@ function updateWizardProgressMarker(marker, step) {
   if (!button) return;
 
   button.disabled = step.id >= currentWizardStep;
-  button.setAttribute("aria-current", step.id === currentWizardStep ? "step" : "false");
+  if (step.id === currentWizardStep) {
+    button.setAttribute("aria-current", "step");
+  } else {
+    button.removeAttribute("aria-current");
+  }
   button.textContent = step.id < currentWizardStep ? "✓" : String(step.id);
 }
 
@@ -582,7 +587,14 @@ function renderWizardProgressMap() {
     existingMarkers.forEach((marker) => {
       const stepId = Number(marker.dataset.stepMarker);
       const step = WIZARD_STEPS.find((item) => item.id === stepId);
-      if (step) updateWizardProgressMarker(marker, step);
+      if (!step) return;
+
+      const label = marker.querySelector(".wizard-step-marker-label");
+      if (label) label.textContent = step.label;
+
+      const button = marker.querySelector("[data-step-jump]");
+      button?.setAttribute("aria-label", `Go to step ${step.id}: ${step.label}`);
+      updateWizardProgressMarker(marker, step);
     });
     return;
   }
@@ -604,7 +616,7 @@ function renderWizardProgressMap() {
           class="wizard-step-marker-btn"
           data-step-jump="${step.id}"
           aria-label="Go to step ${step.id}: ${step.label}"
-          aria-current="${step.id === currentWizardStep ? "step" : "false"}"
+          ${step.id === currentWizardStep ? 'aria-current="step"' : ""}
           ${disabled}
         >
           ${step.id < currentWizardStep ? "✓" : step.id}
@@ -621,10 +633,10 @@ function getWizardStepConfig(step = currentWizardStep) {
 
 function focusWizardStepField(step = currentWizardStep) {
   const focusTargets = {
-    1: els.submitterEmail,
-    2: els.title,
-    3: getDateSegments(els.startDate).day,
-    4: els.eventTypes?.querySelector("input"),
+    1: els.title,
+    2: getDateSegments(els.startDate).day,
+    3: els.eventTypes?.querySelector("input"),
+    4: els.submitterEmail,
     5: els.description,
   };
 
@@ -657,6 +669,10 @@ function renderWizardReview() {
     <div class="wizard-review-row">
       <span class="wizard-review-label">Type</span>
       <span class="wizard-review-value">${escapeHtml(types || "—")}</span>
+    </div>
+    <div class="wizard-review-row">
+      <span class="wizard-review-label">Email</span>
+      <span class="wizard-review-value">${escapeHtml(els.submitterEmail?.value.trim() || "—")}</span>
     </div>
   `;
 }
@@ -703,24 +719,6 @@ function isValidEmail(value) {
 function validateWizardStep(step) {
   switch (step) {
     case 1: {
-      const email = els.submitterEmail?.value.trim() ?? "";
-      if (!email) {
-        return {
-          ok: false,
-          message: "Enter your email address so we can reach you.",
-          field: "submitterEmail",
-        };
-      }
-      if (!isValidEmail(email)) {
-        return {
-          ok: false,
-          message: "Enter a valid email address (e.g. you@example.com).",
-          field: "submitterEmail",
-        };
-      }
-      return { ok: true };
-    }
-    case 2: {
       const title = els.title?.value.trim() ?? "";
       if (!title) {
         return {
@@ -738,7 +736,7 @@ function validateWizardStep(step) {
       }
       return { ok: true };
     }
-    case 3: {
+    case 2: {
       const result = validateScheduleInput();
       if (!result.ok) {
         return result;
@@ -747,12 +745,30 @@ function validateWizardStep(step) {
       updateSchedulePreview();
       return { ok: true };
     }
-    case 4: {
+    case 3: {
       if (!getSelectedEventTypes().length) {
         return {
           ok: false,
           message: "Select at least one event type.",
           field: "eventTypes",
+        };
+      }
+      return { ok: true };
+    }
+    case 4: {
+      const email = els.submitterEmail?.value.trim() ?? "";
+      if (!email) {
+        return {
+          ok: false,
+          message: "Enter your email address so we can reach you.",
+          field: "submitterEmail",
+        };
+      }
+      if (!isValidEmail(email)) {
+        return {
+          ok: false,
+          message: "Enter a valid email address (e.g. you@example.com).",
+          field: "submitterEmail",
         };
       }
       return { ok: true };
@@ -1752,7 +1768,7 @@ function showSubmitAnotherForm() {
   resetEventForm();
   hide(els.success);
   show(els.formSection);
-  els.submitterEmail?.focus();
+  focusWizardStepField(1);
   els.formSection?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -1782,6 +1798,16 @@ async function handleFinalSubmit() {
     }
   }
 
+  if (!selectedPlace) {
+    goToWizardStep(1);
+    applyWizardStepError({
+      ok: false,
+      message: "Search for a location and tap a result to confirm it.",
+      field: "eventLocation",
+    });
+    return;
+  }
+
   const input = {
     title: els.title?.value ?? "",
     submitterEmail: els.submitterEmail?.value ?? "",
@@ -1803,41 +1829,54 @@ async function handleFinalSubmit() {
     return;
   }
 
-  els.submitBtn.disabled = true;
-  els.submitBtn.textContent = "Submitting…";
+  if (submitInFlight) return;
+  submitInFlight = true;
+  els.submitBtn?.setAttribute("aria-busy", "true");
+  if (els.submitBtn) els.submitBtn.textContent = "Submitting…";
 
-  let client;
+  let eventId = null;
   try {
-    client = await getSupabase();
-  } catch {
-    els.submitBtn.disabled = false;
-    els.submitBtn.textContent = "Submit for review";
-    showFormError("Supabase is not configured on this page.");
+    let client;
+    try {
+      client = await getSupabase();
+    } catch {
+      showFormError("Supabase is not configured on this page.");
+      return;
+    }
+
+    const result = await client.rpc("submit_community_event", {
+      p_title: input.title.trim(),
+      p_location_name: input.locationName.trim(),
+      p_country_code: input.countryCode,
+      p_latitude: input.latitude,
+      p_longitude: input.longitude,
+      p_schedule_type: input.scheduleType,
+      p_starts_at: input.startsAt,
+      p_ends_at: input.endsAt || null,
+      p_event_types: input.eventTypes,
+      p_submitter_email: input.submitterEmail.trim(),
+      p_submitter_note: input.submitterNote?.trim() || null,
+      p_description: input.description?.trim() || null,
+      p_timezone: getSelectedTimezone(),
+    });
+
+    if (result.error) {
+      showFormError(formatSubmitRpcError(result.error.message));
+      return;
+    }
+
+    eventId = result.data;
+  } catch (caught) {
+    showFormError(
+      caught instanceof Error && caught.message
+        ? caught.message
+        : "Something went wrong. Please try again.",
+    );
     return;
-  }
-
-  const { data: eventId, error } = await client.rpc("submit_community_event", {
-    p_title: input.title.trim(),
-    p_location_name: input.locationName.trim(),
-    p_country_code: input.countryCode,
-    p_latitude: input.latitude,
-    p_longitude: input.longitude,
-    p_schedule_type: input.scheduleType,
-    p_starts_at: input.startsAt,
-    p_ends_at: input.endsAt || null,
-    p_event_types: input.eventTypes,
-    p_submitter_email: input.submitterEmail.trim(),
-    p_submitter_note: input.submitterNote?.trim() || null,
-    p_description: input.description?.trim() || null,
-    p_timezone: getSelectedTimezone(),
-  });
-
-  els.submitBtn.disabled = false;
-  els.submitBtn.textContent = "Submit for review";
-
-  if (error) {
-    showFormError(formatSubmitRpcError(error.message));
-    return;
+  } finally {
+    submitInFlight = false;
+    els.submitBtn?.removeAttribute("aria-busy");
+    if (els.submitBtn) els.submitBtn.textContent = "Submit for review";
   }
 
   hide(els.formSection);

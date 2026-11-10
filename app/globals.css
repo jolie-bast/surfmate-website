@@ -77,12 +77,17 @@ img {
   align-items: center;
   justify-content: center;
   gap: 8px;
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
   border-radius: var(--sm-radius);
+  font-family: inherit;
   font-weight: 600;
   text-decoration: none;
   min-height: 44px;
   box-sizing: border-box;
   white-space: nowrap;
+  cursor: pointer;
 }
 
 .sm-btn-dark {
@@ -124,8 +129,763 @@ img {
   color: var(--sm-muted);
 }
 
+.sm-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.sm-partner-marquee {
+  overflow: hidden;
+  margin-top: 40px;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+}
+
+.sm-partner-marquee-move {
+  display: flex;
+  width: max-content;
+  animation: sm-partner-scroll 52s linear infinite;
+}
+
+.sm-partner-marquee:hover .sm-partner-marquee-move,
+.sm-partner-marquee:focus-within .sm-partner-marquee-move {
+  animation-play-state: paused;
+}
+
+.sm-partner-marquee-track {
+  display: flex;
+  gap: 12px;
+  margin: 0;
+  padding: 0 12px 0 0;
+  list-style: none;
+}
+
+.sm-partner-marquee-track > li {
+  flex: 0 0 auto;
+}
+
+.sm-partner-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 188px;
+  height: 110px;
+  padding: 16px;
+  border-radius: 15px;
+  box-sizing: border-box;
+  text-decoration: none;
+}
+
+.sm-partner-tile img {
+  display: block;
+  max-width: 78%;
+  max-height: 52px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.sm-partner-tile-name {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+@keyframes sm-partner-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sm-partner-marquee {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .sm-partner-marquee-move {
+    animation: none;
+  }
+
+  .sm-partner-marquee-track[aria-hidden="true"] {
+    display: none;
+  }
+}
+
 @media (max-width: 640px) {
   .sm-container {
     padding: 0 16px;
   }
+}
+
+.sm-events {
+  background: var(--sm-mint);
+}
+
+.sm-events-inner {
+  padding: 80px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.sm-events-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+}
+
+.sm-events-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 22px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.sm-events-links a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.sm-events-rail {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.sm-events-rail > * {
+  min-width: 0;
+}
+
+.sm-events-dots {
+  display: none;
+}
+
+.sm-events-dots button {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: rgba(26, 26, 26, 0.28);
+  cursor: pointer;
+}
+
+.sm-events-dots button.is-active {
+  background: var(--sm-black);
+}
+
+.sm-event-promo {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.85fr);
+  border-radius: 22px;
+  overflow: hidden;
+}
+
+.sm-event-promo-main,
+.sm-event-promo-featured {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 36px 40px 32px;
+}
+
+.sm-event-promo-main {
+  background: #fff;
+}
+
+.sm-event-promo-main h3 {
+  margin: 0;
+  font-size: clamp(40px, 4.6vw, 64px);
+  line-height: 0.9;
+}
+
+.sm-event-promo-main p,
+.sm-event-promo-featured p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.sm-event-promo-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sm-event-promo-note {
+  margin: 0;
+  font-size: 13px;
+  color: var(--sm-muted);
+}
+
+.sm-event-promo-featured {
+  background: #d8c6a3;
+  color: var(--sm-black);
+}
+
+.sm-event-promo-kicker {
+  margin: 0;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--sm-black);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sm-event-promo-featured h3 {
+  margin: 4px 0 0;
+  font-size: clamp(26px, 2.4vw, 32px);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.sm-event-promo-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.sm-event-promo-list li {
+  display: flex;
+  gap: 8px;
+}
+
+.sm-event-promo .sm-btn {
+  border-radius: 999px;
+}
+
+.sm-event-promo-featured .sm-btn {
+  margin-top: auto;
+}
+
+@media (max-width: 760px) {
+  .sm-events-inner {
+    padding: 56px 16px 64px;
+    gap: 24px;
+  }
+
+  .sm-events-rail {
+    display: flex;
+    gap: 12px;
+    margin-inline: -16px;
+    padding-inline: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .sm-events-rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .sm-events-rail > * {
+    flex: 0 0 84%;
+    scroll-snap-align: start;
+  }
+
+  .sm-events-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .sm-event-promo {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    overflow: visible;
+    background: transparent;
+  }
+
+  .sm-event-promo-main,
+  .sm-event-promo-featured {
+    border-radius: 22px;
+    padding: 28px 22px 26px;
+  }
+}
+
+/* Surfmate Wear — shop page */
+
+.wear-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 48px;
+  align-items: center;
+  padding: 64px 0 72px;
+}
+
+.wear-hero h1 {
+  margin: 0;
+  font-size: clamp(46px, 5.6vw, 84px);
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+}
+
+.wear-frame {
+  overflow: hidden;
+  border-radius: 15px;
+  background: #f2f2f2;
+}
+
+.wear-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.wear-hero-photo {
+  aspect-ratio: 4 / 5;
+}
+
+.wear-hero-photo img {
+  object-position: 50% 28%;
+}
+
+.wear-facts {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  gap: 12px 28px;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 20px 24px;
+  background: var(--sm-black);
+  color: #fff;
+  list-style: none;
+  text-align: center;
+}
+
+.wear-facts li {
+  margin: 0;
+  font-size: clamp(14px, 1.7vw, 20px);
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+}
+
+.wear-block {
+  padding: 88px 0 0;
+}
+
+.wear-drop-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px 48px;
+  margin-bottom: 36px;
+}
+
+.wear-drop-head h2 {
+  margin: 8px 0 0;
+  font-size: clamp(40px, 5vw, 68px);
+  line-height: 0.92;
+}
+
+.wear-drop-head p {
+  margin: 0;
+  max-width: 320px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--sm-ink);
+}
+
+.wear-looks,
+.wear-products,
+.wear-days {
+  display: grid;
+  gap: 22px;
+}
+
+.wear-looks {
+  grid-template-columns: 1fr 1fr;
+}
+
+.wear-products {
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: 48px;
+}
+
+.wear-days {
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: 28px;
+}
+
+.wear-look-photo,
+.wear-day-photo {
+  aspect-ratio: 1 / 1;
+}
+
+.wear-product-photo,
+.wear-day-photo {
+  aspect-ratio: 3 / 4;
+}
+
+.wear-look-photo img {
+  object-position: 50% 40%;
+}
+
+.wear-product-photo img {
+  object-position: var(--wear-pos, 50% 30%);
+}
+
+.wear-product-photo[data-focus="womens-tee"] img {
+  transform: scale(1.7);
+  transform-origin: 14% 46%;
+}
+
+.wear-caption {
+  margin: 14px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--sm-muted);
+}
+
+.wear-product-meta {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wear-product-meta h3 {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.15;
+}
+
+.wear-product-index,
+.wear-product-detail {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sm-muted);
+}
+
+.wear-print {
+  margin: 6px 0 0;
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.wear-story {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 48px 72px;
+  align-items: center;
+  padding: 96px 0;
+}
+
+.wear-story-photo {
+  aspect-ratio: 4 / 5;
+}
+
+.wear-story-photo img {
+  object-position: 50% 42%;
+}
+
+.wear-story h2 {
+  margin: 10px 0 0;
+  font-size: clamp(36px, 4.4vw, 60px);
+  line-height: 0.92;
+}
+
+.wear-story-copy {
+  margin: 22px 0 0;
+  max-width: 460px;
+  font-size: 17px;
+  line-height: 1.55;
+}
+
+.wear-story-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 28px;
+  margin-top: 28px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.wear-story-links a {
+  text-decoration: none;
+}
+
+.wear-early {
+  background: var(--sm-black);
+  color: #fff;
+}
+
+.wear-early-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 440px);
+  gap: 40px 64px;
+  align-items: center;
+  padding: 80px 0;
+}
+
+.wear-early-title {
+  margin: 0;
+  font-size: clamp(36px, 4.6vw, 60px);
+  line-height: 0.92;
+}
+
+.wear-early-lead {
+  margin: 18px 0 0;
+  max-width: 420px;
+  font-size: 17px;
+  line-height: 1.55;
+  color: #e8e8e8;
+}
+
+.wear-count-label {
+  margin: 28px 0 10px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.wear-count {
+  display: flex;
+  gap: 28px;
+  font-variant-numeric: tabular-nums;
+}
+
+.wear-count-value {
+  display: block;
+  font-size: clamp(40px, 5vw, 64px);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.wear-count-unit {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.wear-form-card {
+  background: #fff;
+  color: var(--sm-black);
+  border-radius: 16px;
+  padding: 28px;
+}
+
+.wear-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.wear-form-submit {
+  width: 100%;
+  background: var(--sm-black);
+  color: #fff;
+  padding: 14px 22px;
+  font-size: 16px;
+}
+
+.wear-form-submit:disabled {
+  opacity: 0.7;
+}
+
+.wear-form-error {
+  margin: 0;
+  font-size: 14px;
+  color: #b3261e;
+}
+
+.wear-form-note {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--sm-muted);
+}
+
+.wear-form-note a {
+  color: inherit;
+}
+
+.wear-days-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px 24px;
+}
+
+.wear-days-head h2 {
+  margin: 0;
+  font-size: clamp(32px, 4vw, 52px);
+  line-height: 0.95;
+}
+
+.wear-days-head a {
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.wear-day-photo img {
+  object-position: 50% 40%;
+}
+
+/* Logo ink inside logo-surfmate-schriftzug.svg (viewBox 1000×300):
+   x 47, y 102, width 906, height 91.
+   "YOUR SURF. YOUR STORY." in Seattle Regular at 100px is 912.6px wide. */
+.wear-lockup {
+  container-type: inline-size;
+  width: min(680px, 100%);
+  margin: 96px auto 36px;
+}
+
+.wear-lockup-logo {
+  position: relative;
+  width: 100%;
+  height: calc(100cqi * 91 / 906);
+  overflow: hidden;
+}
+
+.wear-lockup-logo img {
+  position: absolute;
+  width: calc(100cqi * 1000 / 906);
+  max-width: none;
+  height: auto;
+  left: calc(100cqi * -47 / 906);
+  top: calc(100cqi * -102 / 906);
+}
+
+.wear-lockup p {
+  margin: calc(100cqi * 45.5 / 906) 0 0;
+  font-size: calc(100cqi * 100 / 912.6);
+  font-weight: 400;
+  line-height: 1.1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.wear-lockup-white {
+  width: min(280px, 100%);
+  margin: 0;
+  color: #fff;
+}
+
+.wear-lockup-white .wear-lockup-logo img {
+  filter: brightness(0) invert(1);
+}
+
+@media (max-width: 900px) {
+  .wear-hero,
+  .wear-story,
+  .wear-early-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .wear-looks {
+    grid-template-columns: 1fr;
+  }
+
+  .wear-products {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .wear-days {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .wear-hero {
+    padding-top: 36px;
+  }
+
+  .wear-story {
+    padding-top: 72px;
+    padding-bottom: 72px;
+  }
+
+  .wear-early-grid {
+    padding: 56px 0;
+  }
+}
+
+.spot-approx-map {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: 15px;
+  overflow: hidden;
+  background: var(--sm-mint);
+}
+
+.spot-approx-map-canvas,
+.spot-approx-map .leaflet-container {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--sm-blue-light);
+  font-family: Inter, system-ui, sans-serif;
+  z-index: 0;
+}
+
+.spot-approx-map-label {
+  position: absolute;
+  z-index: 500;
+  left: 10px;
+  top: 10px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--sm-black);
+  pointer-events: none;
+}
+
+.spot-approx-map .leaflet-control-attribution {
+  font-size: 10px;
+  line-height: 1.2;
+  max-width: 58%;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.spot-approx-map .leaflet-bar a {
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
 }

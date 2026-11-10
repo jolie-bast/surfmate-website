@@ -2,6 +2,10 @@ import Script from "next/script";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import EventCard from "../components/EventCard";
+import EventRail from "../components/EventRail";
+import JsonLd from "../components/JsonLd";
+import WearLockup from "../components/WearLockup";
+import { faqNode, HOME_FAQS, pageMetadata, SITE_DESCRIPTION, SITE_TITLE, softwareApplicationNode } from "../lib/seo";
 import {
   getWebsiteEvents,
   getWebsiteEventGoingCount,
@@ -36,9 +40,47 @@ function allPartners(partners) {
   ].filter((p) => !p.hide_logo_on_website);
 }
 
+function PartnerTile({ partner, duplicate = false }) {
+  const dark = partner.logo_background === "black";
+  const content = partner.logo_url ? (
+    <img src={partner.logo_url} alt={duplicate ? "" : partner.name} />
+  ) : (
+    <span className="sm-partner-tile-name" style={{ color: dark ? "#fff" : "var(--sm-muted)" }}>
+      {partner.name}
+    </span>
+  );
+
+  if (partner.website_url) {
+    return (
+      <a
+        className="sm-partner-tile"
+        href={partner.website_url}
+        target="_blank"
+        rel="noopener noreferrer"
+        tabIndex={duplicate ? -1 : undefined}
+        style={{ background: dark ? "#111" : "#fff" }}
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <div className="sm-partner-tile" style={{ background: dark ? "#111" : "#fff" }}>
+      {content}
+    </div>
+  );
+}
+
 // Round down to a clean "N00+" so the stat doesn't look like it's ticking up
 // by one with every signup, and still fall back to a safe default if the
 // RPC is unreachable at build time.
+export const metadata = pageMetadata({
+  title: { absolute: SITE_TITLE },
+  description: SITE_DESCRIPTION,
+  path: "/",
+});
+
 function surferCountLabel(count) {
   if (!count || count < 100) return "2,000+";
   const rounded = Math.floor(count / 100) * 100;
@@ -52,12 +94,14 @@ export default async function HomePage() {
     getWebsiteSpots(),
     getWebsiteUserCount(),
   ]);
-  const partnerLogos = allPartners(partners).slice(0, 6);
+  const partnerLogos = allPartners(partners);
   const surferCount = surferCountLabel(userCount);
 
   return (
     <>
+      <JsonLd data={[softwareApplicationNode(), faqNode()]} />
       <Header />
+      <main>
 
       {/* HERO */}
       <section
@@ -113,28 +157,62 @@ export default async function HomePage() {
       </section>
 
       {/* UPCOMING EVENTS */}
-      <section id="events" style={{ background: "var(--sm-mint)" }}>
-        <div className="sm-container" style={{ padding: "80px 24px", display: "flex", flexDirection: "column", gap: 32 }}>
-          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "flex-end", gap: 24 }}>
+      <section id="events" className="sm-events">
+        <div className="sm-container sm-events-inner">
+          <div className="sm-events-head">
             <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 680 }}>
               <p className="sm-eyebrow">Upcoming surf events</p>
-              <h2 className="sm-heavy" style={{ margin: 0, fontSize: "clamp(34px, 4.4vw, 60px)", lineHeight: 1 }}>See who is going.</h2>
+              <h2 className="sm-heavy" style={{ margin: 0, fontSize: "clamp(40px, 5.4vw, 72px)", lineHeight: 0.92 }}>See who is going.</h2>
               <p style={{ margin: 0, fontSize: 17, lineHeight: 1.55, color: "var(--sm-ink)" }}>
-                Contests, festivals and meetups worldwide. Tap “I’m going” and meet the crew there.
+                Contests, festivals and meetups worldwide. Tap “I’m going” and meet the crew there – or add your own event for free.
               </p>
             </div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 20, fontSize: 15, fontWeight: 600 }}>
-              <a href="/events/submit/">Submit an event</a>
+            <div className="sm-events-links">
+              <a href="/events/submit/">Add your event – free</a>
               <a href="/events/">All events →</a>
             </div>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
-            {events.length === 0 && (
-              <p style={{ fontSize: 16, color: "var(--sm-ink)" }}>No upcoming events right now – check back soon.</p>
-            )}
-            {events.map((e) => (
-              <EventCard key={e.id} event={e} />
-            ))}
+          {events.length === 0 ? (
+            <p style={{ fontSize: 16, color: "var(--sm-ink)" }}>No upcoming events right now – check back soon.</p>
+          ) : (
+            <EventRail count={events.length}>
+              {events.map((e) => (
+                <EventCard key={e.id} event={e} />
+              ))}
+            </EventRail>
+          )}
+          <div className="sm-event-promo">
+            <div className="sm-event-promo-main">
+              <p className="sm-eyebrow">Hosting a surf event?</p>
+              <h3 className="sm-heavy">
+                Add your event.
+                <br />
+                It’s free.
+              </h3>
+              <p>
+                Contest, festival, meetup or beach clean-up? Add it to Surfmate so the Surfmates in your area can discover it and see who’s going. :-)
+              </p>
+              <div className="sm-event-promo-tags">
+                {["Contests", "Festivals", "Meetups", "Retreats", "Beach clean-ups"].map((label) => (
+                  <span key={label} className="sm-pill">{label}</span>
+                ))}
+              </div>
+              <a href="/events/submit/" className="sm-btn sm-btn-dark">Add your event – free</a>
+              <p className="sm-event-promo-note">Takes 2 minutes. We check every event before it goes live.</p>
+            </div>
+            <div className="sm-event-promo-featured">
+              <p className="sm-event-promo-kicker">Featured</p>
+              <h3>Want your event to stand out?</h3>
+              <p>Featured events get:</p>
+              <ul className="sm-event-promo-list">
+                <li><span aria-hidden="true">✓</span> Event photo &amp; your logo</li>
+                <li><span aria-hidden="true">✓</span> Description</li>
+                <li><span aria-hidden="true">✓</span> Ticket link</li>
+                <li><span aria-hidden="true">✓</span> Instagram link</li>
+                <li><span aria-hidden="true">✓</span> Shown first to local surfers</li>
+              </ul>
+              <a href="mailto:jolie@surfmate.eu" className="sm-btn sm-btn-outline">Contact us →</a>
+            </div>
           </div>
         </div>
       </section>
@@ -277,11 +355,13 @@ export default async function HomePage() {
 
       {/* FEEDBACK */}
       <section className="sm-container" style={{ padding: "104px 24px 0", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 56 }}>
-        <img
-          src="/images/feedback-wall-peniche.webp"
-          alt="Feedback wall with sticky notes and ideas for Surfmate at the Peniche meetup"
-          style={{ flex: "1 1 520px", minWidth: 0, width: "100%", aspectRatio: "3 / 2", objectFit: "cover", borderRadius: 15, display: "block" }}
-        />
+        <div style={{ flex: "1 1 520px", minWidth: 0, width: "100%", aspectRatio: "3 / 2", borderRadius: 15, overflow: "hidden" }}>
+          <img
+            src="/images/feedback-wall-peniche.webp"
+            alt="Feedback wall with sticky notes and ideas for Surfmate at the Peniche meetup"
+            style={{ width: "100%", height: "100%", objectFit: "cover", transform: "translateX(-3%) scale(1.18)", display: "block" }}
+          />
+        </div>
         <div style={{ flex: "1 1 380px", minWidth: 0, display: "flex", flexDirection: "column", gap: 20 }}>
           <p className="sm-eyebrow">Built with the community</p>
           <h2 className="sm-heavy" style={{ margin: 0, fontSize: "clamp(32px, 4vw, 52px)", lineHeight: 1 }}>You are the most important ingredient.</h2>
@@ -330,6 +410,7 @@ export default async function HomePage() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 20 }}>
           {[
             { name: "Jolie Bast", role: "Founder · Stoked developer", photo: "/images/team-jolie-bast.webp" },
+            { name: "Marlina", role: "IT Backend", color: "var(--sm-blue-light)" },
             { name: "Mavie", role: "Social media", color: "var(--sm-mint)" },
             { name: "Magnus Wolter", role: "Business development", color: "var(--sm-blue-light)" },
             { name: "Nikolaus Lieberum", role: "Keeps the spots accurate", color: "var(--sm-blue-light)" },
@@ -353,30 +434,36 @@ export default async function HomePage() {
       </section>
 
       {/* PARTNERS */}
-      <section id="partners" style={{ background: "var(--sm-mint)" }}>
-        <div className="sm-container" style={{ padding: "96px 24px", display: "flex", flexDirection: "column", gap: 40 }}>
-          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "flex-end", gap: 24 }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 640 }}>
-              <p className="sm-eyebrow">Partners</p>
-              <h2 className="sm-heavy" style={{ margin: 0, fontSize: "clamp(32px, 4vw, 52px)", lineHeight: 1 }}>Brands, events and local spots</h2>
-            </div>
-            <a href="mailto:hello@surf-mate.de" style={{ fontSize: 15, fontWeight: 600 }}>Become a partner →</a>
+      <section id="partners" style={{ background: "var(--sm-mint)", padding: "96px 0", overflow: "hidden" }}>
+        <div className="sm-container" style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "flex-end", gap: 24 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 640 }}>
+            <p className="sm-eyebrow">Partners</p>
+            <h2 className="sm-heavy" style={{ margin: 0, fontSize: "clamp(32px, 4vw, 52px)", lineHeight: 1 }}>Brands, events and local spots</h2>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 12 }}>
-            {partnerLogos.length === 0 && (
-              <p style={{ fontSize: 16, color: "var(--sm-ink)" }}>Partner logos coming soon.</p>
-            )}
-            {partnerLogos.map((p) => (
-              <div key={p.id} style={{ background: "#fff", borderRadius: 15, height: 110, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
-                {p.logo_url ? (
-                  <img src={p.logo_url} alt={p.name} style={{ display: "block", maxWidth: "75%", maxHeight: 40, width: "auto", height: "auto" }} />
-                ) : (
-                  <span style={{ fontSize: 13, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--sm-muted)" }}>{p.name}</span>
-                )}
-              </div>
-            ))}
-          </div>
+          <a href="mailto:jolie@surfmate.eu" style={{ fontSize: 15, fontWeight: 600 }}>Become a partner →</a>
         </div>
+        {partnerLogos.length === 0 ? (
+          <p className="sm-container" style={{ marginTop: 40, fontSize: 16, color: "var(--sm-ink)" }}>Partner logos coming soon.</p>
+        ) : (
+            <div className="sm-partner-marquee" aria-label="Surfmate partners">
+              <div className="sm-partner-marquee-move">
+                <ul className="sm-partner-marquee-track">
+                  {partnerLogos.map((partner) => (
+                    <li key={partner.id}>
+                      <PartnerTile partner={partner} />
+                    </li>
+                  ))}
+                </ul>
+                <ul className="sm-partner-marquee-track" aria-hidden="true">
+                  {partnerLogos.map((partner) => (
+                    <li key={`${partner.id}-copy`}>
+                      <PartnerTile partner={partner} duplicate />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+        )}
       </section>
 
       {/* BLOG */}
@@ -398,10 +485,7 @@ export default async function HomePage() {
             style={{ flex: "1 1 420px", minWidth: 0, width: "100%", aspectRatio: "4 / 5", objectFit: "cover", objectPosition: "50% 30%", borderRadius: 15, display: "block" }}
           />
           <div style={{ flex: "1 1 420px", minWidth: 0, display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 28 }}>
-            <span style={{ width: 220, display: "flex", flexDirection: "column", alignItems: "center", gap: 11 }}>
-              <img src="/images/logo-surfmate-white.png" alt="Surfmate" style={{ width: "100%", height: "auto", display: "block" }} />
-              <span className="sm-seattle" style={{ fontSize: 24, lineHeight: 1.1, whiteSpace: "nowrap" }}>Your Surf. Your Story.</span>
-            </span>
+            <WearLockup tone="white" />
             <h2 className="sm-heavy" style={{ margin: 0, fontSize: "clamp(40px, 5.4vw, 76px)", lineHeight: 0.95 }}>Made for the ones who paddle out.</h2>
             <p style={{ margin: 0, fontSize: 18, lineHeight: 1.55, color: "#E6E6E6", maxWidth: 440 }}>
               Surfmate Wear – the brand behind the community. Wear your surf story.
@@ -428,6 +512,22 @@ export default async function HomePage() {
           <a href="https://play.google.com/store/apps/details?id=com.joliebast.surfmateapp" aria-label="Get it on Google Play">
             <img src="/assets/GetItOnGooglePlay_Badge_Web_color_English.svg" alt="Get it on Google Play" style={{ height: 52, width: "auto", display: "block" }} />
           </a>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section id="faq" className="sm-container" style={{ padding: "104px 24px 40px", display: "flex", flexDirection: "column", gap: 28 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 720 }}>
+          <p className="sm-eyebrow">Questions</p>
+          <h2 className="sm-heavy" style={{ margin: 0, fontSize: "clamp(32px, 4vw, 52px)", lineHeight: 1 }}>Surfmate, in short</h2>
+        </div>
+        <div>
+          {HOME_FAQS.map((faq) => (
+            <article key={faq.question} style={{ borderTop: "1px solid var(--sm-border-strong)", padding: "22px 0", display: "flex", flexDirection: "column", gap: 8 }}>
+              <h3 style={{ margin: 0, fontSize: 20, fontWeight: 600 }}>{faq.question}</h3>
+              <p style={{ margin: 0, fontSize: 16, lineHeight: 1.55, color: "var(--sm-ink)", maxWidth: 720 }}>{faq.answer}</p>
+            </article>
+          ))}
         </div>
       </section>
 
@@ -462,6 +562,7 @@ export default async function HomePage() {
         </div>
       </section>
       <Script src="/js/waitlist.js" strategy="afterInteractive" />
+      </main>
 
       <Footer />
     </>

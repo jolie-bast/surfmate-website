@@ -1,0 +1,67 @@
+@import "../../../public/css/variables.css";
+@import "../../../public/css/event-submit.css";
+
+.event-submit-page {
+  background: #fff;
+  color: var(--sm-black);
+}
+
+.event-submit-main {
+  padding-top: 0;
+}
+
+.event-submit-page .content-header {
+  max-width: 760px;
+  margin: 0 auto 28px;
+  text-align: left;
+  border: none;
+  padding: 0;
+}
+
+.event-submit-page .content-header h1 {
+  margin: 10px 0 0;
+  font-family: "Surfmate Heavy", Inter, sans-serif;
+  font-weight: 800;
+  font-size: clamp(40px, 6vw, 72px);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--sm-black);
+}
+
+.event-submit-page .content-header p {
+  max-width: 36rem;
+  margin: 16px 0 0;
+  text-align: left;
+  color: var(--sm-ink);
+  font-size: 17px;
+  line-height: 1.55;
+}
+
+.event-submit-back {
+  color: var(--sm-black);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.event-submit-card,
+.event-submit-partner-cta-box {
+  border-radius: 15px;
+  box-shadow: none;
+}
+
+.event-submit-page .btn-primary {
+  background: var(--sm-black);
+  color: #fff;
+  border-radius: 15px;
+}
+
+.event-submit-page .btn-primary:hover:not(:disabled) {
+  background: #111;
+  color: #fff;
+}
+
+.event-submit-page .btn-secondary {
+  border-radius: 15px;
+  color: var(--sm-black);
+}

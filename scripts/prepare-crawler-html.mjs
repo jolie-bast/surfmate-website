@@ -22,9 +22,13 @@ const INCLUDE_RE = /<div\b([^>]*?)\sdata-include="([^"]+)"([^>]*)>\s*<\/div>/g;
 
 const FULL_BRIEF_INTRO = `# Surfmate
 
-> Surfmate is the social surf platform to remember every surf, organize spots, discover events, and connect with other surfers. Tagline: Your Surf. Your Story.
+> Surfmate is the free community app to find surfers nearby. See who surfs your spot, share spotchecks, join meetups, and turn strangers in the line-up into surf friends. Tagline: Find surfers nearby. Brand line: Your Surf. Your Story.
 
-Surfmate is a community app for iOS and Android, made by Jolie Bast in Hamburg. More than 2,000 surfers use it.
+Canonical website: https://surfmate.eu/
+Entity: Surfmate, made by Jolie Bast, Deelwisch 43, 22529 Hamburg, Germany. Contact: info@surf-mate.de.
+Surfmate is a community app for iOS and Android. More than 2,000 surfers use it. The app is free and has no ads.
+
+Spot pages: https://surfmate.eu/spots/ lists spots ranked by real logged sessions. Each country, region, and spot has its own URL: /spots/{country}/, /spots/{country}/{region}/, /spots/{country}/{region}/{spot}/. Coordinates on a spot page are the rounded area already shown on the map, not a private pin. Secret spots are never published on the website.
 
 The app helps surfers:
 
@@ -41,6 +45,7 @@ Download:
 - Google Play: https://play.google.com/store/apps/details?id=com.joliebast.surfmateapp
 
 Website: https://surfmate.eu/
+Spot guide: https://surfmate.eu/spots/
 Events: https://surfmate.eu/events/
 Partners: https://surfmate.eu/partners/
 Creators: https://surfmate.eu/creators/

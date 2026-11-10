@@ -1,0 +1,19 @@
+{
+  "name": "Surfmate",
+  "short_name": "Surfmate",
+  "description": "Find surfers nearby. The community app for sessions, spotchecks, spots and meetups.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "browser",
+  "background_color": "#ffffff",
+  "theme_color": "#73c9eb",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/images/app-icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

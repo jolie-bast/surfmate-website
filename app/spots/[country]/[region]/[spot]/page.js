@@ -10,6 +10,9 @@ import {
 } from "../../../../../lib/supabase";
 import { countryName, countrySlug } from "../../../../../lib/countries";
 import { isUpcomingOrLive, eventSortStart, distanceKm } from "../../../../../lib/events";
+import ApproxLocationMap from "../../../../../components/ApproxLocationMap";
+import JsonLd from "../../../../../components/JsonLd";
+import { breadcrumbNode, countryPath, pageMetadata, regionPath, spotPath, spotPlaceNode } from "../../../../../lib/seo";
 
 const NEARBY_EVENT_RADIUS_KM = 300;
 
@@ -26,10 +29,12 @@ export async function generateMetadata({ params }) {
   const { spot: slug } = await params;
   const spot = await getWebsiteSpot(slug);
   if (!spot) return {};
-  return {
-    title: `${spot.name} · Surf spot in ${spot.region} · Surfmate`,
-    description: `See who surfs ${spot.name} in ${spot.region}, ${countryName(spot.country_code)}. Public sessions, local knowledge and events nearby, on Surfmate.`,
-  };
+  const country = countryName(spot.country_code);
+  return pageMetadata({
+    title: `${spot.name} surf spot in ${spot.region}`,
+    description: `See who surfs ${spot.name} in ${spot.region}, ${country}. Public sessions, local knowledge and events nearby, on Surfmate.`,
+    path: spotPath(spot),
+  });
 }
 
 function formatSessionDate(dateStr) {
@@ -61,24 +66,41 @@ export default async function SpotPage({ params }) {
     .filter((e) => e.distanceKm <= NEARBY_EVENT_RADIUS_KM)
     .sort((a, b) => a.distanceKm - b.distanceKm || eventSortStart(a) - eventSortStart(b))[0];
 
+  const country = countryName(spot.country_code);
+
   return (
     <>
+      <JsonLd
+        data={[
+          breadcrumbNode([
+            { name: "Home", path: "/" },
+            { name: "Spots", path: "/spots/" },
+            { name: country, path: countryPath(spot.country_code) },
+            { name: spot.region, path: regionPath(spot) },
+            { name: spot.name, path: spotPath(spot) },
+          ]),
+          spotPlaceNode(spot),
+        ]}
+      />
       <Header />
+      <main>
 
       {/* SPOT HEADER */}
       <section className="sm-container" style={{ padding: "32px 24px 48px", display: "flex", flexDirection: "column", gap: 28 }}>
         <nav aria-label="Breadcrumb" style={{ fontSize: 14, color: "var(--sm-muted)", display: "flex", flexWrap: "wrap", gap: 8 }}>
+          <a href="/">Home</a>
+          <span aria-hidden="true">/</span>
           <a href="/spots/">Spots</a>
           <span aria-hidden="true">/</span>
-          <span>{countryName(spot.country_code)}</span>
+          <a href={countryPath(spot.country_code)}>{country}</a>
           <span aria-hidden="true">/</span>
-          <span>{spot.region}</span>
+          <a href={regionPath(spot)}>{spot.region}</a>
           <span aria-hidden="true">/</span>
           <span>{spot.name}</span>
         </nav>
         <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "flex-end", gap: 24 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <p className="sm-eyebrow">Surf spot · {spot.region}, {countryName(spot.country_code)}</p>
+            <p className="sm-eyebrow">Surf spot · {spot.region}, {country}</p>
             <h1 className="sm-heavy" style={{ margin: 0, fontSize: "clamp(52px, 7vw, 104px)", lineHeight: 0.9 }}>{spot.name}</h1>
           </div>
         </div>
@@ -157,27 +179,12 @@ export default async function SpotPage({ params }) {
         </div>
 
         <aside style={{ flex: "1 1 320px", minWidth: 0, display: "flex", flexDirection: "column", gap: 20 }}>
-          <div style={{ borderRadius: 15, background: "var(--sm-mint)", overflow: "hidden", position: "relative", aspectRatio: "4 / 3" }}>
-            <span
-              style={{
-                position: "absolute",
-                left: `${20 + (Math.abs(spot.longitude) % 1) * 60}%`,
-                top: `${20 + (Math.abs(spot.latitude) % 1) * 60}%`,
-                width: 18,
-                height: 18,
-                borderRadius: "50%",
-                background: "var(--sm-black)",
-                border: "3px solid #fff",
-                transform: "translate(-50%, -50%)",
-              }}
-            />
-            <span style={{ position: "absolute", left: 14, bottom: 12, fontSize: 12, fontWeight: 600, color: "var(--sm-black)" }}>Approximate location</span>
-          </div>
+          <ApproxLocationMap latitude={spot.latitude} longitude={spot.longitude} name={spot.name} />
           <div style={{ border: "1px solid var(--sm-border)", borderRadius: 15, padding: 22, display: "flex", flexDirection: "column", gap: 12 }}>
             <h3 style={{ margin: 0, fontSize: 18, fontWeight: 600 }}>About this spot</h3>
             <p style={{ margin: 0, fontSize: 15, lineHeight: 1.6, color: "var(--sm-ink)" }}>
-              {spot.name} is one of the spots the Surfmate community keeps coming back to in {spot.region}. Download
-              the app for tides, webcams and local notes from other surfers.
+              {spot.name} is a surf spot in {spot.region}, {country}. It is one of the places the Surfmate community
+              keeps coming back to. Download the app for tides, webcams and local notes from other surfers.
             </p>
           </div>
           {nearbyEvent && (
@@ -230,6 +237,7 @@ export default async function SpotPage({ params }) {
           </div>
         </div>
       </section>
+      </main>
 
       <Footer />
     </>
