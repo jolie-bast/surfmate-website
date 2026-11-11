@@ -1,32 +1,52 @@
+"use client";
+
+import { useState } from "react";
+
+const NAV_LINKS = [
+  { href: "/spots/", label: "Spots" },
+  { href: "/events/", label: "Events" },
+  { href: "/#community", label: "Community" },
+  { href: "/#blog", label: "Blog" },
+  { href: "/shop/", label: "Wear" },
+];
+
 export default function Header({ homeHref = "/" }) {
+  const [open, setOpen] = useState(false);
+  const close = () => setOpen(false);
+
   return (
-    <header style={{ borderBottom: "1px solid var(--sm-border)", background: "#fff" }}>
-      <div
-        className="sm-container"
-        style={{
-          padding: "18px 24px",
-          display: "flex",
-          flexWrap: "wrap",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 16,
-        }}
-      >
-        <a href={homeHref} aria-label="Surfmate home" style={{ display: "flex", alignItems: "center" }}>
-          <img src="/assets/logo-surfmate-schriftzug.svg" alt="Surfmate" style={{ height: 28, width: "auto", display: "block" }} />
+    <header className="sm-header">
+      <div className="sm-container sm-header-bar">
+        <a href={homeHref} aria-label="Surfmate home" className="sm-header-logo">
+          <img src="/assets/logo-surfmate-schriftzug.svg" alt="Surfmate" />
         </a>
-        <nav
-          aria-label="Main"
-          style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 28, fontSize: 15, fontWeight: 500 }}
+
+        <button
+          type="button"
+          className={`sm-nav-toggle${open ? " is-open" : ""}`}
+          aria-expanded={open}
+          aria-controls="sm-main-nav"
+          aria-label={open ? "Close menu" : "Open menu"}
+          onClick={() => setOpen((v) => !v)}
         >
-          <a href="/spots/" style={{ textDecoration: "none" }}>Spots</a>
-          <a href="/events/" style={{ textDecoration: "none" }}>Events</a>
-          <a href="/#community" style={{ textDecoration: "none" }}>Community</a>
-          <a href="/#blog" style={{ textDecoration: "none" }}>Blog</a>
-          <a href="/shop/" style={{ textDecoration: "none" }}>Wear</a>
+          <span />
+          <span />
+          <span />
+        </button>
+
+        <nav id="sm-main-nav" aria-label="Main" className={`sm-nav${open ? " is-open" : ""}`}>
+          {NAV_LINKS.map((link) => (
+            <a key={link.href} href={link.href} onClick={close}>
+              {link.label}
+            </a>
+          ))}
+          <a href="/#download" className="sm-btn sm-btn-dark sm-nav-cta" onClick={close}>
+            Get the app
+          </a>
         </nav>
-        <a href="/#download" className="sm-btn sm-btn-dark">Get the app</a>
       </div>
+
+      {open && <button type="button" aria-hidden="true" tabIndex={-1} className="sm-nav-backdrop" onClick={close} />}
     </header>
   );
 }

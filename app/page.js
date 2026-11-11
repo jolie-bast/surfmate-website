@@ -21,15 +21,16 @@ async function loadUpcomingEvents() {
   const now = new Date();
   const upcoming = events
     .filter((e) => isUpcomingOrLive(e, now))
-    .sort((a, b) => eventSortStart(a) - eventSortStart(b))
-    .slice(0, 3);
+    .sort((a, b) => eventSortStart(a) - eventSortStart(b));
 
-  return Promise.all(
-    upcoming.map(async (e) => ({
+  const featured = await Promise.all(
+    upcoming.slice(0, 3).map(async (e) => ({
       ...e,
       going: await getWebsiteEventGoingCount(e.id),
     })),
   );
+
+  return { featured, total: upcoming.length };
 }
 
 function allPartners(partners) {
@@ -88,7 +89,7 @@ function surferCountLabel(count) {
 }
 
 export default async function HomePage() {
-  const [events, partners, spots, userCount] = await Promise.all([
+  const [{ featured: events, total: eventsTotal }, partners, spots, userCount] = await Promise.all([
     loadUpcomingEvents(),
     getWebsitePartners(),
     getWebsiteSpots(),
@@ -161,7 +162,11 @@ export default async function HomePage() {
         <div className="sm-container sm-events-inner">
           <div className="sm-events-head">
             <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 680 }}>
-              <p className="sm-eyebrow">Upcoming surf events</p>
+              <p className="sm-eyebrow">
+                {eventsTotal > 0
+                  ? `${eventsTotal} upcoming surf event${eventsTotal === 1 ? "" : "s"}`
+                  : "Upcoming surf events"}
+              </p>
               <h2 className="sm-heavy" style={{ margin: 0, fontSize: "clamp(40px, 5.4vw, 72px)", lineHeight: 0.92 }}>See who is going.</h2>
               <p style={{ margin: 0, fontSize: 17, lineHeight: 1.55, color: "var(--sm-ink)" }}>
                 Contests, festivals and meetups worldwide. Tap “I’m going” and meet the crew there – or add your own event for free.
