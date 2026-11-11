@@ -62,13 +62,13 @@
                         type="button"
                         class="wizard-step-marker-btn"
                         data-step-jump="1"
-                        aria-label="Go to step 1: Contact"
+                        aria-label="Go to step 1: Partner"
                         aria-current="step"
                         disabled
                       >
                         1
                       </button>
-                      <span class="wizard-step-marker-label">Contact</span>
+                      <span class="wizard-step-marker-label">Partner</span>
                     </li>
                     <li class="wizard-step-marker" data-step-marker="2">
                       <button
@@ -114,11 +114,24 @@
                         type="button"
                         class="wizard-step-marker-btn"
                         data-step-jump="5"
-                        aria-label="Go to step 5: Send"
+                        aria-label="Go to step 5: Contact"
                         aria-current="false"
                         disabled
                       >
                         5
+                      </button>
+                      <span class="wizard-step-marker-label">Contact</span>
+                    </li>
+                    <li class="wizard-step-marker" data-step-marker="6">
+                      <button
+                        type="button"
+                        class="wizard-step-marker-btn"
+                        data-step-jump="6"
+                        aria-label="Go to step 6: Send"
+                        aria-current="false"
+                        disabled
+                      >
+                        6
                       </button>
                       <span class="wizard-step-marker-label">Send</span>
                     </li>
@@ -126,10 +139,10 @@
                 </nav>
 
                 <div class="wizard-step-header">
-                  <p class="wizard-step-kicker" id="wizard-step-kicker">Step 1 of 5</p>
-                  <h2 class="wizard-step-title" id="wizard-step-title">How can we reach you?</h2>
+                  <p class="wizard-step-kicker" id="wizard-step-kicker">Step 1 of 6</p>
+                  <h2 class="wizard-step-title" id="wizard-step-title">Who’s organizing?</h2>
                   <p class="wizard-step-lead" id="wizard-step-lead">
-                    We’ll only use this if we have a question about your event.
+                    Your brand or series name — shown as the partner on the event.
                   </p>
                 </div>
 
@@ -139,26 +152,6 @@
                     data-step="1"
                     aria-labelledby="wizard-step-title"
                   >
-                    <div class="form-field">
-                      <label for="submitter-email">
-                        Your email <span class="required-mark" aria-hidden="true">*</span>
-                      </label>
-                      <input
-                        id="submitter-email"
-                        name="submitterEmail"
-                        type="email"
-                        autocomplete="email"
-                        placeholder="you@example.com"
-                        aria-describedby="submitter-email-hint submitter-email-error"
-                      />
-                      <p id="submitter-email-hint" class="field-hint">
-                        So we can confirm your submission or ask a quick question if needed.
-                      </p>
-                      <p id="submitter-email-error" class="field-error" hidden role="alert"></p>
-                    </div>
-                  </section>
-
-                  <section class="wizard-step" data-step="2" hidden>
                     <div class="form-field">
                       <label for="partner-name">
                         Partner / organizer name <span class="required-mark" aria-hidden="true">*</span>
@@ -176,7 +169,7 @@
                     </div>
                   </section>
 
-                  <section class="wizard-step" data-step="3" hidden>
+                  <section class="wizard-step" data-step="2" hidden>
                     <div class="form-field">
                       <label for="event-title">
                         Event name <span class="required-mark" aria-hidden="true">*</span>
@@ -226,7 +219,7 @@
                     </div>
                   </section>
 
-                  <section class="wizard-step" data-step="4" hidden>
+                  <section class="wizard-step" data-step="3" hidden>
                     <div class="form-field">
                       <span class="field-label">Schedule</span>
                       <div class="schedule-toggle" role="radiogroup" aria-label="Schedule type">
@@ -449,12 +442,32 @@
                     <p id="schedule-error" class="field-error" hidden role="alert"></p>
                   </section>
 
-                  <section class="wizard-step" data-step="5" hidden>
+                  <section class="wizard-step" data-step="4" hidden>
                     <p class="field-hint section-hint">
                       Pick one or more — tap to toggle.
                     </p>
                     <div id="event-types" class="event-type-chips" role="group" aria-label="Event types"></div>
                     <p id="event-types-error" class="field-error" hidden role="alert"></p>
+                  </section>
+
+                  <section class="wizard-step" data-step="5" hidden>
+                    <div class="form-field">
+                      <label for="submitter-email">
+                        Your email <span class="required-mark" aria-hidden="true">*</span>
+                      </label>
+                      <input
+                        id="submitter-email"
+                        name="submitterEmail"
+                        type="email"
+                        autocomplete="email"
+                        placeholder="you@example.com"
+                        aria-describedby="submitter-email-hint submitter-email-error"
+                      />
+                      <p id="submitter-email-hint" class="field-hint">
+                        So we can confirm your submission or ask a quick question if needed.
+                      </p>
+                      <p id="submitter-email-error" class="field-error" hidden role="alert"></p>
+                    </div>
                   </section>
 
                   <section class="wizard-step" data-step="6" hidden>
@@ -611,6 +624,7 @@
     <script src="/js/includes.js"></script>
     <script src="/js/navigation.js"></script>
     <script src="/js/supabase-config.js"></script>
+    <script src="/js/google-places-config.local.js"></script>
     <script type="module" src="/js/event-partner-submit.js"></script>
   </body>
 </html>

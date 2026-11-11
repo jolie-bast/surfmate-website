@@ -10,10 +10,15 @@ export default function EventSubmitScripts() {
     const config = document.createElement("script");
     config.src = "/js/supabase-config.js";
     config.onload = () => {
-      const wizard = document.createElement("script");
-      wizard.type = "module";
-      wizard.src = "/js/event-submit.js";
-      document.body.appendChild(wizard);
+      const placesConfig = document.createElement("script");
+      placesConfig.src = "/js/google-places-config.local.js";
+      placesConfig.onload = placesConfig.onerror = () => {
+        const wizard = document.createElement("script");
+        wizard.type = "module";
+        wizard.src = "/js/event-submit.js";
+        document.body.appendChild(wizard);
+      };
+      document.body.appendChild(placesConfig);
     };
     document.body.appendChild(config);
   }, []);

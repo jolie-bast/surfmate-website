@@ -11,6 +11,7 @@ import {
   validateCommunityEventSubmissionInput,
 } from "./community-event-shared.js";
 import { createEventSubmitCardPreview } from "./event-submit-card-preview.js";
+import { searchPlaces, getPlaceDetails } from "./google-places.js";
 
 const config = window.SURFMATE_SUPABASE;
 const DEBOUNCE_MS = 300;
@@ -1597,52 +1598,6 @@ function clearPlaceSelection() {
   updateEventCardPreview();
 }
 
-async function searchPlacesWithPhoton(query) {
-  const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=8&lang=en`;
-  const response = await fetch(url, {
-    headers: { Accept: "application/json" },
-  });
-
-  if (!response.ok) {
-    throw new Error(`Place search failed (${response.status}).`);
-  }
-
-  const payload = await response.json().catch(() => null);
-
-  return (payload?.features ?? [])
-    .map((feature) => {
-      const props = feature.properties ?? {};
-      const coordinates = feature.geometry?.coordinates ?? [];
-      const longitude = Number(coordinates[0]);
-      const latitude = Number(coordinates[1]);
-      const name = String(props.name ?? props.city ?? props.state ?? "Location").trim();
-      const placeName = [name, props.city, props.country]
-        .map((part) => String(part ?? "").trim())
-        .filter(Boolean)
-        .filter((part, index, parts) => parts.indexOf(part) === index)
-        .slice(0, 2)
-        .join(", ");
-
-      return {
-        id: `${props.osm_type ?? "place"}-${props.osm_id ?? `${latitude},${longitude}`}`,
-        placeName: placeName || name,
-        subtitle:
-          [props.city, props.state, props.country]
-            .map((part) => String(part ?? "").trim())
-            .filter(Boolean)
-            .join(", ") || null,
-        countryCode: props.countrycode ? String(props.countrycode).toUpperCase() : null,
-        latitude,
-        longitude,
-      };
-    })
-    .filter((place) => Number.isFinite(place.latitude) && Number.isFinite(place.longitude));
-}
-
-async function searchPlaces(query) {
-  return searchPlacesWithPhoton(query);
-}
-
 function setPlaceResultsOpen(isOpen) {
   if (!els.placeResults || !els.locationInput) return;
   if (isOpen) {
@@ -1683,24 +1638,33 @@ function renderPlaceResults(results) {
   setPlaceResultsOpen(true);
 
   els.placeResults.querySelectorAll(".place-result-btn").forEach((button) => {
-    button.addEventListener("click", () => {
+    button.addEventListener("click", async () => {
       const placeId = button.dataset.placeId;
       const place = results.find((item) => item.id === placeId);
       if (!place) return;
-
-      selectedPlace = {
-        locationName: place.placeName,
-        countryCode: place.countryCode ?? null,
-        latitude: place.latitude,
-        longitude: place.longitude,
-      };
 
       if (els.locationInput) {
         els.locationInput.value = place.placeName;
       }
       els.placeResults.innerHTML = "";
       setPlaceResultsOpen(false);
-      renderSelectedPlace();
+      setPlaceStatus("Loading location…", "searching");
+
+      try {
+        const details = await getPlaceDetails(placeId);
+        selectedPlace = {
+          locationName: details.placeName || place.placeName,
+          countryCode: details.countryCode,
+          latitude: details.latitude,
+          longitude: details.longitude,
+        };
+        renderSelectedPlace();
+      } catch (error) {
+        setPlaceStatus(
+          error instanceof Error ? error.message : "Couldn't load that location — try again.",
+          "error",
+        );
+      }
     });
   });
 }

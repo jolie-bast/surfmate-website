@@ -11,6 +11,7 @@ import {
   validatePartnerEventSubmissionInput,
 } from "./community-event-shared.js";
 import { createEventSubmitCardPreview } from "./event-submit-card-preview.js";
+import { searchPlaces, getPlaceDetails } from "./google-places.js";
 
 const config = window.SURFMATE_SUPABASE;
 const DEBOUNCE_MS = 300;
@@ -29,33 +30,33 @@ const ACCESS_KEY = new URLSearchParams(window.location.search).get("k")?.trim() 
 const WIZARD_STEPS = [
   {
     id: 1,
-    label: "Contact",
-    title: "How can we reach you?",
-    lead: "We’ll only use this if we have a question about your event.",
-  },
-  {
-    id: 2,
     label: "Partner",
     title: "Who’s organizing?",
     lead: "Your brand or series name — shown as the partner on the event.",
   },
   {
-    id: 3,
+    id: 2,
     label: "Event",
     title: "What’s the event?",
     lead: "Name it and pin the location on the map.",
   },
   {
-    id: 4,
+    id: 3,
     label: "When",
     title: "When does it happen?",
     lead: "Dates only, or include start and end times.",
   },
   {
-    id: 5,
+    id: 4,
     label: "Type",
     title: "What kind of event?",
     lead: "Pick everything that fits — festival, contest, meetup, and more.",
+  },
+  {
+    id: 5,
+    label: "Contact",
+    title: "How can we reach you?",
+    lead: "We’ll only use this if we have a question about your event.",
   },
   {
     id: 6,
@@ -664,11 +665,11 @@ function getWizardStepConfig(step = currentWizardStep) {
 
 function focusWizardStepField(step = currentWizardStep) {
   const focusTargets = {
-    1: els.submitterEmail,
-    2: els.partnerName,
-    3: els.title,
-    4: getDateSegments(els.startDate).day,
-    5: els.eventTypes?.querySelector("input"),
+    1: els.partnerName,
+    2: els.title,
+    3: getDateSegments(els.startDate).day,
+    4: els.eventTypes?.querySelector("input"),
+    5: els.submitterEmail,
     6: els.websiteUrl,
   };
 
@@ -763,24 +764,6 @@ function isValidEmail(value) {
 function validateWizardStep(step) {
   switch (step) {
     case 1: {
-      const email = els.submitterEmail?.value.trim() ?? "";
-      if (!email) {
-        return {
-          ok: false,
-          message: "Enter your email address so we can reach you.",
-          field: "submitterEmail",
-        };
-      }
-      if (!isValidEmail(email)) {
-        return {
-          ok: false,
-          message: "Enter a valid email address (e.g. you@example.com).",
-          field: "submitterEmail",
-        };
-      }
-      return { ok: true };
-    }
-    case 2: {
       const partnerName = els.partnerName?.value.trim() ?? "";
       if (!partnerName) {
         return {
@@ -798,7 +781,7 @@ function validateWizardStep(step) {
       }
       return { ok: true };
     }
-    case 3: {
+    case 2: {
       const title = els.title?.value.trim() ?? "";
       if (!title) {
         return {
@@ -816,7 +799,7 @@ function validateWizardStep(step) {
       }
       return { ok: true };
     }
-    case 4: {
+    case 3: {
       const result = validateScheduleInput();
       if (!result.ok) {
         return result;
@@ -825,12 +808,30 @@ function validateWizardStep(step) {
       updateSchedulePreview();
       return { ok: true };
     }
-    case 5: {
+    case 4: {
       if (!getSelectedEventTypes().length) {
         return {
           ok: false,
           message: "Select at least one event type.",
           field: "eventTypes",
+        };
+      }
+      return { ok: true };
+    }
+    case 5: {
+      const email = els.submitterEmail?.value.trim() ?? "";
+      if (!email) {
+        return {
+          ok: false,
+          message: "Enter your email address so we can reach you.",
+          field: "submitterEmail",
+        };
+      }
+      if (!isValidEmail(email)) {
+        return {
+          ok: false,
+          message: "Enter a valid email address (e.g. you@example.com).",
+          field: "submitterEmail",
         };
       }
       return { ok: true };
@@ -1681,52 +1682,6 @@ function clearPlaceSelection() {
   updateEventCardPreview();
 }
 
-async function searchPlacesWithPhoton(query) {
-  const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=8&lang=en`;
-  const response = await fetch(url, {
-    headers: { Accept: "application/json" },
-  });
-
-  if (!response.ok) {
-    throw new Error(`Place search failed (${response.status}).`);
-  }
-
-  const payload = await response.json().catch(() => null);
-
-  return (payload?.features ?? [])
-    .map((feature) => {
-      const props = feature.properties ?? {};
-      const coordinates = feature.geometry?.coordinates ?? [];
-      const longitude = Number(coordinates[0]);
-      const latitude = Number(coordinates[1]);
-      const name = String(props.name ?? props.city ?? props.state ?? "Location").trim();
-      const placeName = [name, props.city, props.country]
-        .map((part) => String(part ?? "").trim())
-        .filter(Boolean)
-        .filter((part, index, parts) => parts.indexOf(part) === index)
-        .slice(0, 2)
-        .join(", ");
-
-      return {
-        id: `${props.osm_type ?? "place"}-${props.osm_id ?? `${latitude},${longitude}`}`,
-        placeName: placeName || name,
-        subtitle:
-          [props.city, props.state, props.country]
-            .map((part) => String(part ?? "").trim())
-            .filter(Boolean)
-            .join(", ") || null,
-        countryCode: props.countrycode ? String(props.countrycode).toUpperCase() : null,
-        latitude,
-        longitude,
-      };
-    })
-    .filter((place) => Number.isFinite(place.latitude) && Number.isFinite(place.longitude));
-}
-
-async function searchPlaces(query) {
-  return searchPlacesWithPhoton(query);
-}
-
 function setPlaceResultsOpen(isOpen) {
   if (!els.placeResults || !els.locationInput) return;
   if (isOpen) {
@@ -1767,24 +1722,33 @@ function renderPlaceResults(results) {
   setPlaceResultsOpen(true);
 
   els.placeResults.querySelectorAll(".place-result-btn").forEach((button) => {
-    button.addEventListener("click", () => {
+    button.addEventListener("click", async () => {
       const placeId = button.dataset.placeId;
       const place = results.find((item) => item.id === placeId);
       if (!place) return;
-
-      selectedPlace = {
-        locationName: place.placeName,
-        countryCode: place.countryCode ?? null,
-        latitude: place.latitude,
-        longitude: place.longitude,
-      };
 
       if (els.locationInput) {
         els.locationInput.value = place.placeName;
       }
       els.placeResults.innerHTML = "";
       setPlaceResultsOpen(false);
-      renderSelectedPlace();
+      setPlaceStatus("Loading location…", "searching");
+
+      try {
+        const details = await getPlaceDetails(placeId);
+        selectedPlace = {
+          locationName: details.placeName || place.placeName,
+          countryCode: details.countryCode,
+          latitude: details.latitude,
+          longitude: details.longitude,
+        };
+        renderSelectedPlace();
+      } catch (error) {
+        setPlaceStatus(
+          error instanceof Error ? error.message : "Couldn't load that location — try again.",
+          "error",
+        );
+      }
     });
   });
 }
@@ -1990,7 +1954,7 @@ function showSubmitAnotherForm() {
   resetEventForm();
   hide(els.success);
   show(els.formSection);
-  els.submitterEmail?.focus();
+  els.partnerName?.focus();
   els.formSection?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 

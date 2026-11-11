@@ -1,5 +1,6 @@
 # Optional local overrides
 public/js/mapbox-config.local.js
+public/js/google-places-config.local.js
 
 # Next.js
 node_modules
