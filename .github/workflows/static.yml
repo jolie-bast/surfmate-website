@@ -43,6 +43,11 @@ jobs:
         run: npm ci
       - name: Inline legacy HTML includes for crawlers
         run: node scripts/prepare-crawler-html.mjs --deploy
+      - name: Write Google Places config
+        env:
+          GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
+        run: |
+          node -e "require('fs').writeFileSync('public/js/google-places-config.local.js', 'window.SURFMATE_GOOGLE_PLACES = { apiKey: ' + JSON.stringify(process.env.GOOGLE_PLACES_API_KEY || '') + ' };\n')"
       - name: Build Next.js static export
         run: npm run build
       - name: Setup Pages
