@@ -4,7 +4,7 @@ import { countryName } from "../lib/countries";
 
 export default function EventCard({ event }) {
   return (
-    <article style={{ background: "#fff", borderRadius: 15, overflow: "hidden", display: "flex", flexDirection: "column", height: "100%" }}>
+    <article style={{ background: "#fff", borderRadius: 15, overflow: "hidden", display: "flex", flexDirection: "column" }}>
       <div style={{ aspectRatio: "16 / 9", background: "var(--sm-blue-light)", position: "relative" }}>
         {event.cover_image_url && (
           <img src={event.cover_image_url} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { getSmartAppLink } from "../lib/appLinks";
 
 const NAV_LINKS = [
   { href: "/spots/", label: "Spots" },
@@ -13,6 +14,15 @@ const NAV_LINKS = [
 export default function Header({ homeHref = "/" }) {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
+
+  function handleGetAppClick(event) {
+    close();
+    const smartLink = getSmartAppLink();
+    if (smartLink) {
+      event.preventDefault();
+      window.location.href = smartLink;
+    }
+  }
 
   return (
     <header className="sm-header">
@@ -40,7 +50,7 @@ export default function Header({ homeHref = "/" }) {
               {link.label}
             </a>
           ))}
-          <a href="/#download" className="sm-btn sm-btn-dark sm-nav-cta" onClick={close}>
+          <a href="/#download" className="sm-btn sm-btn-dark sm-nav-cta" onClick={handleGetAppClick}>
             Get the app
           </a>
         </nav>

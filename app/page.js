@@ -195,7 +195,7 @@ export default async function HomePage() {
                 It’s free.
               </h3>
               <p>
-                Contest, festival, meetup or beach clean-up? Add it to Surfmate so the Surfmates in your area can discover it and see who’s going. :-)
+                Contest, festival, meetup or beach clean-up? Add it to Surfmate so the {surferCount} surfers on the app can see exactly when and where it’s happening – and see who’s going. :-)
               </p>
               <div className="sm-event-promo-tags">
                 {["Contests", "Festivals", "Meetups", "Retreats", "Beach clean-ups"].map((label) => (
@@ -215,6 +215,7 @@ export default async function HomePage() {
                 <li><span aria-hidden="true">✓</span> Ticket link</li>
                 <li><span aria-hidden="true">✓</span> Instagram link</li>
                 <li><span aria-hidden="true">✓</span> Shown first to local surfers</li>
+                <li><span aria-hidden="true">✓</span> Push notification to nearby surfers when it goes live</li>
               </ul>
               <a href="mailto:jolie@surfmate.eu" className="sm-btn sm-btn-outline">Contact us →</a>
             </div>
