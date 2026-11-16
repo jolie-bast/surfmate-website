@@ -1,3 +1,23 @@
+function ExternalLinkIcon() {
+  return (
+    <svg
+      width="11"
+      height="11"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      style={{ marginLeft: 4, verticalAlign: -1 }}
+    >
+      <path d="M7 17 17 7" />
+      <path d="M8 7h9v9" />
+    </svg>
+  );
+}
+
 export default function Footer() {
   return (
     <footer style={{ borderTop: "1px solid var(--sm-border)" }}>
@@ -31,7 +51,10 @@ export default function Footer() {
           <a href="/partners/">Partners</a>
           <a href="/creators/">Creators</a>
           <a href="/join/">Join</a>
-          <a href="/shop/">Wear</a>
+          <a href="https://shop.surfmate.eu" target="_blank" rel="noopener noreferrer">
+            Wear
+            <ExternalLinkIcon />
+          </a>
         </nav>
         <nav aria-label="Get in touch" style={{ display: "flex", flexDirection: "column", gap: 10, fontSize: 15 }}>
           <strong style={{ fontWeight: 600 }}>Get in touch</strong>

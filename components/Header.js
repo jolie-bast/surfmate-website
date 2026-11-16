@@ -8,8 +8,28 @@ const NAV_LINKS = [
   { href: "/events/", label: "Events" },
   { href: "/#community", label: "Community" },
   { href: "/#blog", label: "Blog" },
-  { href: "/shop/", label: "Wear" },
+  { href: "https://shop.surfmate.eu", label: "Wear", external: true },
 ];
+
+function ExternalLinkIcon() {
+  return (
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      style={{ marginLeft: 4, verticalAlign: -1 }}
+    >
+      <path d="M7 17 17 7" />
+      <path d="M8 7h9v9" />
+    </svg>
+  );
+}
 
 export default function Header({ homeHref = "/" }) {
   const [open, setOpen] = useState(false);
@@ -46,8 +66,14 @@ export default function Header({ homeHref = "/" }) {
 
         <nav id="sm-main-nav" aria-label="Main" className={`sm-nav${open ? " is-open" : ""}`}>
           {NAV_LINKS.map((link) => (
-            <a key={link.href} href={link.href} onClick={close}>
+            <a
+              key={link.href}
+              href={link.href}
+              onClick={close}
+              {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+            >
               {link.label}
+              {link.external && <ExternalLinkIcon />}
             </a>
           ))}
           <a href="/#download" className="sm-btn sm-btn-dark sm-nav-cta" onClick={handleGetAppClick}>
