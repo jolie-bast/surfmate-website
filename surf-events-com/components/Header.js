@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { getSmartAppLink } from "../lib/appLinks";
 
 // Minimal header for the surf-events.com mirror: just the Surfmate brand
 // (linking back to the main site) and the "Add your event" / "Get the app"
@@ -11,6 +12,15 @@ import { useState } from "react";
 export default function Header() {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
+
+  function handleGetAppClick(event) {
+    close();
+    const smartLink = getSmartAppLink();
+    if (smartLink) {
+      event.preventDefault();
+      window.location.href = smartLink;
+    }
+  }
 
   return (
     <header className="sm-header">
@@ -36,7 +46,7 @@ export default function Header() {
           <a href="https://surfmate.eu/events/submit/" className="sm-btn sm-btn-accent" onClick={close}>
             Add your event
           </a>
-          <a href="https://surfmate.eu/#download" className="sm-btn sm-btn-dark" onClick={close}>
+          <a href="https://surfmate.eu/#download" className="sm-btn sm-btn-dark" onClick={handleGetAppClick}>
             Get the app
           </a>
         </div>
