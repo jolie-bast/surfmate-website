@@ -56,14 +56,11 @@ export default async function SurfEventsPage() {
         <section className="sm-container" style={{ padding: "48px 24px 24px", display: "flex", flexDirection: "column", gap: 18 }}>
           <p className="sm-eyebrow">Upcoming surf events</p>
           <h1 className="sm-heavy" style={{ margin: 0, fontSize: "clamp(40px, 6vw, 72px)", lineHeight: 0.95 }}>
-            See who is going.
+            Surf Events Worldwide
           </h1>
           <p style={{ margin: 0, fontSize: 17, lineHeight: 1.55, color: "var(--sm-ink)", maxWidth: 640 }}>
             Contests, festivals and meetups worldwide. Tap “I’m going” and meet the crew there.
           </p>
-          <a href="https://surfmate.eu/events/submit/" className="sm-btn sm-btn-accent" style={{ alignSelf: "flex-start" }}>
-            Got an event to add? Submit it on Surfmate →
-          </a>
         </section>
 
         <section className="sm-container" style={{ padding: "24px 24px 104px" }}>

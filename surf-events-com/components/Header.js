@@ -9,9 +9,14 @@ export default function Header() {
         <a href="https://surfmate.eu" aria-label="Surfmate home" className="sm-header-logo">
           <img src="/assets/logo-surfmate-schriftzug.svg" alt="Surfmate" />
         </a>
-        <a href="https://surfmate.eu/#download" className="sm-btn sm-btn-dark">
-          Get the app
-        </a>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <a href="https://surfmate.eu/events/submit/" className="sm-btn sm-btn-accent">
+            Add your event
+          </a>
+          <a href="https://surfmate.eu/#download" className="sm-btn sm-btn-dark">
+            Get the app
+          </a>
+        </div>
       </div>
     </header>
   );

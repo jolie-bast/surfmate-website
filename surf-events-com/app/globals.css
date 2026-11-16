@@ -116,9 +116,10 @@ img {
 
 .sm-header-bar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px 16px;
   padding: 16px 24px;
 }
 
