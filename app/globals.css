@@ -290,6 +290,23 @@ html {
 }
 
 @media (max-width: 760px) {
+  html {
+    scroll-padding-top: 0;
+  }
+
+  body:has(.sm-header) {
+    padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .sm-header {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    border-bottom: none;
+    border-top: 1px solid var(--sm-border);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
   .sm-header-bar {
     padding: 14px 16px;
   }
@@ -334,7 +351,7 @@ html {
 
   .sm-nav {
     position: absolute;
-    top: 100%;
+    bottom: 100%;
     left: 0;
     right: 0;
     z-index: 110;
@@ -343,12 +360,12 @@ html {
     gap: 0;
     margin-left: 0;
     background: #fff;
-    border-bottom: 1px solid var(--sm-border);
-    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+    border-top: 1px solid var(--sm-border);
+    box-shadow: 0 -16px 32px rgba(0, 0, 0, 0.12);
     padding: 4px 16px 16px;
     max-height: calc(100vh - 64px);
     overflow-y: auto;
-    transform: translateY(-8px);
+    transform: translateY(8px);
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
