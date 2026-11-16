@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Pure static-assets Worker: this is a `next build && next export`
+  // output, not an SSR app, so there's no "main" entrypoint — this stops
+  // the Cloudflare build pipeline from auto-detecting Next.js and running
+  // the OpenNext/wrangler migration (which tries to deploy it as an SSR
+  // Worker and fails on a broken @ast-grep native binding in their image).
+  "name": "surf-events-com",
+  "compatibility_date": "2026-11-16",
+  "assets": {
+    "directory": "./out"
+  }
+}
