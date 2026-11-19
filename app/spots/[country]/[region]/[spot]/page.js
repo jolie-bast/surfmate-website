@@ -184,7 +184,7 @@ export default async function SpotPage({ params }) {
             <h3 style={{ margin: 0, fontSize: 18, fontWeight: 600 }}>About this spot</h3>
             <p style={{ margin: 0, fontSize: 15, lineHeight: 1.6, color: "var(--sm-ink)" }}>
               {spot.name} is a surf spot in {spot.region}, {country}. It is one of the places the Surfmate community
-              keeps coming back to. Download the app for tides, webcams and local notes from other surfers.
+              keeps coming back to. Use the app to find surfers to surf with and surf photographers nearby.
             </p>
           </div>
           {nearbyEvent && (

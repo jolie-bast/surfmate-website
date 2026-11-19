@@ -5,6 +5,7 @@ import { getSmartAppLink } from "../lib/appLinks";
 
 const NAV_LINKS = [
   { href: "/spots/", label: "Spots" },
+  { href: "/lensmates/", label: "Lensmates" },
   { href: "/events/", label: "Events" },
   { href: "/#community", label: "Community" },
   { href: "/#blog", label: "Blog" },

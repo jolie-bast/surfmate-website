@@ -23,8 +23,64 @@
   --sm-mint: #e1f7e7;
   --sm-border: #ececec;
   --sm-border-strong: #dadada;
+  --sm-beige: #e0d2b5;
   --sm-radius: 15px;
   --sm-max-width: 1240px;
+}
+
+.sm-faq summary {
+  list-style: none;
+}
+.sm-faq summary::-webkit-details-marker {
+  display: none;
+}
+.sm-faq-chevron {
+  transition: transform 0.2s ease;
+  flex: none;
+}
+.sm-faq[open] .sm-faq-chevron {
+  transform: rotate(180deg);
+}
+
+.lensmate-shots {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.lensmate-shots-top {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-radius: var(--sm-radius);
+  display: block;
+}
+.lensmate-shots-rest {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.lensmate-shots-rest img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--sm-radius);
+  display: block;
+}
+@media (min-width: 860px) {
+  .lensmate-shots {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+  .lensmate-shots-rest {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .lensmate-shots-rest img {
+    aspect-ratio: 3 / 2;
+  }
 }
 
 * {
@@ -247,6 +303,8 @@ html {
 
 .sm-header-bar {
   position: relative;
+  z-index: 100;
+  background: #fff;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -301,6 +359,8 @@ html {
   .sm-header {
     position: fixed;
     top: auto;
+    left: 0;
+    right: 0;
     bottom: 0;
     border-bottom: none;
     border-top: 1px solid var(--sm-border);
