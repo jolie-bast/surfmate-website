@@ -32,6 +32,11 @@ export function eventSortStart(event) {
   return bounds ? bounds.start.getTime() : Infinity;
 }
 
+export function isEventLiveNow(event, now = new Date()) {
+  const bounds = eventDateBounds(event);
+  return bounds ? bounds.start <= now && now <= bounds.end : false;
+}
+
 function sameCalendarDay(a, b, timeZone) {
   const fmt = new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" });
   return fmt.format(a) === fmt.format(b);
@@ -71,4 +76,16 @@ export function eventDateLabel(event) {
   }
 
   return "Date TBA";
+}
+
+// "14:00" or "14:00–18:00" for an exact-time event; "" when only a
+// year/month schedule is known (there is no time of day to show).
+export function eventTimeLabel(event) {
+  if (!event.starts_at) return "";
+  const tz = event.timezone || "UTC";
+  const start = new Date(event.starts_at);
+  const end = event.ends_at ? new Date(event.ends_at) : null;
+  const time = (d) => new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: tz }).format(d);
+  if (!end || time(start) === time(end)) return time(start);
+  return `${time(start)}–${time(end)}`;
 }

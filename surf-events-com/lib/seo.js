@@ -3,6 +3,10 @@
 // URLs instead of this mirror's own.
 const CANONICAL_EVENTS_URL = "https://surfmate.eu/events/";
 
+export function eventPath(event) {
+  return `${CANONICAL_EVENTS_URL}${event.id}/`;
+}
+
 function toIso(value) {
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? null : date.toISOString();
@@ -26,39 +30,48 @@ function eventEndDate(event) {
   return null;
 }
 
+export function eventNode(event) {
+  const startDate = eventStartDate(event);
+  if (!startDate || !event.title) return null;
+
+  const endDate = eventEndDate(event);
+  const locationName = event.location_name || event.title;
+
+  return {
+    "@type": "Event",
+    "@id": `${eventPath(event)}#event`,
+    name: event.title,
+    url: eventPath(event),
+    startDate,
+    ...(endDate ? { endDate } : {}),
+    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+    eventStatus: "https://schema.org/EventScheduled",
+    location: {
+      "@type": "Place",
+      name: locationName,
+      ...(event.country_code
+        ? { address: { "@type": "PostalAddress", addressCountry: event.country_code } }
+        : {}),
+    },
+    ...(isHttpUrl(event.website_url) ? { sameAs: event.website_url } : {}),
+    ...(isHttpUrl(event.cover_image_url) ? { image: event.cover_image_url } : {}),
+    description: event.location_name
+      ? `${event.title} in ${event.location_name}. See who from Surfmate is going.`
+      : `${event.title}. See who from Surfmate is going.`,
+  };
+}
+
 export function eventsItemListNode(events) {
   const itemListElement = [];
 
   for (const event of events) {
-    const startDate = eventStartDate(event);
-    if (!startDate || !event.title) continue;
-
-    const endDate = eventEndDate(event);
-    const locationName = event.location_name || event.title;
+    const node = eventNode(event);
+    if (!node) continue;
 
     itemListElement.push({
       "@type": "ListItem",
       position: itemListElement.length + 1,
-      item: {
-        "@type": "Event",
-        name: event.title,
-        startDate,
-        ...(endDate ? { endDate } : {}),
-        eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-        eventStatus: "https://schema.org/EventScheduled",
-        location: {
-          "@type": "Place",
-          name: locationName,
-          ...(event.country_code
-            ? { address: { "@type": "PostalAddress", addressCountry: event.country_code } }
-            : {}),
-        },
-        ...(isHttpUrl(event.website_url) ? { url: event.website_url } : {}),
-        ...(isHttpUrl(event.cover_image_url) ? { image: event.cover_image_url } : {}),
-        description: event.location_name
-          ? `${event.title} in ${event.location_name}. See who from Surfmate is going.`
-          : `${event.title}. See who from Surfmate is going.`,
-      },
+      item: node,
     });
   }
 
