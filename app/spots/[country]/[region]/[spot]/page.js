@@ -12,9 +12,10 @@ import { countryName, countrySlug } from "../../../../../lib/countries";
 import { isUpcomingOrLive, eventSortStart, distanceKm } from "../../../../../lib/events";
 import ApproxLocationMap from "../../../../../components/ApproxLocationMap";
 import JsonLd from "../../../../../components/JsonLd";
-import { breadcrumbNode, countryPath, pageMetadata, regionPath, spotPath, spotPlaceNode } from "../../../../../lib/seo";
+import { breadcrumbNode, countryPath, eventPath, pageMetadata, regionPath, spotPath, spotPlaceNode } from "../../../../../lib/seo";
 
 const NEARBY_EVENT_RADIUS_KM = 300;
+const MAX_NEARBY_EVENTS = 4;
 
 export async function generateStaticParams() {
   const spots = await getWebsiteSpots();
@@ -60,11 +61,19 @@ export default async function SpotPage({ params }) {
 
   const moreInRegion = allSpots.filter((s) => s.region_slug === spot.region_slug && s.slug !== spot.slug);
   const now = new Date();
-  const nearbyEvent = events
-    .filter((e) => isUpcomingOrLive(e, now) && e.latitude != null && e.longitude != null)
+  // Upcoming/live events first (soonest first), then past events nearby
+  // (most recent first), so the card also shows what has happened here.
+  const nearbyEvents = events
+    .filter((e) => e.latitude != null && e.longitude != null)
     .map((e) => ({ ...e, distanceKm: distanceKm(spot.latitude, spot.longitude, e.latitude, e.longitude) }))
     .filter((e) => e.distanceKm <= NEARBY_EVENT_RADIUS_KM)
-    .sort((a, b) => a.distanceKm - b.distanceKm || eventSortStart(a) - eventSortStart(b))[0];
+    .sort((a, b) => {
+      const aUpcoming = isUpcomingOrLive(a, now);
+      const bUpcoming = isUpcomingOrLive(b, now);
+      if (aUpcoming !== bUpcoming) return aUpcoming ? -1 : 1;
+      return aUpcoming ? eventSortStart(a) - eventSortStart(b) : eventSortStart(b) - eventSortStart(a);
+    })
+    .slice(0, MAX_NEARBY_EVENTS);
 
   const country = countryName(spot.country_code);
 
@@ -187,21 +196,29 @@ export default async function SpotPage({ params }) {
               keeps coming back to. Use the app to find surfers to surf with and surf photographers nearby.
             </p>
           </div>
-          {nearbyEvent && (
+          {nearbyEvents.length > 0 && (
             <div style={{ border: "1px solid var(--sm-border)", borderRadius: 15, padding: 22, display: "flex", flexDirection: "column", gap: 14 }}>
               <h3 style={{ margin: 0, fontSize: 18, fontWeight: 600 }}>Events nearby</h3>
-              <a href={nearbyEvent.website_url || "/events/"} style={{ textDecoration: "none", display: "flex", gap: 14, alignItems: "center" }}>
-                <span style={{ flex: "none", width: 52, height: 52, borderRadius: 12, background: "var(--sm-black)", color: "#fff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", lineHeight: 1.1 }}>
-                  <span style={{ fontSize: 11, fontWeight: 600 }}>
-                    {new Intl.DateTimeFormat("en-GB", { month: "short" }).format(new Date(eventSortStart(nearbyEvent))).toUpperCase()}
-                  </span>
-                  <span style={{ fontSize: 18, fontWeight: 600 }}>{new Date(eventSortStart(nearbyEvent)).getDate()}</span>
-                </span>
-                <span style={{ fontSize: 15, lineHeight: 1.4 }}>
-                  <strong style={{ fontWeight: 600, display: "block" }}>{nearbyEvent.title}</strong>
-                  <span style={{ color: "var(--sm-muted)" }}>{nearbyEvent.location_name}</span>
-                </span>
-              </a>
+              {nearbyEvents.map((e) => {
+                const past = !isUpcomingOrLive(e, now);
+                return (
+                  <a key={e.id} href={eventPath(e)} style={{ textDecoration: "none", display: "flex", gap: 14, alignItems: "center" }}>
+                    <span style={{ flex: "none", width: 52, height: 52, borderRadius: 12, background: past ? "var(--sm-muted)" : "var(--sm-black)", color: "#fff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", lineHeight: 1.1 }}>
+                      <span style={{ fontSize: 11, fontWeight: 600 }}>
+                        {new Intl.DateTimeFormat("en-GB", { month: "short" }).format(new Date(eventSortStart(e))).toUpperCase()}
+                      </span>
+                      <span style={{ fontSize: 18, fontWeight: 600 }}>{new Date(eventSortStart(e)).getDate()}</span>
+                    </span>
+                    <span style={{ fontSize: 15, lineHeight: 1.4 }}>
+                      <strong style={{ fontWeight: 600, display: "block" }}>{e.title}</strong>
+                      <span style={{ color: "var(--sm-muted)" }}>
+                        {e.location_name}
+                        {past ? " · past event" : ""}
+                      </span>
+                    </span>
+                  </a>
+                );
+              })}
             </div>
           )}
           {moreInRegion.length > 0 && (

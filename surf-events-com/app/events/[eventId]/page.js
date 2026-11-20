@@ -66,6 +66,11 @@ function communityDiscount(event) {
   return { chip: `${percent}%`, message: `on ${appliesTo}`, buttonLabel };
 }
 
+function sharedTypeCount(event, otherTypes) {
+  const types = new Set(event.event_types || []);
+  return (otherTypes || []).filter((type) => types.has(type)).length;
+}
+
 function attendanceHeadline(counts, isPast) {
   if (isPast) {
     const went = (counts.went || 0) + (counts.going || 0);
@@ -106,10 +111,16 @@ export default async function EventDetailPage({ params }) {
       ? `https://www.openstreetmap.org/?mlat=${event.latitude}&mlon=${event.longitude}#map=15/${event.latitude}/${event.longitude}`
       : null;
 
-  const otherEvents = allEvents
-    .filter((e) => e.id !== event.id && isUpcomingOrLive(e, now))
-    .sort((a, b) => eventSortStart(a) - eventSortStart(b))
-    .slice(0, 4);
+  // Same-category events first (ranked by how many categories they share),
+  // then other upcoming events by date, so the list is never empty.
+  const upcomingOthers = allEvents.filter((e) => e.id !== event.id && isUpcomingOrLive(e, now));
+  const similarEvents = upcomingOthers
+    .filter((e) => sharedTypeCount(event, e.event_types) > 0)
+    .sort((a, b) => sharedTypeCount(event, b.event_types) - sharedTypeCount(event, a.event_types) || eventSortStart(a) - eventSortStart(b));
+  const otherUpcoming = upcomingOthers
+    .filter((e) => sharedTypeCount(event, e.event_types) === 0)
+    .sort((a, b) => eventSortStart(a) - eventSortStart(b));
+  const otherEvents = [...similarEvents, ...otherUpcoming].slice(0, 4);
 
   return (
     <>
@@ -265,7 +276,9 @@ export default async function EventDetailPage({ params }) {
 
             {otherEvents.length > 0 && (
               <div style={{ border: "1px solid var(--sm-border)", borderRadius: "var(--sm-radius)", padding: 22, display: "flex", flexDirection: "column", gap: 12 }}>
-                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 600 }}>More events</h3>
+                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 600 }}>
+                  {similarEvents.length > 0 ? "Similar events" : "More events"}
+                </h3>
                 {otherEvents.map((e) => (
                   <a key={e.id} href={`/events/${e.id}/`} style={{ fontSize: 15 }}>
                     {e.title} →
