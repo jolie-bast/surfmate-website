@@ -564,7 +564,13 @@ export default async function HomePage() {
             <p style={{ margin: 0, fontSize: 18, lineHeight: 1.55, color: "#E6E6E6", maxWidth: 440 }}>
               Surfmate Wear – the brand behind the community. Wear your surf story.
             </p>
-            <a href="/shop/" className="sm-btn" style={{ background: "#fff", color: "var(--sm-black)", padding: "14px 22px", fontSize: 16 }}>
+            <a
+              href="https://shop.surfmate.eu"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="sm-btn"
+              style={{ background: "#fff", color: "var(--sm-black)", padding: "14px 22px", fontSize: 16 }}
+            >
               Shop now
             </a>
           </div>

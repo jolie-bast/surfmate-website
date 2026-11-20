@@ -49,7 +49,6 @@ export default function Footer() {
           <a href="/#story">Our story</a>
           <a href="/team.html">Team</a>
           <a href="/partners/">Partners</a>
-          <a href="/creators/">Creators</a>
           <a href="/join/">Join</a>
           <a href="https://shop.surfmate.eu" target="_blank" rel="noopener noreferrer">
             Wear

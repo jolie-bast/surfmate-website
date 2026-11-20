@@ -149,8 +149,8 @@ export default function LensmateDirectory({ lensmates }) {
         ))}
 
         <div
+          className="sm-lensmate-promo"
           style={{
-            gridColumn: "span 2",
             background: "var(--sm-mint)",
             borderRadius: "var(--sm-radius)",
             padding: 40,
