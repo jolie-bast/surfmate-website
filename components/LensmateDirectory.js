@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { lensmatePath } from "../lib/seo";
 import { lensmateKindBadge } from "../lib/lensmates";
 import { KindIcon } from "./LensmateIcons";
+import ProtectedPhoto from "./ProtectedPhoto";
 
 const FILTERS = [
   { value: "all", label: "All" },
@@ -78,10 +79,11 @@ export default function LensmateDirectory({ lensmates }) {
             }}
           >
             <div style={{ position: "relative", aspectRatio: "4 / 3", background: "var(--sm-mint)" }}>
-              <img
+              <ProtectedPhoto
                 src={lensmate.shot_1_url}
                 alt={`Shot by ${lensmate.display_name || lensmate.instagram_username}`}
-                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                watermark={false}
+                style={{ width: "100%", height: "100%" }}
               />
               <span
                 style={{

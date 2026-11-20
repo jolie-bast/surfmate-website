@@ -3,6 +3,7 @@ import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
 import JsonLd from "../../../components/JsonLd";
 import { KindIcon, InstagramIcon } from "../../../components/LensmateIcons";
+import ProtectedPhoto from "../../../components/ProtectedPhoto";
 import { getWebsiteLensmate, getWebsiteLensmates } from "../../../lib/supabase";
 import { lensmateKindLabel, formatAvailableFor } from "../../../lib/lensmates";
 import { breadcrumbNode, lensmatePath, lensmatePersonNode, pageMetadata } from "../../../lib/seo";
@@ -127,15 +128,33 @@ export default async function LensmatePage({ params }) {
           <section className="sm-container" style={{ padding: "0 24px 24px" }}>
             {shots.length > 1 ? (
               <div className="lensmate-shots">
-                <img className="lensmate-shots-top" src={shots[0]} alt={`Shot by ${name}`} />
+                <ProtectedPhoto
+                  className="lensmate-shots-top"
+                  src={shots[0]}
+                  alt={`Shot by ${name}`}
+                  watermark={false}
+                  size="md"
+                />
                 <div className="lensmate-shots-rest">
                   {shots.slice(1).map((url) => (
-                    <img key={url} src={url} alt={`Shot by ${name}`} />
+                    <ProtectedPhoto
+                      key={url}
+                      src={url}
+                      alt={`Shot by ${name}`}
+                      watermark={false}
+                      size="md"
+                    />
                   ))}
                 </div>
               </div>
             ) : (
-              <img src={shots[0]} alt={`Shot by ${name}`} style={{ width: "100%", aspectRatio: "3 / 2", objectFit: "cover", borderRadius: 15, display: "block" }} />
+              <ProtectedPhoto
+                src={shots[0]}
+                alt={`Shot by ${name}`}
+                watermark={false}
+                size="md"
+                style={{ width: "100%", aspectRatio: "3 / 2", borderRadius: 15 }}
+              />
             )}
             <div style={{ fontSize: 14, color: "var(--sm-muted)", paddingTop: 12 }}>Photos by {name}</div>
           </section>

@@ -59,10 +59,9 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
-.lensmate-shots-rest img {
+.lensmate-shots-rest > div {
   width: 100%;
   aspect-ratio: 4 / 3;
-  object-fit: cover;
   border-radius: var(--sm-radius);
   display: block;
 }
@@ -78,7 +77,7 @@
     flex-direction: column;
     gap: 16px;
   }
-  .lensmate-shots-rest img {
+  .lensmate-shots-rest > div {
     aspect-ratio: 3 / 2;
   }
 }
@@ -254,6 +253,43 @@ img {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   text-align: center;
+}
+
+.sm-lensmate-marquee-move {
+  animation-duration: 64s;
+}
+
+.sm-lensmate-tile {
+  display: flex;
+  flex-direction: column;
+  width: 220px;
+  background: var(--sm-white);
+  border: 1px solid var(--sm-border);
+  border-radius: 15px;
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--sm-black);
+}
+
+.sm-lensmate-tile-photo {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  display: block;
+}
+
+.sm-lensmate-tile-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+}
+
+.sm-lensmate-tile-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: none;
 }
 
 @keyframes sm-partner-scroll {

@@ -5,10 +5,12 @@ import EventCard from "../components/EventCard";
 import EventRail from "../components/EventRail";
 import JsonLd from "../components/JsonLd";
 import WearLockup from "../components/WearLockup";
-import { faqNode, HOME_FAQS, pageMetadata, SITE_DESCRIPTION, SITE_TITLE, softwareApplicationNode } from "../lib/seo";
+import ProtectedPhoto from "../components/ProtectedPhoto";
+import { faqNode, HOME_FAQS, pageMetadata, SITE_DESCRIPTION, SITE_TITLE, softwareApplicationNode, lensmatePath } from "../lib/seo";
 import {
   getWebsiteEvents,
   getWebsiteEventGoingCount,
+  getWebsiteLensmates,
   getWebsitePartners,
   getWebsiteSpots,
   getWebsiteUserCount,
@@ -73,6 +75,35 @@ function PartnerTile({ partner, duplicate = false }) {
   );
 }
 
+function LensmateTile({ lensmate, duplicate = false }) {
+  const name = lensmate.display_name || `@${lensmate.instagram_username}`;
+  return (
+    <a
+      className="sm-lensmate-tile"
+      href={lensmatePath(lensmate)}
+      tabIndex={duplicate ? -1 : undefined}
+    >
+      <ProtectedPhoto
+        src={lensmate.shot_1_url}
+        alt={duplicate ? "" : `Shot by ${name}`}
+        watermark={false}
+        className="sm-lensmate-tile-photo"
+      />
+      <div className="sm-lensmate-tile-info">
+        {lensmate.avatar_url ? (
+          <img src={lensmate.avatar_url} alt="" className="sm-lensmate-tile-avatar" />
+        ) : (
+          <span className="sm-lensmate-tile-avatar" style={{ background: "var(--sm-blue-light)" }} />
+        )}
+        <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.25, minWidth: 0 }}>
+          <strong style={{ fontSize: 15, fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{name}</strong>
+          <span style={{ fontSize: 13, color: "var(--sm-muted)" }}>@{lensmate.instagram_username}</span>
+        </div>
+      </div>
+    </a>
+  );
+}
+
 // Round down to a clean "N00+" so the stat doesn't look like it's ticking up
 // by one with every signup, and still fall back to a safe default if the
 // RPC is unreachable at build time.
@@ -89,11 +120,12 @@ function surferCountLabel(count) {
 }
 
 export default async function HomePage() {
-  const [{ featured: events, total: eventsTotal }, partners, spots, userCount] = await Promise.all([
+  const [{ featured: events, total: eventsTotal }, partners, spots, userCount, lensmates] = await Promise.all([
     loadUpcomingEvents(),
     getWebsitePartners(),
     getWebsiteSpots(),
     getWebsiteUserCount(),
+    getWebsiteLensmates(),
   ]);
   const partnerLogos = allPartners(partners);
   const surferCount = surferCountLabel(userCount);
@@ -198,7 +230,7 @@ export default async function HomePage() {
                 Contest, festival, meetup or beach clean-up? Add it to Surfmate so the {surferCount} surfers on the app can see exactly when and where it’s happening – and see who’s going. :-)
               </p>
               <div className="sm-event-promo-tags">
-                {["Contests", "Festivals", "Meetups", "Retreats", "Beach clean-ups"].map((label) => (
+                {["Contests", "Festivals", "Meetups", "Beach clean-ups"].map((label) => (
                   <span key={label} className="sm-pill">{label}</span>
                 ))}
               </div>
@@ -327,9 +359,45 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* LENSMATES */}
+      {lensmates.length > 0 && (
+        <section id="lensmates" style={{ padding: "96px 0", overflow: "hidden" }}>
+          <div className="sm-container" style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "flex-end", gap: 24 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 640 }}>
+              <p className="sm-eyebrow">
+                Lensmates · {lensmates.length} photographer{lensmates.length === 1 ? "" : "s"} & filmmakers
+              </p>
+              <h2 className="sm-heavy" style={{ margin: 0, fontSize: "clamp(32px, 4vw, 52px)", lineHeight: 1 }}>Who's shooting your sessions</h2>
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 20 }}>
+              <a href="/lensmates/#program" className="sm-btn sm-btn-dark">Become a Lensmate</a>
+              <a href="/lensmates/" style={{ fontSize: 15, fontWeight: 600 }}>See all Lensmates →</a>
+            </div>
+          </div>
+          <div className="sm-partner-marquee" aria-label="Surfmate Lensmates">
+            <div className="sm-partner-marquee-move sm-lensmate-marquee-move">
+              <ul className="sm-partner-marquee-track">
+                {lensmates.map((lensmate) => (
+                  <li key={lensmate.user_id}>
+                    <LensmateTile lensmate={lensmate} />
+                  </li>
+                ))}
+              </ul>
+              <ul className="sm-partner-marquee-track" aria-hidden="true">
+                {lensmates.map((lensmate) => (
+                  <li key={`${lensmate.user_id}-copy`}>
+                    <LensmateTile lensmate={lensmate} duplicate />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* SURF CALENDAR */}
       <section style={{ background: "var(--sm-mint)" }}>
-        <div className="sm-container" style={{ padding: "0 24px 96px", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 56 }}>
+        <div className="sm-container" style={{ padding: "96px 24px", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 56 }}>
           <div style={{ flex: "1 1 380px", minWidth: 0, display: "flex", flexDirection: "column", gap: 18 }}>
             <p className="sm-eyebrow">Surf calendar</p>
             <h3 className="sm-heavy" style={{ margin: 0, fontSize: "clamp(28px, 3.4vw, 44px)", lineHeight: 1 }}>See how often you really surf.</h3>
