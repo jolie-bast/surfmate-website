@@ -1,0 +1,37 @@
+<!-- New-design header, matches components/Header.js -->
+<header class="sm-header">
+  <div class="sm-container sm-header-bar">
+    <a href="/index.html" aria-label="Surfmate home" class="sm-header-logo">
+      <img src="/assets/logo-surfmate-schriftzug.svg" alt="Surfmate" />
+    </a>
+
+    <button
+      type="button"
+      id="sm-nav-toggle"
+      class="sm-nav-toggle"
+      aria-expanded="false"
+      aria-controls="sm-main-nav"
+      aria-label="Open menu"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <nav id="sm-main-nav" aria-label="Main" class="sm-nav">
+      <a href="/spots/">Spots</a>
+      <a href="/lensmates/">Lensmates</a>
+      <a href="/events/">Events</a>
+      <a href="/index.html#community">Community</a>
+      <a href="/index.html#blog">Blog</a>
+      <a href="https://shop.surfmate.eu" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 4px">
+        Wear
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M7 17 17 7" />
+          <path d="M8 7h9v9" />
+        </svg>
+      </a>
+      <a href="/index.html#download" class="sm-btn sm-btn-dark sm-nav-cta">Get the app</a>
+    </nav>
+  </div>
+</header>

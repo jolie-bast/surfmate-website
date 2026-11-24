@@ -1,0 +1,347 @@
+/* Shared "new design" tokens + header/nav/button chrome, ported from the
+   Next.js rebuild (app/globals.css) for use on pages still served as plain
+   static HTML from /public. Keep in sync by eye, not by build step. */
+
+@font-face {
+  font-family: "Surfmate Heavy";
+  src: url("/assets/fonts/8/WOFF/8-Heavy.woff2") format("woff2"),
+    url("/assets/fonts/8/WOFF/8-Heavy.woff") format("woff");
+  font-weight: 800;
+  font-display: swap;
+}
+
+:root {
+  --sm-black: #1a1a1a;
+  --sm-ink: #2b2b2b;
+  --sm-muted: #3a3a3a;
+  --sm-white: #ffffff;
+  --sm-blue: #73c9eb;
+  --sm-blue-light: #d2e9f2;
+  --sm-mint: #e1f7e7;
+  --sm-border: #ececec;
+  --sm-border-strong: #dadada;
+  --sm-beige: #e0d2b5;
+  --sm-radius: 15px;
+  --sm-max-width: 1240px;
+}
+
+.sm-heavy {
+  font-family: "Surfmate Heavy", Inter, sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.sm-container {
+  max-width: var(--sm-max-width);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+@media (max-width: 640px) {
+  .sm-container {
+    padding: 0 16px;
+  }
+}
+
+.sm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  border-radius: var(--sm-radius);
+  font-family: Inter, sans-serif;
+  font-weight: 600;
+  text-decoration: none;
+  min-height: 44px;
+  box-sizing: border-box;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.sm-btn-dark {
+  background: var(--sm-black);
+  color: var(--sm-white);
+  padding: 12px 20px;
+  font-size: 15px;
+}
+
+.sm-btn-dark:hover:not(:disabled) {
+  background: #000;
+}
+
+.sm-btn-outline {
+  background: transparent;
+  color: var(--sm-black);
+  border: 1.5px solid var(--sm-black);
+  padding: 12px 20px;
+  font-size: 15px;
+}
+
+.sm-btn-accent {
+  background: var(--sm-blue);
+  color: var(--sm-black);
+  padding: 14px 22px;
+  font-size: 16px;
+}
+
+.sm-btn-accent:hover:not(:disabled) {
+  background: #8fd6f1;
+}
+
+.sm-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===== HEADER / NAV (matches components/Header.js) ===== */
+
+html {
+  scroll-padding-top: 88px;
+}
+
+.sm-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #fff;
+  border-bottom: 1px solid var(--sm-border);
+}
+
+.sm-header-bar {
+  position: relative;
+  z-index: 100;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px;
+}
+
+.sm-header-logo {
+  display: flex;
+  align-items: center;
+  flex: none;
+}
+
+.sm-header-logo img {
+  height: 28px;
+  width: auto;
+  display: block;
+}
+
+.sm-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 28px;
+  margin-left: auto;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.sm-nav a {
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.sm-nav a:not(.sm-btn),
+.sm-footer a {
+  color: var(--sm-black);
+}
+
+.sm-nav a:not(.sm-btn):hover,
+.sm-footer a:hover {
+  color: var(--sm-muted);
+}
+
+.sm-nav-toggle {
+  display: none;
+}
+
+.sm-nav-backdrop {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  html {
+    scroll-padding-top: 0;
+  }
+
+  body:has(.sm-header) {
+    padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .sm-header {
+    position: fixed;
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-bottom: none;
+    border-top: 1px solid var(--sm-border);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .sm-header-bar {
+    padding: 14px 16px;
+  }
+
+  .sm-nav-toggle {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    margin-left: auto;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    cursor: pointer;
+    flex: none;
+  }
+
+  .sm-nav-toggle span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--sm-black);
+    border-radius: 2px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .sm-nav-toggle.is-open span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .sm-nav-toggle.is-open span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .sm-nav-toggle.is-open span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  .sm-nav {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    z-index: 110;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    margin-left: 0;
+    background: #fff;
+    border-top: 1px solid var(--sm-border);
+    box-shadow: 0 -16px 32px rgba(0, 0, 0, 0.12);
+    padding: 4px 16px 16px;
+    max-height: calc(100vh - 64px);
+    overflow-y: auto;
+    transform: translateY(8px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+  }
+
+  .sm-nav.is-open {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .sm-nav a {
+    padding: 15px 2px;
+    font-size: 17px;
+    border-bottom: 1px solid var(--sm-border);
+  }
+
+  .sm-nav-cta {
+    display: inline-flex;
+    width: 100%;
+    margin-top: 14px;
+  }
+
+  .sm-nav-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    border: none;
+    padding: 0;
+    background: rgba(26, 26, 26, 0.35);
+    cursor: default;
+  }
+}
+
+/* ===== FOOTER (matches components/Footer.js) ===== */
+
+.sm-footer {
+  border-top: 1px solid var(--sm-border);
+}
+
+.sm-footer-main {
+  padding: 56px 24px 40px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 48px;
+  justify-content: space-between;
+}
+
+.sm-footer-brand {
+  flex: 1 1 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sm-footer-brand img {
+  height: 40px;
+  width: auto;
+  align-self: flex-start;
+}
+
+.sm-footer-brand p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--sm-muted);
+  max-width: 280px;
+}
+
+.sm-footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 15px;
+}
+
+.sm-footer-col strong {
+  font-weight: 600;
+}
+
+.sm-footer-bottom {
+  padding: 20px 24px 40px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--sm-muted);
+}
+
+@media (max-width: 640px) {
+  .sm-footer-main,
+  .sm-footer-bottom {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}

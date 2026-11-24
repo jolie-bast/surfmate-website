@@ -10,6 +10,20 @@
   padding-top: var(--header-height);
 }
 
+.event-partner-submit-page .event-submit-main {
+  padding-top: 40px;
+}
+
+/* New-design tokens (ported from app/globals.css) override the old ones
+   within this page's scope, without touching the shared stylesheet. */
+body.event-partner-submit-page {
+  --surfmate-blue: #73c9eb;
+  --surfmate-dark: #1a1a1a;
+  --border-radius-sm: 10px;
+  --border-radius-md: var(--sm-radius, 15px);
+  --border-radius-lg: var(--sm-radius, 15px);
+}
+
 .event-submit-back-wrap {
   max-width: min(760px, 100%);
   margin: 0 auto var(--spacing-md);
@@ -44,6 +58,25 @@
   font-family: "Inter", sans-serif;
   font-weight: 700;
   letter-spacing: -0.02em;
+}
+
+.event-partner-submit-page .content-header {
+  border-bottom: none;
+  padding-top: 0;
+}
+
+.event-partner-submit-page .content-header h1 {
+  font-size: clamp(1.9rem, 4vw, 2.3rem);
+  color: #1a1a1a;
+}
+
+.event-partner-submit-page .event-submit-back {
+  color: #3a3a3a;
+}
+
+.event-partner-submit-page .event-submit-back:hover,
+.event-partner-submit-page .event-submit-back:focus-visible {
+  color: #1a1a1a;
 }
 
 .event-submit-page .content-header p {
@@ -971,7 +1004,8 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  object-fit: cover;
+  object-fit: contain;
+  background: #fff;
   flex: none;
 }
 
@@ -996,7 +1030,8 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  object-fit: cover;
+  object-fit: contain;
+  background: #fff;
   flex: none;
 }
 
@@ -1569,3 +1604,99 @@
   outline: 2px solid rgba(15, 42, 61, 0.25);
   outline-offset: 1px;
 }
+
+/* ============================================================
+   Partner-page redesign — adopts the new Next.js site's look
+   (app/globals.css tokens) without touching the generic
+   /events/submit/ wizard, which stays on the old design for now.
+   ============================================================ */
+
+.event-partner-submit-page .event-submit-card {
+  border-color: #ececec;
+  border-radius: 20px;
+  box-shadow: 0 18px 48px rgba(26, 26, 26, 0.07);
+}
+
+.event-partner-submit-page .wizard-steps-map::before,
+.event-partner-submit-page .auth-divider::before,
+.event-partner-submit-page .auth-divider::after,
+.event-partner-submit-page .event-type-chip,
+.event-partner-submit-page .place-results,
+.event-partner-submit-page .place-result-btn,
+.event-partner-submit-page .event-submit-auth-optional,
+.event-partner-submit-page .event-submit-auth-body,
+.event-partner-submit-page .signed-in-bar {
+  border-color: #ececec;
+}
+
+.event-partner-submit-page .form-field input[type="text"],
+.event-partner-submit-page .form-field input[type="email"],
+.event-partner-submit-page .form-field input[type="password"],
+.event-partner-submit-page .form-field textarea,
+.event-partner-submit-page .date-segments-row,
+.event-partner-submit-page .time-segments-row,
+.event-partner-submit-page .timezone-select,
+.event-partner-submit-page .btn-secondary,
+.event-partner-submit-page .btn-ghost {
+  border-color: #dadada;
+}
+
+.event-partner-submit-page .wizard-step-marker.is-active .wizard-step-marker-btn,
+.event-partner-submit-page .wizard-step-marker.is-active .wizard-step-marker-label,
+.event-partner-submit-page .wizard-step-marker.is-complete .wizard-step-marker-label,
+.event-partner-submit-page .wizard-step-title,
+.event-partner-submit-page .wizard-review-value,
+.event-partner-submit-page .date-segment,
+.event-partner-submit-page .time-segment,
+.event-partner-submit-page .schedule-preview-block-date,
+.event-partner-submit-page .form-field label,
+.event-partner-submit-page .form-field .field-label,
+.event-partner-submit-page .form-field legend,
+.event-partner-submit-page .event-submit-preview-heading {
+  color: #1a1a1a;
+}
+
+.event-partner-submit-page .date-segment,
+.event-partner-submit-page .time-segment {
+  caret-color: #1a1a1a;
+  -webkit-text-fill-color: #1a1a1a;
+}
+
+.event-partner-submit-page .wizard-review-label,
+.event-partner-submit-page .wizard-step-marker-label,
+.event-partner-submit-page .field-hint,
+.event-partner-submit-page .field-status,
+.event-partner-submit-page .optional-mark,
+.event-partner-submit-page .media-upload-clear,
+.event-partner-submit-page .place-result-subtitle,
+.event-partner-submit-page .schedule-preview-block-label,
+.event-partner-submit-page .schedule-preview-meta,
+.event-partner-submit-page .auth-tab,
+.event-partner-submit-page .event-partner-access-gate p {
+  color: #5a5a5a;
+}
+
+.event-partner-submit-page .event-submit-back,
+.event-partner-submit-page .event-submit-card > p,
+.event-partner-submit-page .auth-intro,
+.event-partner-submit-page .event-submit-loading,
+.event-partner-submit-page .signed-in-bar,
+.event-partner-submit-page .content-header p {
+  color: #3a3a3a;
+}
+
+.event-partner-submit-page .btn-primary,
+.event-partner-submit-page .btn-secondary,
+.event-partner-submit-page .btn-ghost {
+  border-radius: var(--sm-radius, 15px);
+}
+
+.event-partner-submit-page .btn-primary {
+  background: var(--sm-blue, #73c9eb);
+  color: #1a1a1a;
+}
+
+.event-partner-submit-page .btn-primary:hover:not(:disabled) {
+  background: #8fd6f1;
+}
+
