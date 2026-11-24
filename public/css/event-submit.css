@@ -1515,17 +1515,32 @@ body.event-partner-submit-page {
   background: #f3f8fb;
   border: 1px solid var(--sm-border, #ececec);
   padding: clamp(1rem, 3vw, 1.5rem);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(1.25rem, 4vw, 2rem);
+}
+
+.event-submit-preview-col {
+  flex: 1 1 260px;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.event-submit-preview-col-label {
+  margin: 0 0 0.6rem;
+  font-family: "Inter", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6b7280;
 }
 
 .event-submit-preview-grid {
-  display: flex;
-  justify-content: center;
   width: 100%;
-}
-
-.event-submit-preview-grid .esp-card {
-  width: 100%;
-  max-width: 300px;
   pointer-events: none;
   cursor: default;
 }
