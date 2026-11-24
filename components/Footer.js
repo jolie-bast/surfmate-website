@@ -77,7 +77,7 @@ export default function Footer() {
         <span>
           © {new Date().getFullYear()} Surfmate · <a href="/impressum.html">Imprint</a> · <a href="/datenschutz.html">Privacy</a>
         </span>
-        <span>App languages: EN, DE, PT, ES, FR</span>
+        <span>App language: EN</span>
       </div>
     </footer>
   );
