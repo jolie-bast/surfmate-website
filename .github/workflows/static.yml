@@ -48,6 +48,8 @@ jobs:
           GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
         run: |
           node -e "require('fs').writeFileSync('public/js/google-places-config.local.js', 'window.SURFMATE_GOOGLE_PLACES = { apiKey: ' + JSON.stringify(process.env.GOOGLE_PLACES_API_KEY || '') + ' };\n')"
+      - name: Version legacy script and stylesheet URLs
+        run: node scripts/stamp-asset-versions.mjs
       - name: Build Next.js static export
         run: npm run build
       - name: Setup Pages
