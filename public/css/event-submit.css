@@ -1523,23 +1523,11 @@ body.event-partner-submit-page {
   width: 100%;
 }
 
-.event-submit-preview-grid .events-card {
+.event-submit-preview-grid .esp-card {
   width: 100%;
   max-width: 300px;
-}
-
-.events-card--preview {
   pointer-events: none;
   cursor: default;
-}
-
-.events-card--preview.is-placeholder .events-card-title,
-.events-card--preview.is-placeholder .events-card-meta {
-  opacity: 0.55;
-}
-
-.events-card--preview.is-placeholder .events-card-cover--empty {
-  opacity: 0.85;
 }
 
 /* Partner branding hint (community submit only) */
