@@ -159,7 +159,7 @@ export function createEventSubmitCardPreview(mountEl, asideEl) {
     </div>
     <div class="event-submit-preview-col">
       <p class="event-submit-preview-col-label">In-app</p>
-      <p class="event-submit-preview-col-sublabel">Surfmate app calendar</p>
+      <p class="event-submit-preview-col-sublabel">Surfmate app calendar · Surf Map</p>
       <div class="event-submit-preview-grid" data-preview-slot="app" role="presentation"></div>
     </div>
   `;
