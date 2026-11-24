@@ -62,6 +62,9 @@ export default async function SurfEventsPage() {
           <p style={{ margin: 0, fontSize: 17, lineHeight: 1.55, color: "var(--sm-ink)", maxWidth: 640 }}>
             Contests, festivals and meetups worldwide. Tap “I’m going” and meet the crew there.
           </p>
+          <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: "var(--sm-muted)" }}>
+            Every Sunday we post upcoming surf events worldwide.
+          </p>
         </section>
 
         <section className="sm-container" style={{ padding: "24px 24px 104px" }}>

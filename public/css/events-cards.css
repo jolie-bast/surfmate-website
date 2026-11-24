@@ -11,9 +11,9 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  background: #fff;
+  border: 1px solid var(--sm-border, #ececec);
   overflow: hidden;
   text-decoration: none;
   color: inherit;
@@ -30,7 +30,7 @@
 }
 
 a.events-card:hover {
-  border-color: rgba(115, 201, 235, 0.45);
+  border-color: var(--sm-blue, #73c9eb);
   transform: translateY(-2px);
   text-decoration: none;
 }
@@ -42,7 +42,7 @@ a.events-card:hover {
   overflow: hidden;
   line-height: 0;
   font-size: 0;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--sm-blue-light, #d2e9f2);
 }
 
 .events-card-cover > img {
@@ -58,7 +58,7 @@ a.events-card:hover {
 }
 
 .events-card-cover--empty {
-  background: linear-gradient(135deg, rgba(115, 201, 235, 0.12), rgba(255, 255, 255, 0.04));
+  background: var(--sm-blue-light, #d2e9f2);
 }
 
 .events-card-logo {
@@ -71,7 +71,7 @@ a.events-card:hover {
   border-radius: 12px;
   background: #fff;
   border: 2px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   box-sizing: border-box;
   overflow: hidden;
 }
@@ -151,14 +151,14 @@ a.events-card:hover {
 }
 
 .events-card-badge--partner {
-  background: rgba(115, 201, 235, 0.18);
-  color: #9ddcf5;
+  background: var(--sm-blue-light, #d2e9f2);
+  color: #0f2a3d;
 }
 
 .events-card-badge--live {
   gap: 0.35rem;
-  background: rgba(34, 197, 94, 0.15);
-  color: #86efac;
+  background: #dcfce7;
+  color: #166534;
 }
 
 .events-on-dot {
@@ -189,7 +189,7 @@ a.events-card:hover {
   font-family: var(--font-family-primary-bold);
   font-size: 1.02rem;
   line-height: 1.1;
-  color: var(--surfmate-white);
+  color: var(--sm-black, #1a1a1a);
 }
 
 .events-card-meta {
@@ -197,7 +197,7 @@ a.events-card:hover {
   display: flex;
   align-items: flex-start;
   gap: 0.4rem;
-  color: rgba(255, 255, 255, 0.62);
+  color: var(--sm-muted, #3a3a3a);
   font-family: var(--font-family-ui);
   font-size: 0.86rem;
   font-weight: 400;
@@ -224,21 +224,21 @@ a.events-card:hover {
   padding: 0.15rem 0.55rem;
   padding-top: 0.15rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.75);
+  background: var(--sm-border, #ececec);
+  color: var(--sm-muted, #3a3a3a);
   font-size: 0.72rem;
   font-family: var(--font-family-ui);
   font-weight: 500;
 }
 
 .events-type-tag.is-highlighted {
-  background: rgba(115, 201, 235, 0.2);
-  color: #b8e8fb;
+  background: var(--sm-blue-light, #d2e9f2);
+  color: #0f2a3d;
 }
 
 .events-card-live-link {
   margin-top: 0.25rem;
-  color: var(--surfmate-blue);
+  color: #0f7aad;
   font-family: var(--font-family-ui);
   font-size: 0.82rem;
   font-weight: 600;
