@@ -55,6 +55,10 @@
 
             <div id="event-submit-form-section" class="event-submit-card" hidden>
               <form id="event-submit-form" class="event-submit-form" novalidate>
+                <div id="partner-identity-banner" class="partner-identity-banner" hidden>
+                  <img id="partner-identity-logo" class="partner-identity-logo" alt="" hidden />
+                  <span>Submitting as <strong id="partner-identity-name"></strong></span>
+                </div>
                 <nav class="wizard-progress" aria-label="Submission steps">
                   <ol id="wizard-steps-map" class="wizard-steps-map">
                     <li class="wizard-step-marker is-active" data-step-marker="1">
@@ -156,16 +160,36 @@
                       <label for="partner-name">
                         Partner / organizer name <span class="required-mark" aria-hidden="true">*</span>
                       </label>
-                      <input
-                        id="partner-name"
-                        name="partnerName"
-                        type="text"
-                        maxlength="120"
-                        placeholder="e.g. Baltic Surf Series"
-                        aria-describedby="partner-name-error"
-                      />
-                      <p class="field-hint">Shown as the partner name on your event in Surfmate.</p>
+                      <div class="location-autocomplete">
+                        <div class="location-search-wrap">
+                          <input
+                            id="partner-name"
+                            name="partnerName"
+                            type="text"
+                            maxlength="120"
+                            autocomplete="off"
+                            placeholder="e.g. Baltic Surf Series"
+                            aria-describedby="partner-hint partner-status selected-partner partner-name-error"
+                            aria-expanded="false"
+                            aria-controls="partner-results"
+                            role="combobox"
+                          />
+                        </div>
+                        <ul id="partner-results" class="place-results" role="listbox" hidden></ul>
+                      </div>
+                      <p id="partner-hint" class="field-hint">
+                        Search for your partner, or keep typing to create a new one.
+                      </p>
+                      <p id="partner-status" class="field-status" aria-live="polite"></p>
                       <p id="partner-name-error" class="field-error" hidden role="alert"></p>
+                      <div id="selected-partner" class="selected-place" hidden>
+                        <span class="selected-place-label">Selected</span>
+                        <img id="selected-partner-logo" class="selected-partner-logo" alt="" hidden />
+                        <span id="selected-partner-name" class="selected-place-name"></span>
+                        <button type="button" id="clear-partner-btn" class="selected-place-clear">
+                          Change
+                        </button>
+                      </div>
                     </div>
                   </section>
 

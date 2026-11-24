@@ -967,6 +967,39 @@
   padding: 0;
 }
 
+.selected-partner-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: none;
+}
+
+.partner-identity-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  margin-bottom: 18px;
+  border-radius: var(--border-radius-md);
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  font-size: 0.9rem;
+  color: #065f46;
+}
+
+.partner-identity-banner[hidden] {
+  display: none !important;
+}
+
+.partner-identity-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: none;
+}
+
 .event-type-chips {
   display: flex;
   flex-wrap: wrap;

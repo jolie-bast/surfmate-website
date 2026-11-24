@@ -26,6 +26,8 @@ const ALLOWED_MEDIA_TYPES = new Set([
 ]);
 
 const ACCESS_KEY = new URLSearchParams(window.location.search).get("k")?.trim() ?? "";
+const PARTNER_SLUG = new URLSearchParams(window.location.search).get("partner")?.trim() ?? "";
+const PARTNER_TOKEN = new URLSearchParams(window.location.search).get("t")?.trim() ?? "";
 
 const WIZARD_STEPS = [
   {
@@ -71,6 +73,9 @@ let supabaseLoadPromise = null;
 let selectedPlace = null;
 let placeSearchTimer = null;
 let currentWizardStep = 1;
+let selectedPartnerId = null;
+let partnerIdentity = null;
+let partnerSearchTimer = null;
 
 let coverFile = null;
 let logoFile = null;
@@ -95,6 +100,15 @@ const els = {
   formError: document.getElementById("form-error"),
   submitterEmail: document.getElementById("submitter-email"),
   partnerName: document.getElementById("partner-name"),
+  partnerResults: document.getElementById("partner-results"),
+  partnerStatus: document.getElementById("partner-status"),
+  selectedPartnerBox: document.getElementById("selected-partner"),
+  selectedPartnerName: document.getElementById("selected-partner-name"),
+  selectedPartnerLogo: document.getElementById("selected-partner-logo"),
+  clearPartnerBtn: document.getElementById("clear-partner-btn"),
+  partnerIdentityBanner: document.getElementById("partner-identity-banner"),
+  partnerIdentityLogo: document.getElementById("partner-identity-logo"),
+  partnerIdentityName: document.getElementById("partner-identity-name"),
   websiteUrl: document.getElementById("event-website-url"),
   title: document.getElementById("event-title"),
   locationInput: document.getElementById("event-location"),
@@ -1753,6 +1767,124 @@ function renderPlaceResults(results) {
   });
 }
 
+function setPartnerResultsOpen(isOpen) {
+  if (!els.partnerResults || !els.partnerName) return;
+  if (isOpen) {
+    show(els.partnerResults);
+    els.partnerName.setAttribute("aria-expanded", "true");
+  } else {
+    hide(els.partnerResults);
+    els.partnerName.setAttribute("aria-expanded", "false");
+  }
+}
+
+function setPartnerStatus(message, tone = "") {
+  setText(els.partnerStatus, message);
+  if (!els.partnerStatus) return;
+  els.partnerStatus.className = "field-status";
+  if (tone) els.partnerStatus.classList.add(`is-${tone}`);
+}
+
+function renderSelectedPartner(partner) {
+  if (!partner) {
+    hide(els.selectedPartnerBox);
+    return;
+  }
+
+  setText(els.selectedPartnerName, partner.name);
+  if (partner.logoUrl && els.selectedPartnerLogo) {
+    els.selectedPartnerLogo.src = partner.logoUrl;
+    show(els.selectedPartnerLogo);
+  } else {
+    hide(els.selectedPartnerLogo);
+  }
+  show(els.selectedPartnerBox);
+  if (els.partnerResults) els.partnerResults.innerHTML = "";
+  setPartnerResultsOpen(false);
+  setPartnerStatus("", "");
+}
+
+function clearPartnerSelection() {
+  selectedPartnerId = null;
+  hide(els.selectedPartnerBox);
+  els.partnerName?.focus();
+}
+
+function renderPartnerResults(results) {
+  if (!els.partnerResults) return;
+
+  if (!results.length) {
+    els.partnerResults.innerHTML = "";
+    setPartnerResultsOpen(false);
+    return;
+  }
+
+  els.partnerResults.innerHTML = results
+    .map(
+      (partner) => `
+      <li role="presentation">
+        <button type="button" class="place-result-btn" data-partner-id="${escapeHtml(partner.id)}" role="option">
+          <span class="place-result-name">${escapeHtml(partner.name)}</span>
+        </button>
+      </li>
+    `,
+    )
+    .join("");
+
+  setPartnerResultsOpen(true);
+
+  els.partnerResults.querySelectorAll(".place-result-btn").forEach((button) => {
+    button.addEventListener("click", () => {
+      const partnerId = button.dataset.partnerId;
+      const partner = results.find((item) => item.id === partnerId);
+      if (!partner) return;
+
+      selectedPartnerId = partner.id;
+      if (els.partnerName) els.partnerName.value = partner.name;
+      showFieldError("partnerName", null);
+      markFieldInvalid("partnerName", false);
+      showFormError(null);
+      renderSelectedPartner({ name: partner.name, logoUrl: partner.logo_url || null });
+      updateEventCardPreview();
+    });
+  });
+}
+
+async function searchEventSubmitPartners(query) {
+  const client = await getSupabase();
+  const { data, error } = await client.rpc("search_event_submit_partners", {
+    p_access_key: ACCESS_KEY,
+    p_query: query,
+  });
+  if (error) throw new Error(error.message);
+  return Array.isArray(data) ? data : [];
+}
+
+function handlePartnerNameInput() {
+  selectedPartnerId = null;
+  hide(els.selectedPartnerBox);
+
+  const query = els.partnerName?.value.trim() ?? "";
+  setPartnerStatus("", "");
+
+  if (query.length < MIN_QUERY_LENGTH) {
+    if (els.partnerResults) els.partnerResults.innerHTML = "";
+    setPartnerResultsOpen(false);
+    return;
+  }
+
+  clearTimeout(partnerSearchTimer);
+  partnerSearchTimer = setTimeout(async () => {
+    try {
+      const results = await searchEventSubmitPartners(query);
+      renderPartnerResults(results);
+    } catch {
+      if (els.partnerResults) els.partnerResults.innerHTML = "";
+      setPartnerResultsOpen(false);
+    }
+  }, DEBOUNCE_MS);
+}
+
 function escapeHtml(value) {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -1975,7 +2107,7 @@ async function handleFinalSubmit() {
   showFormError(null);
   clearFieldErrors();
 
-  if (!ACCESS_KEY) {
+  if (!ACCESS_KEY && !partnerIdentity) {
     showFormError("Invalid partner link — check the URL you were given.");
     return;
   }
@@ -2067,6 +2199,8 @@ async function handleFinalSubmit() {
       p_submitter_note: input.submitterNote?.trim() || null,
       p_description: input.description?.trim() || null,
       p_timezone: getSelectedTimezone(),
+      p_partner_id: selectedPartnerId || null,
+      p_partner_token: partnerIdentity ? PARTNER_TOKEN : null,
     });
 
     els.submitBtn.disabled = false;
@@ -2122,6 +2256,16 @@ function bindEvents() {
     showFieldError("partnerName", null);
     markFieldInvalid("partnerName", false);
     showFormError(null);
+    handlePartnerNameInput();
+  });
+
+  els.clearPartnerBtn?.addEventListener("click", clearPartnerSelection);
+
+  els.partnerName?.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && els.partnerResults) {
+      els.partnerResults.innerHTML = "";
+      setPartnerResultsOpen(false);
+    }
   });
 
   els.websiteUrl?.addEventListener("input", () => {
@@ -2199,22 +2343,96 @@ function bindEvents() {
       setPlaceResultsOpen(false);
     }
   });
+
+  document.addEventListener("click", (event) => {
+    if (!els.partnerResults || !els.partnerName || selectedPartnerId) return;
+    const target = event.target;
+    if (
+      target instanceof Node &&
+      !els.partnerResults.contains(target) &&
+      target !== els.partnerName &&
+      !els.partnerName.contains(target) &&
+      !(target instanceof Element && target.closest(".location-autocomplete"))
+    ) {
+      els.partnerResults.innerHTML = "";
+      setPartnerResultsOpen(false);
+    }
+  });
 }
 
-function init() {
-  if (!ACCESS_KEY) {
-    showAccessGate();
-    return;
-  }
-
+function setupWizardChrome() {
   hide(els.accessGate);
   refreshWizardElements();
-
   renderEventTypeChips();
   initTimezoneSelect();
   updateDatetimeVisibility();
   bindEvents();
   showForm();
+}
+
+async function resolvePartnerIdentity() {
+  try {
+    const client = await getSupabase();
+    const { data, error } = await client.rpc("verify_partner_submit_link", {
+      p_slug: PARTNER_SLUG,
+      p_token: PARTNER_TOKEN,
+    });
+    if (error) return null;
+    const result = Array.isArray(data) ? data[0] : data;
+    if (!result?.found) return null;
+    return {
+      id: result.id,
+      name: result.name,
+      kind: result.kind,
+      logoUrl: result.logo_url || null,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function applyPartnerIdentity(identity) {
+  partnerIdentity = identity;
+  selectedPartnerId = identity.id;
+
+  if (els.partnerName) {
+    els.partnerName.value = identity.name;
+    els.partnerName.setAttribute("readonly", "readonly");
+  }
+
+  setText(els.partnerIdentityName, identity.name);
+  if (identity.logoUrl && els.partnerIdentityLogo) {
+    els.partnerIdentityLogo.src = identity.logoUrl;
+    show(els.partnerIdentityLogo);
+  }
+  show(els.partnerIdentityBanner);
+}
+
+async function init() {
+  if (PARTNER_SLUG && PARTNER_TOKEN) {
+    if (!config?.url || !config?.anonKey) {
+      showAccessGate();
+      return;
+    }
+
+    const identity = await resolvePartnerIdentity();
+    if (!identity) {
+      showAccessGate();
+      return;
+    }
+
+    setupWizardChrome();
+    applyPartnerIdentity(identity);
+    goToWizardStep(2, { focus: true });
+    return;
+  }
+
+  if (!ACCESS_KEY) {
+    showAccessGate();
+    return;
+  }
+
+  setupWizardChrome();
 
   if (!config?.url || !config?.anonKey) {
     showFormError("Supabase is not configured on this page.");
