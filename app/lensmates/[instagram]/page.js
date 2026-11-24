@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
 import JsonLd from "../../../components/JsonLd";
-import { KindIcon, InstagramIcon } from "../../../components/LensmateIcons";
+import { KindIcon, InstagramIcon, GlobeIcon } from "../../../components/LensmateIcons";
 import ProtectedPhoto from "../../../components/ProtectedPhoto";
 import { getWebsiteLensmate, getWebsiteLensmates } from "../../../lib/supabase";
 import { lensmateKindLabel, formatAvailableFor } from "../../../lib/lensmates";
@@ -117,9 +117,16 @@ export default async function LensmatePage({ params }) {
               )}
             </div>
 
-            <a href={instagramUrl} target="_blank" rel="noopener noreferrer" className="sm-btn sm-btn-accent">
-              <InstagramIcon size={18} /> Message on Instagram
-            </a>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+              <a href={instagramUrl} target="_blank" rel="noopener noreferrer" className="sm-btn sm-btn-accent">
+                <InstagramIcon size={18} /> Message on Instagram
+              </a>
+              {lensmate.portfolio_url && (
+                <a href={lensmate.portfolio_url} target="_blank" rel="noopener noreferrer" className="sm-btn sm-btn-outline">
+                  <GlobeIcon size={18} /> Portfolio
+                </a>
+              )}
+            </div>
           </div>
         </section>
 
@@ -182,6 +189,17 @@ export default async function LensmatePage({ params }) {
               >
                 <InstagramIcon size={18} /> Message on Instagram
               </a>
+              {lensmate.portfolio_url && (
+                <a
+                  href={lensmate.portfolio_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="sm-btn sm-btn-outline"
+                  style={{ width: "100%", borderColor: "#fff", color: "#fff" }}
+                >
+                  <GlobeIcon size={18} /> Portfolio
+                </a>
+              )}
             </div>
             {others.length > 0 && (
               <div style={{ border: "1px solid var(--sm-border)", borderRadius: "var(--sm-radius)", padding: 22, display: "flex", flexDirection: "column", gap: 12 }}>
