@@ -11,6 +11,7 @@
 }
 
 :root {
+  color-scheme: light;
   --sm-black: #1a1a1a;
   --sm-ink: #2b2b2b;
   --sm-muted: #3a3a3a;

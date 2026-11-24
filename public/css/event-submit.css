@@ -1510,6 +1510,11 @@ body.event-partner-submit-page {
   line-height: 1.45;
 }
 
+.event-submit-preview-lead a {
+  color: var(--sm-black, #1a1a1a);
+  font-weight: 600;
+}
+
 .event-submit-preview-stage {
   border-radius: 20px;
   background: #f3f8fb;
@@ -1530,12 +1535,18 @@ body.event-partner-submit-page {
 }
 
 .event-submit-preview-col-label {
-  margin: 0 0 0.6rem;
+  margin: 0 0 0.15rem;
   font-family: "Inter", sans-serif;
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  color: var(--sm-black, #1a1a1a);
+}
+
+.event-submit-preview-col-sublabel {
+  margin: 0 0 0.75rem;
+  font-size: 0.78rem;
   color: #6b7280;
 }
 
