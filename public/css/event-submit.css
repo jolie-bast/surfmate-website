@@ -1550,6 +1550,16 @@ body.event-partner-submit-page {
   color: #6b7280;
 }
 
+.event-submit-preview-col-sublabel a {
+  color: #6b7280;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.event-submit-preview-col-sublabel a:hover {
+  color: var(--sm-black, #1a1a1a);
+}
+
 .event-submit-preview-grid {
   width: 100%;
   pointer-events: none;

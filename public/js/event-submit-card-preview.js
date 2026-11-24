@@ -154,7 +154,7 @@ export function createEventSubmitCardPreview(mountEl, asideEl) {
   mountEl.innerHTML = `
     <div class="event-submit-preview-col">
       <p class="event-submit-preview-col-label">Website</p>
-      <p class="event-submit-preview-col-sublabel">surfmate.eu/events · surf-events.com</p>
+      <p class="event-submit-preview-col-sublabel"><a href="https://surfmate.eu/events/" target="_blank" rel="noopener noreferrer">surfmate.eu/events</a> · <a href="https://surf-events.com/" target="_blank" rel="noopener noreferrer">surf-events.com</a></p>
       <div class="event-submit-preview-grid" data-preview-slot="website" role="presentation"></div>
     </div>
     <div class="event-submit-preview-col">
