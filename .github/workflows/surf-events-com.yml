@@ -1,0 +1,43 @@
+name: Deploy surf-events.com
+
+# Cloudflare's own git integration already rebuilds and deploys this app on
+# every push to main, so this workflow only covers the daily freshness
+# rebuild Cloudflare's pipeline has no scheduling for.
+on:
+  # Daily rebuild so new events stay fresh, same as the main site
+  schedule:
+    - cron: "47 3 * * *"
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+concurrency:
+  group: "surf-events-com"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: surf-events-com
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: surf-events-com/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Build Next.js static export
+        run: npm run build
+      - name: Deploy to Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: surf-events-com
+          command: deploy
