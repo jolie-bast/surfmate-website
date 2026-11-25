@@ -1,4 +1,5 @@
 import Script from "next/script";
+import AppStoreRedirect from "../components/AppStoreRedirect";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import EventCard from "../components/EventCard";
@@ -133,6 +134,7 @@ export default async function HomePage() {
   return (
     <>
       <JsonLd data={[softwareApplicationNode(), faqNode()]} />
+      <AppStoreRedirect />
       <Header />
       <main>
 
