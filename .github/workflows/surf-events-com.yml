@@ -41,3 +41,6 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: surf-events-com
           command: deploy
+          # Wrangler 3's default deploy requires a "main" entry-point script.
+          # This Worker is assets-only (no script), which needs Wrangler 4.
+          wranglerVersion: "4"
