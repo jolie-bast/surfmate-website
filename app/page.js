@@ -189,6 +189,39 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* PARTNERS */}
+      <section id="partners" style={{ background: "var(--sm-mint)", padding: "96px 0", overflow: "hidden" }}>
+        <div className="sm-container" style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "flex-end", gap: 24 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 640 }}>
+            <p className="sm-eyebrow">Partners</p>
+            <h2 className="sm-heavy" style={{ margin: 0, fontSize: "clamp(32px, 4vw, 52px)", lineHeight: 1 }}>Brands, events and local spots</h2>
+          </div>
+          <a href="mailto:jolie@surfmate.eu" style={{ fontSize: 15, fontWeight: 600 }}>Become a partner →</a>
+        </div>
+        {partnerLogos.length === 0 ? (
+          <p className="sm-container" style={{ marginTop: 40, fontSize: 16, color: "var(--sm-ink)" }}>Partner logos coming soon.</p>
+        ) : (
+            <div className="sm-partner-marquee" aria-label="Surfmate partners">
+              <div className="sm-partner-marquee-move">
+                <ul className="sm-partner-marquee-track">
+                  {partnerLogos.map((partner) => (
+                    <li key={partner.id}>
+                      <PartnerTile partner={partner} />
+                    </li>
+                  ))}
+                </ul>
+                <ul className="sm-partner-marquee-track" aria-hidden="true">
+                  {partnerLogos.map((partner) => (
+                    <li key={`${partner.id}-copy`}>
+                      <PartnerTile partner={partner} duplicate />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+        )}
+      </section>
+
       {/* UPCOMING EVENTS */}
       <section id="events" className="sm-events">
         <div className="sm-container sm-events-inner">
@@ -505,39 +538,6 @@ export default async function HomePage() {
             </div>
           ))}
         </div>
-      </section>
-
-      {/* PARTNERS */}
-      <section id="partners" style={{ background: "var(--sm-mint)", padding: "96px 0", overflow: "hidden" }}>
-        <div className="sm-container" style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "flex-end", gap: 24 }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 640 }}>
-            <p className="sm-eyebrow">Partners</p>
-            <h2 className="sm-heavy" style={{ margin: 0, fontSize: "clamp(32px, 4vw, 52px)", lineHeight: 1 }}>Brands, events and local spots</h2>
-          </div>
-          <a href="mailto:jolie@surfmate.eu" style={{ fontSize: 15, fontWeight: 600 }}>Become a partner →</a>
-        </div>
-        {partnerLogos.length === 0 ? (
-          <p className="sm-container" style={{ marginTop: 40, fontSize: 16, color: "var(--sm-ink)" }}>Partner logos coming soon.</p>
-        ) : (
-            <div className="sm-partner-marquee" aria-label="Surfmate partners">
-              <div className="sm-partner-marquee-move">
-                <ul className="sm-partner-marquee-track">
-                  {partnerLogos.map((partner) => (
-                    <li key={partner.id}>
-                      <PartnerTile partner={partner} />
-                    </li>
-                  ))}
-                </ul>
-                <ul className="sm-partner-marquee-track" aria-hidden="true">
-                  {partnerLogos.map((partner) => (
-                    <li key={`${partner.id}-copy`}>
-                      <PartnerTile partner={partner} duplicate />
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-        )}
       </section>
 
       {/* BLOG */}
